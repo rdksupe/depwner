@@ -191,7 +191,7 @@
 				<a href="threats.html" class="statusCardList">
 					<p>Last Scan</p>
 					<div class="flex">
-						<p>3 days ago</p>
+						<p>Today</p>
 					</div>
 				</a>
 			</div>
