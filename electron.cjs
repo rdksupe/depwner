@@ -12,6 +12,72 @@ let win;
 
 let watcher = null;
 
+function scheduleScanning() {
+    if (!settings.schedule || !settings.schedule.active) {
+        console.log("Scheduling is disabled.");
+        return;
+    }
+
+    console.log("Setting up scanning schedule...");
+
+    cron.getTasks().forEach(task => task.stop());
+
+    const { freq, time, days } = settings.schedule;
+
+    function getCurrentTimeIn24HFormat() {
+        const now = new Date();
+        const userTime = now.toLocaleTimeString('en-GB', { hour12: false }); // Get 24H format
+        return userTime.slice(0, 5); // Extract HH:MM
+    }
+
+    if (freq === "hourly") {
+        cron.schedule("0 * * * *", () => {
+            console.log("Running hourly scan...");
+            if (settings.locations.length > 0) {
+                settings.locations.forEach(location => startManualScan(location, "custom"));
+            } else {
+                console.warn("No locations set for scanning.");
+            }
+        });
+    } else if (freq === "daily") {
+        const [hour, minute] = time.split(":").map(Number);
+        cron.schedule(`${minute} ${hour} * * *`, () => {
+            const currentTime = getCurrentTimeIn24HFormat();
+            console.log(`Running daily scan at ${currentTime}...`);
+            if (settings.locations.length > 0) {
+                settings.locations.forEach(location => startManualScan(location, "custom"));
+            } else {
+                console.warn("No locations set for scanning.");
+            }
+        });
+    } else if (freq === "weekly") {
+        const [hour, minute] = time.split(":").map(Number);
+        const dayMap = {
+            sun: 0,
+            mon: 1,
+            tue: 2,
+            wed: 3,
+            thu: 4,
+            fri: 5,
+            sat: 6
+        };
+
+        Object.entries(days).forEach(([day, active]) => {
+            if (active) {
+                cron.schedule(`${minute} ${hour} * * ${dayMap[day]}`, () => {
+                    const currentTime = getCurrentTimeIn24HFormat();
+                    console.log(`Running weekly scan on ${day} at ${currentTime}...`);
+                    if (settings.locations.length > 0) {
+                        settings.locations.forEach(location => startManualScan(location, "custom"));
+                    } else {
+                        console.warn("No locations set for scanning.");
+                    }
+                });
+            }
+        });
+    }
+}
+
 const startManualScan = async (pathToScan, type) => {
     console.log("Starting manual scan:", pathToScan, type);
 
@@ -19,15 +85,21 @@ const startManualScan = async (pathToScan, type) => {
         status: 'scan',
         type: type,
         progress: 0,
-        threatsFound: 0,
+        threatsFound: [],
         currentFile: '',
     }
 
     let options;
     if (settings.yara) {
-        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/malware_hashes_full.db", yaraPath: "./scanner/output.yarc" };
+        options = {
+            dbPath: "./scanner/malware_hashes.db",
+            yaraPath: "./scanner/output.yarc"
+        };
     } else {
-        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/malware_hashes_overfitted.db", yaraPath: "" };
+        options = {
+            dbPath: "./scanner/malware_hashes.db",
+            yaraPath: ""
+        };
     }
 
     try {
@@ -206,7 +278,6 @@ function createWindow() {
 
     win.loadFile('./build/index.html');
 }
-
 
 let tray = null
 let isQuiting = false
