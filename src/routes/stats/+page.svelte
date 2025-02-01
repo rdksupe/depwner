@@ -22,7 +22,7 @@
 	</select>
 	<div class="img">
 		{#if img}
-			<img src="/trend_analysis/{img}" alt={img} />
+			<img src="./trend_analysis/{img}" alt={img} />
 		{/if}
 	</div>
 </div>
