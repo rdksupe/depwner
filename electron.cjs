@@ -7,7 +7,7 @@ const homedir = require('os').homedir();
 const dataDir = path.join(homedir, './dePWNer')
 const scannerDir = path.join(dataDir, './scanner/')
 
-if (!fs.existsSync(path)) {
+if (!fs.existsSync(dataDir)) {
     console.log('First Run Detected')
     fs.cpSync(path.join(__dirname, './data/'), dataDir, { recursive: true }, (err) => {
         if (err) {
@@ -137,7 +137,7 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        console.log(options) ; 
+        console.log(options);
         // Change the import to use the original scanner location instead of the copied one
         const { scanInput } = await import(path.join(__dirname, './scanner/scanner.cjs'));
         const result = await scanInput(options);
