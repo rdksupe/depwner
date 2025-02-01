@@ -233,8 +233,8 @@ async function loadCsvToBloom(dbPath) {
         console.log(`Checking hash in database: ${hash}`);
         const quotedHash = `"${hash}"`;
         return new Promise((resolve, reject) => {
-          db.get('SELECT * FROM malware_hashes WHERE md5_hash = ? OR md5_hash = ?', 
-            [hash, quotedHash], 
+          db.get('SELECT * FROM malware_hashes WHERE md5_hash = ? OR md5_hash = ?',
+            [hash, quotedHash],
             (err, row) => {
               if (err) {
                 console.error('Database query error:', err);
