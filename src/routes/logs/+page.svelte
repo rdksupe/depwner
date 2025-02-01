@@ -22,7 +22,7 @@
 <div class="overall-container">
 	<h2 class="overall-threats">🚀 {totalThreatsFound} Threats Eliminated by dePWNer</h2>
 	<h2 class="active-threats">⚠️ {threats} Threats in Quarantine</h2>
-	<h2 class="eliminated-threats">✅ {totalThreatsFound - threats} Removed by User</h2>
+	<h2 class="eliminated-threats text-red-400">✅ {totalThreatsFound - threats} Removed by User</h2>
 
 	<div class="table-container">
 		<table>
@@ -54,11 +54,11 @@
 
 <style>
 	:root {
-		--primary-bg: #1e1e2f;
-		--secondary-bg: #282a36;
+		--primary-bg: rgb(var(--ctp-mantle));
+		--secondary-bg: rgb(var(--ctp-surface0));
 		--primary-text: #ffffff;
 		--secondary-text: #b0b0b0;
-		--highlight: #ff4757;
+		--highlight: rgb(var(--ctp-blue));
 		--safe: #2ed573;
 		--warning: #ffa502;
 	}
@@ -87,7 +87,6 @@
 	}
 
 	.eliminated-threats {
-		color: var(--highlight);
 	}
 
 	.table-container {
@@ -104,7 +103,8 @@
 		color: var(--primary-text);
 	}
 
-	th, td {
+	th,
+	td {
 		padding: 12px;
 		text-align: left;
 		border-bottom: 1px solid var(--secondary-text);
@@ -112,7 +112,7 @@
 
 	th {
 		background: var(--highlight);
-		color: white;
+		color: rgb(var(--ctp-crust));
 		font-weight: bold;
 	}
 
