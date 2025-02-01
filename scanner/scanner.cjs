@@ -21,10 +21,10 @@ function getDirectoryNameForHash(targetHash) {
     fs.createReadStream(hashFilePath)
       .pipe(csv())
       .on("data", (row) => {
-        console.log(targetHash,row["MD5 Hash"])
+        console.log(targetHash, row["MD5 Hash"])
         if (row["MD5 Hash"] === targetHash) {
           foundDirectory = row["Directory Name"];
-          
+
         }
       })
       .on("end", () => resolve(foundDirectory))
@@ -114,7 +114,7 @@ function deleteFromQuarantineByPath(originalPath) {
 function loadWhitelist() {
   const whitelistPath = path.join(__dirname, 'whitelist.txt');
   const whitelist = new Set();
-  
+
   if (fs.existsSync(whitelistPath)) {
     const content = fs.readFileSync(whitelistPath, 'utf-8');
     content.split('\n').forEach(line => {
@@ -147,12 +147,12 @@ function importCsvToDb(db, csvPath) {
   console.log("Importing CSV data to SQLite...");
   const content = fs.readFileSync(csvPath, 'utf-8');
   const lines = content.split('\n');
-  
+
   // Begin transaction for faster inserts
   db.exec('BEGIN TRANSACTION');
-  
+
   const insertStmt = db.prepare('INSERT OR IGNORE INTO malware_hashes (md5_hash, first_seen_utc, signature) VALUES (?, ?, ?)');
-  
+
   let headerProcessed = false;
   let md5Index, firstSeenIndex, signatureIndex;
   let count = 0;
@@ -224,7 +224,7 @@ async function loadCsvToBloom(dbPath) {
 
     const countRow = await db.getAsync('SELECT COUNT(*) as count FROM malware_hashes');
     console.log(`Loaded ${countRow.count} hashes from SQLite database`);
-    
+
     await printDatabaseContents(db);
 
     global.dbConnection = {
@@ -252,7 +252,7 @@ async function loadCsvToBloom(dbPath) {
                 console.log('No match found');
                 resolve(null);
               }
-          });
+            });
         });
       }
     };
@@ -287,8 +287,13 @@ function runYaraScan(filePath, rulesPath = "./output.yarc") {
   }
 
   try {
-    const cmd = path.join(__dirname, "yr");
-    console.log(cmd) ; 
+    let cmd;
+    if (process.platform == 'windows') {
+      cmd = path.join(__dirname, "yr.exe");
+    } else {
+      cmd = path.join(__dirname, "yr");
+    }
+    console.log(cmd);
     const args = ["scan", "-C", rulesPath, filePath];
     console.log(args);
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
@@ -313,10 +318,10 @@ function moveToQuarantine(filePath) {
   if (!fs.existsSync(quarantinePath)) {
     fs.mkdirSync(quarantinePath, { recursive: true });
   }
-  
+
   const fileName = path.basename(filePath);
   const newPath = path.join(quarantinePath, fileName);
-  
+
   try {
     fs.renameSync(filePath, newPath);
     return newPath;
@@ -329,7 +334,7 @@ function moveToQuarantine(filePath) {
 function updateQuarantineJson(fileInfo) {
   const quarantineJsonPath = path.join(__dirname, '../data/quarantine.json');
   let quarantineList = [];
-  
+
   try {
     if (fs.existsSync(quarantineJsonPath)) {
       const content = fs.readFileSync(quarantineJsonPath, 'utf-8').trim();
@@ -339,7 +344,7 @@ function updateQuarantineJson(fileInfo) {
     }
   } catch (err) {
     console.error("Error reading quarantine.json:", err);
-    quarantineList = []; 
+    quarantineList = [];
   }
 
   quarantineList.push(fileInfo);
@@ -349,10 +354,10 @@ function updateQuarantineJson(fileInfo) {
 async function scanFile(filePath, dbConnection, yaraRules) {
   const whitelist = loadWhitelist();
   const hashes = computeHashes(filePath);
-  
+
   console.log(`\nScanning file: ${filePath}`);
   console.log(`Computed MD5: ${hashes?.md5 || 'failed to compute hash'}`);
-  
+
   if (!hashes) {
     return { matched: false, result: "hash_error" };
   }
@@ -370,7 +375,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
     };
   }
   const directoryName = await getDirectoryNameForHash(hashes.md5);
-  console.log("dir name:",directoryName);
+  console.log("dir name:", directoryName);
   if (!directoryName) {
     console.log("No matching directory found for hash:", hashes.md5);
   }
@@ -409,7 +414,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
       if (Object.keys(filteredData).length > 0) {
         updateQuarantineJson(filteredData);
       }
-      
+
       return {
         matched: true,
         result: {
@@ -428,7 +433,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
     console.log('Checking database for hash match...');
     const match = await dbConnection.checkHash(hashes.md5);
     console.log(`Database match result: ${match ? 'Found' : 'Not found'}`);
-    
+
     if (match) {
       console.log(`Match details: ${JSON.stringify(match)}`);
       const quarantinePath = moveToQuarantine(filePath);
@@ -561,7 +566,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
 
   const totalFiles = allFiles.length;
   showScanStartNotification(totalFiles);
-  
+
   const results = {
     scan_summary: {
       total_files: totalFiles,
@@ -582,7 +587,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
   for (const filePath of allFiles) {
     let scanResult = await scanFile(filePath, dbConnection, yaraRules);
     global.scanStatus.currentFile = filePath;
-    
+
     if (scanResult.result?.type === "whitelist") {
       results.scan_summary.whitelisted++;
       results.whitelisted_files.push(scanResult.result);
@@ -605,7 +610,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
       ///////// NOTIFICATION /////////////////////////
       ////////////////////////////////////////////////
     }
-    
+
     count++;
     global.scanStatus.progress = count;
     process.stdout.write(`\rScanned: ${count}/${totalFiles}`);
@@ -632,10 +637,10 @@ async function scanFolder(folder, dbConnection, yaraRules) {
   results.scan_summary.match_percentage = totalFiles > 0 ? (totalMatches / totalFiles) * 100 : 0;
 
   showScanCompleteNotification(
-    totalFiles, 
+    totalFiles,
     results.scan_summary.total_matches
   );
-  
+
   console.log(JSON.stringify(results, null, 2));
   return results;
 }
@@ -705,7 +710,7 @@ if (require.main === module) {
   (async () => {
     const args = process.argv.slice(2);
     let dbPath = null, yaraPath = "./output.yarc", filePath = null, folderPath = null, whitelistPath = null;
-    
+
     for (let i = 0; i < args.length; i++) {
       switch (args[i]) {
         case "--db":
