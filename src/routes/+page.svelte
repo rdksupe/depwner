@@ -167,6 +167,20 @@
 				<a href="settings.html" class="statusCardList">
 					<p>Active Monitoring</p>
 					<div class="flex items-center" style="--pingColor:oklch(0.897 0.196 126.665)">
+						<p>Active</p>
+						<div class="yara_ping relative">
+							<div class="yara_ping animate-ping-monitoring absolute"></div>
+						</div>
+					</div>
+				</a>
+				<a href="settings.html" class="statusCardList">
+					<p>Advanced Detection</p>
+					<div
+						class="flex items-center"
+						style="--pingColor:{settings.yara
+							? 'oklch(0.897 0.196 126.665)'
+							: 'rgb(var(--ctp-red))'}"
+					>
 						<p>{settings.yara ? 'Active' : 'Disabled'}</p>
 						<div class="yara_ping relative">
 							<div class="yara_ping animate-ping-monitoring absolute"></div>
