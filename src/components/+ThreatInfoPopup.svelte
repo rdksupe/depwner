@@ -4,7 +4,7 @@
 
 <button
 	aria-label="close popup"
-	class="absolute left-0 top-0 h-[100vh] w-[100vw] bg-black opacity-75"
+	class="fixed left-0 top-0 h-[100vh] w-[100vw] bg-black opacity-75"
 	onclick={() => {
 		displayInfo = { name: '' };
 	}}
@@ -32,8 +32,12 @@
 						Authorship
 					{:else if key == 'affected_nations'}
 						Affected Nations
-					{:else if key == 'detection_techniques'}
+					{:else if key =='detection_techniques'}
 						Detection Techniques
+					{:else if key =='predictive_detection_techniques'}
+						Predictive Detection Techniques
+					{:else if key =='behavior_based_detection_techniques'}
+						Behavior Based Detection Technique				
 					{:else}
 						{key}
 					{/if}:</span
@@ -53,7 +57,7 @@
 					threats.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				displayInfo.name = '';
-				electronFilesystem.removeThreat(displayInfo);
+				electronFilesystem.removeThreat(displayInfo.oldPath);
 			}}>Permanently Remove</button
 		>
 		<h3>Think this was a mistake?</h3>
@@ -66,7 +70,7 @@
 					threats.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				displayInfo.name = '';
-				electronFilesystem.restoreThreat(displayInfo);
+				electronFilesystem.restoreThreat(displayInfo.oldPath);
 			}}>Restore and Add to Whitelist</button
 		>
 	</div>
@@ -102,7 +106,7 @@
 		text-transform: capitalize;
 	}
 	.mainCont {
-		position: absolute;
+		position: fixed;
 		top: 50%;
 		left: 50%;
 		translate: -50% -50%;
