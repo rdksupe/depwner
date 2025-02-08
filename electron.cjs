@@ -166,21 +166,21 @@ const openFolderDialog = async () => {
 }
 
 // NEW: Pre-load CSV in app.whenReady() for faster future scans.
-const preloadCsv = async () => {
-    try {
-        const { loadCsvToBloom } = await import('./scanner/scanner.cjs');
-        // Initialize database and import CSV if needed
-        const dbPath = path.join(__dirname, 'scanner', 'malware_hashes.db');
-        const csvPath = path.join(__dirname, 'scanner', 'full.csv');
-
-        // Try to load DB first, if it fails or is empty, it will import from CSV
-        const csvData = await loadCsvToBloom(fs.existsSync(dbPath) ? dbPath : csvPath);
-        global.preloadedCsvData = csvData;
-        console.log("Database initialized successfully");
-    } catch (err) {
-        console.error("Error initializing database:", err);
-    }
-};
+// const preloadCsv = async () => {
+//     try {
+//         const { loadCsvToBloom } = await import('./scanner/scanner.cjs');
+//         // Initialize database and import CSV if needed
+//         const dbPath = path.join(__dirname, 'scanner', 'malware_hashes.db');
+//         const csvPath = path.join(__dirname, 'scanner', 'full.csv');
+//
+//         // Try to load DB first, if it fails or is empty, it will import from CSV
+//         const csvData = await loadCsvToBloom(fs.existsSync(dbPath) ? dbPath : csvPath);
+//         global.preloadedCsvData = csvData;
+//         console.log("Database initialized successfully");
+//     } catch (err) {
+//         console.error("Error initializing database:", err);
+//     }
+// };
 
 const removeThreat = async (_, threat) => {
     // Use threat.oldPath
@@ -281,7 +281,7 @@ app.whenReady().then(() => {
     startWatcher();
 
     // Pre-load CSV database.
-    preloadCsv();
+    // preloadCsv();
     scheduleScanning()
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
