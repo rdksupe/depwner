@@ -1,6 +1,10 @@
 # PNB Hackathon Pwnedraccoon
 
-This is powered by Electron.js to build a cross platform yet native app for various platforms- Windows, Linux, Mac and more. The frontend is made with SvelteKit with adapter-static to prerender it to plain HTML, CSS and Vanilla JS which electron can then use. The backend is made on NodeJS by the APIs provided by Electron.js itself.
+
+
+## Development Setup
+
+This is powered by Electron.js to build a cross platform yet native app for various platforms- Windows, Linux, Mac and more. The frontend is made with SvelteKit with adapter-static to prerender it to plain HTML, CSS and Vanilla JS which electron can then use. The backend is made on NodeJS by the APIs provided by Electron.js itself. both frontend and backend communicate with each other using APIs of ipcMain provided by electron.
 
 For setting the download env locally-
 
@@ -8,6 +12,8 @@ For setting the download env locally-
    ```sh
    # for http clone
    git clone "https://github.com/code-IM-perfect/pwnedraccoons-depwner.git"
+   ```
+   ```sh
    # for ssh authentication
    git clone git@github.com:code-IM-perfect/pwnedraccoons-depwner.git
    ```
