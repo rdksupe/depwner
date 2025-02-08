@@ -22,18 +22,18 @@
 						AI Analysis
 					{:else if key == 'name'}
 						File Name
-					{:else if key =='cve_scores'}
+					{:else if key == 'cve_scores'}
 						CVE
-					{:else if key =='history'}
+					{:else if key == 'history'}
 						History
-					{:else if key =='origin'}
+					{:else if key == 'origin'}
 						Origin
-					{:else if key =='authorship'}
+					{:else if key == 'authorship'}
 						Authorship
-					{:else if key =='affected_nations'}
+					{:else if key == 'affected_nations'}
 						Affected Nations
-					{:else if key =='detection_techniques'}
-						Detection Techniques			
+					{:else if key == 'detection_techniques'}
+						Detection Techniques
 					{:else}
 						{key}
 					{/if}:</span
@@ -109,6 +109,8 @@
 		background: rgb(var(--ctp-base));
 		padding: min(5vh, 5vw);
 		width: 60vw;
+		max-height: 85vh;
+		overflow-y: auto;
 		button {
 			font-size: min(2.5vh, 2.5vw);
 			border-radius: 0.5vh;
