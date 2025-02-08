@@ -49,6 +49,7 @@ const settingsPath = path.join(__dirname, './data/settings.json');
 const logsPath = path.join(__dirname, './data/logs.json');
 const quarantine = path.join(__dirname, './data/quarantine/')
 const status = "idle"
+let settings;
 
 const getSettings = async () => {
     let settingsObject = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'))
@@ -67,7 +68,7 @@ const setSettings = (settings) => {
 }
 
 const getScanStatus = () => {
-
+    return status
 }
 
 app.whenReady().then(() => {
@@ -76,6 +77,10 @@ app.whenReady().then(() => {
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
     createWindow()
+
+    async () => {
+        settings = await getSettings();
+    }
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
