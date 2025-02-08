@@ -1,4 +1,3 @@
-// import { contextBridge, ipcRenderer } from "electron/renderer";
 const { ipcRenderer } = require('electron/renderer')
 const { contextBridge } = require('electron')
 
