@@ -10,8 +10,10 @@
 		ScrollIcon,
 		ScrollTextIcon,
 		FileTextIcon,
-		ShieldClose,
-		ShieldCheckIcon
+		ShieldCheckIcon,
+		ShieldXIcon,
+		BugIcon,
+		CalendarClockIcon
 	} from 'lucide-svelte';
 
 	const statusMessages = {
