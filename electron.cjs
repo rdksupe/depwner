@@ -25,9 +25,9 @@ const startManualScan = async (pathToScan, type) => {
 
     let options;
     if (settings.yara) {
-        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
+        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/malware_hashes_full.db", yaraPath: "./scanner/output.yarc" };
     } else {
-        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./data/hash.csv", yaraPath: "" };
+        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/malware_hashes_overfitted.db", yaraPath: "" };
     }
 
     try {
