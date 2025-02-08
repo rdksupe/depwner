@@ -1,5 +1,5 @@
 {
-	"yara": true,
+	"yara": false,
 	"schedule": {
 		"active": true,
 		"freq": "weekly",
