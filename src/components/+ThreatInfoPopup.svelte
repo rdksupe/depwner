@@ -1,5 +1,5 @@
 <script>
-	let { displayInfo = $bindable() } = $props();
+	let { displayInfo = $bindable(), threats = $bindable() } = $props();
 </script>
 
 <button
@@ -32,9 +32,31 @@
 	{/each}
 	<div class="center">
 		<h3>This malware is securely quarantined</h3>
-		<button class="delete">Permanently Remove</button>
+		<button
+			class="delete"
+			onclick={() => {
+				const index = threats.indexOf(displayInfo);
+				if (index > -1) {
+					// only splice array when item is found
+					threats.splice(index, 1); // 2nd parameter means remove one item only
+				}
+				displayInfo.name = '';
+				electronFilesystem.removeThreat(displayInfo);
+			}}>Permanently Remove</button
+		>
 		<h3>Think this was a mistake?</h3>
-		<button class="restore">Restore and Add to Whitelist</button>
+		<button
+			class="restore"
+			onclick={() => {
+				const index = threats.indexOf(displayInfo);
+				if (index > -1) {
+					// only splice array when item is found
+					threats.splice(index, 1); // 2nd parameter means remove one item only
+				}
+				displayInfo.name = '';
+				electronFilesystem.restoreThreat(displayInfo);
+			}}>Restore and Add to Whitelist</button
+		>
 	</div>
 </div>
 
