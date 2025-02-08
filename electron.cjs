@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('node:path')
+const fs = require('node:fs');
 let win;
 
 // const exePath = app.getPath('exe');
@@ -45,15 +46,35 @@ function createWindow() {
 }
 
 const settingsPath = path.join(__dirname, './data/settings.json');
+const logsPath = path.join(__dirname, './data/logs.json');
+const quarantine = path.join(__dirname, './data/quarantine/')
+const status = "idle"
 
 const getSettings = async () => {
     let settingsObject = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'))
     console.log("Settings Fetched")
     return settingsObject
 }
+const getThreats = () => {
+
+}
+const getStats = () => {
+
+}
+
+const setSettings = (settings) => {
+
+}
+
+const getScanStatus = () => {
+
+}
 
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
+    ipcMain.handle("getStats", getStats)
+    ipcMain.handle("getThreats", getThreats)
+    ipcMain.handle("getScanStatus", getScanStatus)
     createWindow()
 
     app.on('activate', () => {
