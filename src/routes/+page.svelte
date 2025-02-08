@@ -14,34 +14,57 @@
 	const statusMessages = {
 		Okay: {
 			title: 'Secure',
-			message: 'No Threats were found. All depwner services are functioning properly',
+			message: 'No Threats were found.<br/>All Services Functional',
 			fix: '',
 			link: '',
 			icon: ShieldCheckIcon,
 			backIcon: ShieldIcon,
-			color: 'text-lime-300'
+			color: 'lime-300'
 		},
 		Threat: {
 			title: 'Threat Detected',
-			message: 'Threats were detected and quarantined',
+			message: 'Threats were Detected.<br/>Detected Threats Quarantined',
 			fix: 'Take action now',
-			link: ''
+			link: '',
+			icon: ShieldXIcon,
+			backIcon: ShieldIcon,
+			color: 'catp-red'
 		},
 		Disabled: {
-			message: 'DePWNer is Disabled',
+			title: 'DePWNer is Disabled',
+			message: '',
 			fix: 'Enable now',
-			link: '/settings'
+			link: '/settings',
+			icon: ShieldXIcon,
+			backIcon: ShieldIcon,
+			color: 'catp-red'
 		},
 		NoSchedule: {
 			title: 'Feature Disabled',
 			message: 'Scheduled Scanning was disabled',
-			fix: 'Fix Now'
+			fix: 'Fix Now',
+			link: '/settings',
+			icon: ShieldXIcon,
+			backIcon: ShieldIcon,
+			color: 'catp-red'
+		},
+		YaraDisabled: {
+			title: 'Feature Disabled',
+			message: 'Scheduled Scanning was disabled',
+			fix: 'Fix Now',
+			link: '/settings',
+			icon: ShieldXIcon,
+			backIcon: ShieldIcon,
+			color: 'catp-red'
 		},
 		FeatureDisabled: {
 			title: 'Features Disabled',
 			message: 'Some Security features were disabled',
 			fix: 'Enable them now',
-			link: ''
+			link: '/settings',
+			icon: ShieldXIcon,
+			backIcon: ShieldIcon,
+			color: 'catp-red'
 		}
 	};
 
