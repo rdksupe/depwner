@@ -69,8 +69,8 @@
 		<h3>Scan Reports</h3>
 	</HomeButton>
 	<HomeButton>
-		<ScanSearch />
-		<h3>Run a Scan</h3>
+		<CalendarClockIcon />
+		<h3>Scan Schedule</h3>
 	</HomeButton>
 	<div
 		class="homeStatusCard card col-start-3 col-end-5 row-start-1 row-end-3 grid place-items-center rounded-[2vh] bg-catp-mantle"
@@ -95,15 +95,18 @@
 		gap: min(2vh, 1.5vw);
 	}
 	.homeStatusCard {
+		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		padding: min(5vh, 4vw);
 		h3 {
 			font-size: min(4vh, 3vw);
 			font-weight: 700;
 			margin-top: -0.5vh;
 		}
-		p {
+		p,
+		a.fix {
 			font-size: min(2vh, 1.5vw);
 			max-width: 30vw;
+			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		}
 	}
 	.homeStatusCard :global(.lucide-icon) {
