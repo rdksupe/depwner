@@ -2,17 +2,12 @@
 	import HomeButton from '../components/+HomeButton.svelte';
 
 	import {
-		ScanSearch,
 		RefreshCcw,
 		ShieldIcon,
 		ChartSpline,
-		Logs,
-		ScrollIcon,
-		ScrollTextIcon,
 		FileTextIcon,
 		ShieldCheckIcon,
 		ShieldXIcon,
-		BugIcon,
 		CalendarClockIcon
 	} from 'lucide-svelte';
 
