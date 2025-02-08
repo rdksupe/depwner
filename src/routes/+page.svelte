@@ -68,7 +68,29 @@
 		}
 	};
 
-	let status = $state(statusMessages.Okay);
+	let dashStatus: any;
+
+	let currentStatus = {
+		threats: 3,
+		yara: true,
+		scheduled: true
+	};
+
+	let setDashStatus = (status: any) => {
+		if (status.threats != 0) {
+			dashStatus = statusMessages.Threat;
+		} else if (!status.scheduled && !status.yara) {
+			dashStatus = statusMessages.Disabled;
+		} else if (!status.scheduled) {
+			dashStatus = statusMessages.NoSchedule;
+		} else if (!status.yara) {
+			dashStatus = statusMessages.YaraDisabled;
+		} else {
+			dashStatus = statusMessages.Okay;
+		}
+	};
+
+	setDashStatus(currentStatus);
 </script>
 
 <svelte:head>
@@ -96,18 +118,38 @@
 		class="homeStatusCard card col-start-3 col-end-5 row-start-1 row-end-3 grid place-items-center rounded-[2vh] bg-catp-mantle"
 	>
 		<div class="cardInner grid justify-items-center">
-			<div class={status.color}>
+			<div class={'text-' + dashStatus.color}>
 				<p class="relative">
-					<status.icon />
-					<status.backIcon class="animate-ping-shield absolute top-0" />
+					<dashStatus.icon />
+					<dashStatus.backIcon class="animate-ping-shield absolute top-0" />
 				</p>
 				<h3 class="relative">
-					{status.title}
+					{dashStatus.title}
 				</h3>
 			</div>
-			<p>{status.message}</p>
+			<p>{@html dashStatus.message}</p>
+			<a
+				class="fix text-{dashStatus.color} border-{dashStatus.color} my-[1vh] rounded-[0.5vh] bg-catp-surface0/60 px-[1vh] py-[0.2vh] hover:bg-{dashStatus.color} hover:text-catp-crust"
+				href={dashStatus.link}>{dashStatus.fix}</a
+			>
+			<a href="threats.html" class="statusCardList">
+				<p>Threats</p>
+				<p>{currentStatus.threats}</p>
+			</a>
+			<a href="settings.html" class="statusCardList">
+				<p></p>
+				<p>{currentStatus.threats}</p>
+			</a>
 		</div>
 	</div>
+	<button
+		onclick={async () => {
+			console.log('buttonClicked');
+			let yo = await depwnerPreferences.get();
+			console.log('printing');
+			console.log(yo);
+		}}>bruh</button
+	>
 </div>
 
 <style>
