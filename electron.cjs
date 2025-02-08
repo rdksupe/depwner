@@ -191,11 +191,14 @@ const restoreThreat = async (_, threat) => {
     // Use threat.oldPath and threat.hash
 }
 
+const icon = nativeImage.createFromPath('./data/Logo_smol.png')
 function createWindow() {
     win = new BrowserWindow({
         width: 800,
         height: 600,
+        title: "dePWNer",
         autoHideMenuBar: true,
+        icon: icon,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -233,7 +236,6 @@ app.whenReady().then(() => {
         console.error("Error loading settings:", err);
     }
 
-    const icon = nativeImage.createFromPath('./data/Logo_smol.png')
     tray = new Tray(icon)
     var contextMenu = Menu.buildFromTemplate([
         {
