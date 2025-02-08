@@ -1,29 +1,3 @@
 [
-	{
-		"name": "virus1.exe",
-		"type": "TrojanOrSmth",
-		"oldPath": "/home/user/homework",
-		"hash": "",
-		"yaraRule": "",
-		"severiety": "7.1",
-		"deepseekResponse": ""
-	},
-	{
-		"name": "virus1.exe",
-		"type": "TrojanOrSmth",
-		"oldPath": "/home/user/homework",
-		"hash": "",
-		"yaraRule": "",
-		"severiety": "7.1",
-		"deepseekResponse": ""
-	},
-	{
-		"name": "file/virus2.exe",
-		"type": "dangerous Virus",
-		"oldPath": "/some/path/bruh",
-		"hash": "",
-		"yaraRule": "",
-		"severiety": "",
-		"deepseekResponse": ""
-	}
+
 ]
