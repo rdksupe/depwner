@@ -111,6 +111,7 @@
 		width: 60vw;
 		max-height: 85vh;
 		overflow-y: auto;
+		scrollbar-width: thin;
 		button {
 			font-size: min(2.5vh, 2.5vw);
 			border-radius: 0.5vh;
