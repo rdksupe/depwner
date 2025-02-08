@@ -182,6 +182,14 @@ const preloadCsv = async () => {
     }
 };
 
+const removeThreat = async (_, threat) => {
+    // Use threat.oldPath
+
+}
+
+const restoreThreat = async (_, threat) => {
+    // Use threat.oldPath and threat.hash
+}
 
 function createWindow() {
     win = new BrowserWindow({
@@ -214,6 +222,9 @@ app.whenReady().then(() => {
         console.log("Reloading watcher...");
         startWatcher();
     });
+    ipcMain.handle("removeThreat", removeThreat)
+    ipcMain.handle("restoreThreat", restoreThreat)
+
     try {
         settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
         global.settings = settings;

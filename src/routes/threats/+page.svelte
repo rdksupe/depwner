@@ -16,7 +16,7 @@
 		{
 			name: 'virus2.exe',
 			type: 'dangerous Virus',
-			oldPath: '/some/path/bruh',
+			oldPath: '/some/path/bruh/virus2.exe',
 			hash: '',
 			yaraRule: '',
 			severiety: '7.2',
@@ -102,7 +102,7 @@
 	</div>
 </div>
 {#if displayInfo.name}
-	<ThreatInfoPopup bind:displayInfo />
+	<ThreatInfoPopup bind:displayInfo bind:threats />
 {/if}
 
 <style>

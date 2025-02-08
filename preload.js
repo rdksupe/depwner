@@ -16,4 +16,6 @@ contextBridge.exposeInMainWorld("electronFilesystem", {
     getFile: () => ipcRenderer.invoke("selectFile"),
     getFolder: () => ipcRenderer.invoke("selectFolder"),
     manualScan: (path, type) => ipcRenderer.send("startManualScan", path, type),
+    removeThreat: (threat) => ipcRenderer.invoke("removeThreat", threat),
+    restoreThreat: (threat) => ipcRenderer.invoke("restoreThreat", threat),
 })
