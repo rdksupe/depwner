@@ -4,4 +4,5 @@
 
 :root {
     scrollbar-width: thin;
+    scrollbar-color: rgb(var(--ctp-overlay0)) rgb(var(--ctp-mantle));
 }
