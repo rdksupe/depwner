@@ -76,19 +76,19 @@
 </svelte:head>
 
 <div class="dashContainer grid grid-cols-4 text-center">
-	<HomeButton href="/scan">
+	<HomeButton href="scan.html">
 		<RefreshCcw />
 		<h3>Start a Scan</h3>
 	</HomeButton>
-	<HomeButton>
+	<HomeButton href="stats.html">
 		<ChartSpline />
 		<h3>Statistics</h3>
 	</HomeButton>
-	<HomeButton>
+	<HomeButton href="logs.html">
 		<FileTextIcon />
 		<h3>Scan Reports</h3>
 	</HomeButton>
-	<HomeButton>
+	<HomeButton href="schedule.html">
 		<CalendarClockIcon />
 		<h3>Scan Schedule</h3>
 	</HomeButton>
