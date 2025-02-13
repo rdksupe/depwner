@@ -1,5 +1,12 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
+let win;
+
+// const exePath = app.getPath('exe');
+// var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
+// basePath = "./backend";
+//
+// console.log(basePath);
 
 function createWindow() {
     if (process.platform == 'windows') {
@@ -23,6 +30,7 @@ function createWindow() {
             }
         )
     }
+    win = new BrowserWindow({
         width: 800,
         height: 600,
         frame: false,
