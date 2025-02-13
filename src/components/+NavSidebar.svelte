@@ -3,11 +3,11 @@
 		Settings,
 		House,
 		Logs,
-		ChartNoAxesColumn,
 		ChartSpline,
 		CalendarDays,
 		MenuIcon,
-		RefreshCcw
+		RefreshCcw,
+		BugIcon
 	} from 'lucide-svelte';
 
 	let sidebarExpanded = $state(false);
@@ -28,34 +28,51 @@
 		</button>
 	</div>
 	<div class="middle">
-		<a class="navTile" href="/" class:active={page.url.pathname == '/'}>
+		<a class="navTile" href="index.html" class:active={page.url.pathname.endsWith('index.html')}>
 			<House />
 			<p class="shortTitle">Dash</p>
 			<p class="longTitle">Dashboard</p>
 		</a>
-		<a class="navTile" href="/scan" class:active={page.url.pathname == '/scan'}>
+		<a class="navTile" href="scan.html" class:active={page.url.pathname.endsWith('scan.html')}>
 			<RefreshCcw />
 			<p class="shortTitle">Scan</p>
 			<p class="longTitle">Scan</p>
 		</a>
-		<a class="navTile" href="/logs" class:active={page.url.pathname == '/logs'}>
+		<a
+			class="navTile"
+			href="threats.html"
+			class:active={page.url.pathname.endsWith('threats.html')}
+		>
+			<BugIcon />
+			<p class="shortTitle">Threats</p>
+			<p class="longTitle">Threats</p>
+		</a>
+		<a class="navTile" href="logs.html" class:active={page.url.pathname.endsWith('logs.html')}>
 			<Logs />
 			<p class="shortTitle">Logs</p>
 			<p class="longTitle">Scan Logs</p>
 		</a>
-		<a class="navTile" href="/stats" class:active={page.url.pathname == '/stats'}>
+		<a class="navTile" href="stats.html" class:active={page.url.pathname.endsWith('stats.html')}>
 			<ChartSpline />
 			<p class="shortTitle">Stats</p>
 			<p class="longTitle">Statistics</p>
 		</a>
-		<a class="navTile" href="/schedule" class:active={page.url.pathname == '/schedule'}>
+		<a
+			class="navTile"
+			href="schedule.html"
+			class:active={page.url.pathname.endsWith('schedule.html')}
+		>
 			<CalendarDays />
 			<p class="shortTitle">Schedule</p>
 			<p class="longTitle">Schedule</p>
 		</a>
 	</div>
 	<div class="bottom">
-		<a class="navTile" href="/settings" class:active={page.url.pathname == '/settings'}>
+		<a
+			class="navTile"
+			href="settings.html"
+			class:active={page.url.pathname.endsWith('settings.html')}
+		>
 			<Settings />
 			<p class="shortTitle"></p>
 			<p class="longTitle">Settings</p>
