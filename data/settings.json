@@ -1,0 +1,14 @@
+{
+	"yara": true,
+	"schedule": {
+		"freq": "weekly",
+		"days": [
+			"wed",
+			"sat"
+		],
+		"time": ""
+	},
+	"locations": [
+		""
+	]
+}
