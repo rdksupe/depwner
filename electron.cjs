@@ -44,8 +44,16 @@ function createWindow() {
     win.loadFile('./build/index.html')
 }
 
+const settingsPath = path.join(__dirname, './data/settings.json');
+
+const getSettings = async () => {
+    let settingsObject = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'))
+    console.log("Settings Fetched")
+    return settingsObject
+}
+
 app.whenReady().then(() => {
-    ipcMain.handle("getSettings")
+    ipcMain.handle("getSettings", getSettings)
     createWindow()
 
     app.on('activate', () => {
