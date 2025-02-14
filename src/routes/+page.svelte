@@ -129,31 +129,65 @@
 				</h3>
 			</div>
 			<p>{@html dashStatus.message}</p>
-			<a
-				class="fix text-{dashStatus.color} border-{dashStatus.color} my-[1vh] rounded-[0.5vh] bg-catp-surface0/60 px-[1vh] py-[0.2vh] hover:bg-{dashStatus.color} hover:text-catp-crust"
-				href={dashStatus.link}>{dashStatus.fix}</a
-			>
-			<a href="threats.html" class="statusCardList">
-				<p>Threats</p>
-				<p>{currentStatus.threats}</p>
-			</a>
-			<a href="settings.html" class="statusCardList">
-				<p></p>
-				<p>{currentStatus.threats}</p>
-			</a>
+			{#if dashStatus.fix}
+				<a
+					class="fix my-[1vh] rounded-[0.5vh] bg-catp-surface0/60 px-[1vh] py-[0.2vh]"
+					href={dashStatus.link}>{dashStatus.fix}</a
+				>
+			{/if}
+			<div class="statusButtons">
+				<a href="settings.html" class="statusCardList">
+					<p>Active Monitoring</p>
+					<div class="flex" style="align-items: center;">
+						<p>{currentStatus.yara ? 'Active' : 'Disabled'}</p>
+						<div class="yara_ping relative">
+							<div class="yara_ping animate-ping-monitoring absolute"></div>
+						</div>
+					</div>
+				</a>
+
+				<a href="threats.html" class="statusCardList">
+					<p>Last Scan</p>
+					<div class="flex">
+						<p>3 days ago</p>
+					</div>
+				</a>
+			</div>
 		</div>
 	</div>
-	<button
-		onclick={async () => {
-			console.log('buttonClicked');
-			let yo = await depwnerPreferences.get();
-			console.log('printing');
-			console.log(yo);
-		}}>bruh</button
-	>
 </div>
 
 <style>
+	.yara_ping {
+		--size: min(2vh, 1.5vw);
+		height: var(--size);
+		width: var(--size);
+		background: oklch(0.897 0.196 126.665);
+		border-radius: 50%;
+		margin-left: 0.5vw;
+	}
+	.animate-ping-monitoring {
+		right: 0;
+		left: 0;
+		margin: auto;
+		animation: ping-monitor 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+	}
+	.statusButtons {
+		width: min(35vh, 28vw);
+		margin: min(1vh, 1vw) 0;
+	}
+	.statusCardList {
+		display: flex;
+		justify-content: space-between;
+		background: rgba(var(--ctp-surface0), 40%);
+		padding: min(1vh, 1vw) min(2vh, 2vw);
+		margin: min(1vh, 1vw) 0;
+		border-radius: 1vh;
+		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+	}
+	.statusCardList:hover {
+		background: rgb(var(--ctp-surface0));
+	}
 	.dashContainer {
 		gap: min(2vh, 1.5vw);
 	}
@@ -167,7 +201,7 @@
 		}
 		p,
 		a.fix {
-			font-size: min(2vh, 1.5vw);
+			font-size: min(1.6vh, 1.5vw);
 			max-width: 30vw;
 			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 		}
@@ -179,7 +213,7 @@
 			background: var(--statusColor);
 		}
 	}
-	.homeStatusCard :global(.lucide-icon) {
+	.homeStatusCard p :global(.lucide-icon) {
 		height: min(15vh, 12vw);
 		width: stretch;
 	}
@@ -187,6 +221,13 @@
 		50%,
 		100% {
 			transform: scale(1.35);
+			opacity: 0;
+		}
+	}
+	@keyframes ping-monitor {
+		50%,
+		100% {
+			transform: scale(1.7);
 			opacity: 0;
 		}
 	}
