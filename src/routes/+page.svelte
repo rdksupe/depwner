@@ -71,7 +71,7 @@
 	let dashStatus: any;
 
 	let currentStatus = {
-		threats: 3,
+		threats: 0,
 		yara: true,
 		scheduled: true
 	};
