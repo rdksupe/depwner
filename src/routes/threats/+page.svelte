@@ -1,6 +1,9 @@
 <script>
 	import { BugIcon } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+
 	import ThreatInfoPopup from '../../components/+ThreatInfoPopup.svelte';
+
 	let threats = $state([
 		{
 			name: 'virus2.exe',
