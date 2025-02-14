@@ -13,5 +13,7 @@ contextBridge.exposeInMainWorld("depwnerPreferences", {
 
 contextBridge.exposeInMainWorld("electronFilesystem", {
     getFile: () => ipcRenderer.invoke("selectFile"),
-    getFolder: () => ipcRenderer.invoke("selectFolder")
+    getFolder: () => ipcRenderer.invoke("selectFolder"),
+    manualScan: (path, type) => ipcRenderer.send("startManualScan", path, type),
+    onScanStatus: (callback) => ipcRenderer.on("scanStatus", (event, status) => callback(status))
 })

@@ -17,6 +17,7 @@
 						let file = await electronFilesystem.getFile();
 						console.log(file);
 						if (file != 'user cancelled') {
+							electronFilesystem.manualScan(file, "custom");
 							option = 'scan';
 						}
 					}}
@@ -30,6 +31,7 @@
 						let folder = await electronFilesystem.getFolder();
 						console.log(folder);
 						if (folder != 'user cancelled') {
+							electronFilesystem.manualScan(folder, "custom");
 							option = 'scan';
 						}
 					}}
