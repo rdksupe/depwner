@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let logs = $state();
+	let logs = $state([]);
 	// let logs = $state([
 	// 	{
 	// 		scanType: 'Full',

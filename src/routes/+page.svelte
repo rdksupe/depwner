@@ -70,25 +70,25 @@
 		// }
 	};
 
-	let settings = $state();
-	// let settings = $state({
-	// 	yara: true,
-	// 	schedule: {
-	// 		active: true,
-	// 		freq: 'weekly',
-	// 		days: {
-	// 			sun: true,
-	// 			mon: false,
-	// 			tue: false,
-	// 			wed: false,
-	// 			thu: false,
-	// 			fri: false,
-	// 			sat: false
-	// 		},
-	// 		time: '13:00'
-	// 	},
-	// 	locations: ['']
-	// });
+	// let settings = $state();
+	let settings = $state({
+		// 	yara: true,
+		schedule: {
+			active: true,
+			freq: 'weekly',
+			days: {
+				sun: true,
+				mon: false,
+				tue: false,
+				wed: false,
+				thu: false,
+				fri: false,
+				sat: false
+			},
+			time: '13:00'
+		}
+		// 	locations: ['']
+	});
 	let threats = $state(0);
 	onMount(async () => {
 		const settingsResponse = await depwnerPreferences.get();
