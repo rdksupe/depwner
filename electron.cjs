@@ -81,10 +81,10 @@ const getThreats = async () => {
 
 // NEW: Global manual scan status state.
 let manualScanStatus = {
-  status: 'idle', // 'idle' or 'scanning'
-  type: null,     // 'full' or 'custom'
-  progress: 0,    // Could be percent or count
-  output: null    // Raw scanner output
+    status: 'idle', // 'idle' or 'scanning'
+    type: null,     // 'full' or 'custom'
+    progress: 0,    // Could be percent or count
+    output: null    // Raw scanner output
 };
 
 // Updated getScanStatus to return the raw scanner output.
@@ -196,8 +196,8 @@ const getStats = async () => {
 
 const openFileDialog = async () => {
     const { cancelled, filePaths } = await dialog.showOpenDialog(win, { title: "Choose file to scan", properties: ["openFile"] })
-    if (cancelled) {
-        return "User Cancelled"
+    if (cancelled || !filePaths) {
+        return "user cancelled"
     } else {
         return filePaths[0]
     }
@@ -205,8 +205,8 @@ const openFileDialog = async () => {
 
 const openFolderDialog = async () => {
     const { cancelled, filePaths } = await dialog.showOpenDialog(win, { title: "Choose folder to scan", properties: ["openDirectory"] })
-    if (cancelled) {
-        return "User Cancelled"
+    if (cancelled || !filePaths) {
+        return "user cancelled"
     } else {
         return filePaths[0]
     }
