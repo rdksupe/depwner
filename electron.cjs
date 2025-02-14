@@ -56,10 +56,12 @@ const getSettings = async () => {
     console.log("Settings Fetched")
     return settingsObject
 }
-const getThreats = () => {
+
+const getThreats = () => { // HARDCODED
 
 }
-const getStats = () => {
+
+const getStats = () => {  // HARDCODED
 
 }
 
