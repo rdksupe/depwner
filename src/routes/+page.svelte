@@ -19,7 +19,7 @@
 			link: '',
 			icon: ShieldCheckIcon,
 			backIcon: ShieldIcon,
-			color: 'lime-300'
+			color: 'oklch(0.897 0.196 126.665)'
 		},
 		Threat: {
 			title: 'Threat Detected',
@@ -28,7 +28,7 @@
 			link: '',
 			icon: ShieldXIcon,
 			backIcon: ShieldIcon,
-			color: 'catp-red'
+			color: 'rgb(var(--ctp-red))'
 		},
 		Disabled: {
 			title: 'DePWNer is Disabled',
@@ -64,7 +64,7 @@
 			link: '/settings',
 			icon: ShieldXIcon,
 			backIcon: ShieldIcon,
-			color: 'catp-red'
+			color: ''
 		}
 	};
 
@@ -116,9 +116,10 @@
 	</HomeButton>
 	<div
 		class="homeStatusCard card col-start-3 col-end-5 row-start-1 row-end-3 grid place-items-center rounded-[2vh] bg-catp-mantle"
+		style="--statusColor: {dashStatus.color}"
 	>
 		<div class="cardInner grid justify-items-center">
-			<div class={'text-' + dashStatus.color}>
+			<div style="color:var(--statusColor)">
 				<p class="relative">
 					<dashStatus.icon />
 					<dashStatus.backIcon class="animate-ping-shield absolute top-0" />
@@ -169,6 +170,13 @@
 			font-size: min(2vh, 1.5vw);
 			max-width: 30vw;
 			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		}
+		a.fix {
+			color: var(--statusColor);
+		}
+		a.fix:hover {
+			color: rgb(var(--ctp-crust));
+			background: var(--statusColor);
 		}
 	}
 	.homeStatusCard :global(.lucide-icon) {
