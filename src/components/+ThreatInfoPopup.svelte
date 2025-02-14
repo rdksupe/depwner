@@ -38,3 +38,53 @@
 	</div>
 </div>
 
+<style>
+	.delete {
+		--btn-color: rgb(var(--ctp-red));
+	}
+	.restore {
+		--btn-color: rgb(var(--ctp-yellow));
+	}
+	.center {
+		display: grid;
+		place-items: center;
+	}
+	h1 {
+		font-size: min(4vh, 4vw);
+		font-weight: 700;
+	}
+	h3 {
+		margin-top: 2vh;
+		font-size: min(3vh, 3vw);
+		font-weight: 700;
+		text-align: center;
+	}
+	p {
+		font-size: min(2.5vh, 2.5vw);
+	}
+	p span {
+		font-size: min(3vh, 3vw);
+		text-transform: capitalize;
+	}
+	.mainCont {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		translate: -50% -50%;
+		background: rgb(var(--ctp-base));
+		padding: min(5vh, 5vw);
+		width: 60vw;
+		button {
+			font-size: min(2.5vh, 2.5vw);
+			border-radius: 0.5vh;
+			color: var(--btn-color);
+			border: 2px var(--btn-color) solid;
+			padding: 0 min(2vh, 2vw);
+			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		}
+		button:hover {
+			background: var(--btn-color);
+			color: rgb(var(--ctp-mantle));
+		}
+	}
+</style>
