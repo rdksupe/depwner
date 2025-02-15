@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HomeButton from '../components/+HomeButton.svelte';
+	import { onMount } from 'svelte';
 
 	import {
 		RefreshCcw,
@@ -8,13 +9,14 @@
 		FileTextIcon,
 		ShieldCheckIcon,
 		ShieldXIcon,
-		CalendarClockIcon
+		CalendarClockIcon,
+		ShieldAlertIcon
 	} from 'lucide-svelte';
 
 	const statusMessages = {
 		Okay: {
 			title: 'Secure',
-			message: 'No Threats were found.<br/>All Services Functional',
+			message: 'No Threats were found.<br/>All Services are Active',
 			fix: '',
 			link: '',
 			icon: ShieldCheckIcon,
@@ -25,72 +27,87 @@
 			title: 'Threat Detected',
 			message: 'Threats were Detected.<br/>Detected Threats Quarantined',
 			fix: 'Take action now',
-			link: '',
+			link: 'threats.html',
 			icon: ShieldXIcon,
 			backIcon: ShieldIcon,
 			color: 'rgb(var(--ctp-red))'
 		},
-		Disabled: {
-			title: 'DePWNer is Disabled',
-			message: '',
-			fix: 'Enable now',
-			link: '/settings',
-			icon: ShieldXIcon,
-			backIcon: ShieldIcon,
-			color: 'catp-red'
-		},
+		// Disabled: {
+		// 	title: 'DePWNer is Disabled',
+		// 	message: '',
+		// 	fix: 'Enable now',
+		// 	link: 'settings.html',
+		// 	icon: ShieldXIcon,
+		// 	backIcon: ShieldIcon,
+		// 	color: 'catp-red'
+		// },
 		NoSchedule: {
 			title: 'Feature Disabled',
 			message: 'Scheduled Scanning was disabled',
-			fix: 'Fix Now',
-			link: '/settings',
-			icon: ShieldXIcon,
+			fix: 'Enable Now',
+			link: 'schedule.html',
+			icon: ShieldAlertIcon,
 			backIcon: ShieldIcon,
-			color: 'catp-red'
+			color: 'rgb(var(--ctp-yellow))'
 		},
 		YaraDisabled: {
 			title: 'Feature Disabled',
-			message: 'Scheduled Scanning was disabled',
-			fix: 'Fix Now',
-			link: '/settings',
-			icon: ShieldXIcon,
+			message: 'Active Monitoring was disabled',
+			fix: 'Enable Now',
+			link: 'settings.html',
+			icon: ShieldAlertIcon,
 			backIcon: ShieldIcon,
-			color: 'catp-red'
-		},
-		FeatureDisabled: {
-			title: 'Features Disabled',
-			message: 'Some Security features were disabled',
-			fix: 'Enable them now',
-			link: '/settings',
-			icon: ShieldXIcon,
-			backIcon: ShieldIcon,
-			color: ''
+			color: 'rgb(var(--ctp-peach))'
 		}
+		// FeatureDisabled: {
+		// 	title: 'Features Disabled',
+		// 	message: 'Some Security features were disabled',
+		// 	fix: 'Enable them now',
+		// 	link: '/settings',
+		// 	icon: ShieldXIcon,
+		// 	backIcon: ShieldIcon,
+		// 	color: ''
+		// }
 	};
 
-	let dashStatus: any;
-
-	let currentStatus = {
-		threats: 0,
+	let settings = $state({
 		yara: true,
-		scheduled: true
-	};
+		schedule: {
+			active: true,
+			freq: 'weekly',
+			days: {
+				sun: true,
+				mon: false,
+				tue: false,
+				wed: false,
+				thu: false,
+				fri: false,
+				sat: false
+			},
+			time: '13:00'
+		},
+		locations: ['']
+	});
+	let threats = $state(0);
+	onMount(async () => {
+		const settingsResponse = await depwnerPreferences.get();
+		settings = JSON.parse(settingsResponse);
+		const threatResponse = await depwnerStatus.getThreats();
+		const threatObj = JSON.parse(threatResponse);
+		threats = Object.keys(threatObj).length;
+	});
 
-	let setDashStatus = (status: any) => {
-		if (status.threats != 0) {
-			dashStatus = statusMessages.Threat;
-		} else if (!status.scheduled && !status.yara) {
-			dashStatus = statusMessages.Disabled;
-		} else if (!status.scheduled) {
-			dashStatus = statusMessages.NoSchedule;
-		} else if (!status.yara) {
-			dashStatus = statusMessages.YaraDisabled;
+	let dashStatus = $derived.by(() => {
+		if (threats != 0) {
+			return statusMessages.Threat;
+		} else if (!settings.schedule.active) {
+			return statusMessages.NoSchedule;
+		} else if (!settings.yara) {
+			return statusMessages.YaraDisabled;
 		} else {
-			dashStatus = statusMessages.Okay;
+			return statusMessages.Okay;
 		}
-	};
-
-	setDashStatus(currentStatus);
+	});
 </script>
 
 <div class="dashContainer grid grid-cols-4 text-center">
@@ -134,8 +151,13 @@
 			<div class="statusButtons">
 				<a href="settings.html" class="statusCardList">
 					<p>Active Monitoring</p>
-					<div class="flex" style="align-items: center;">
-						<p>{currentStatus.yara ? 'Active' : 'Disabled'}</p>
+					<div
+						class="flex items-center"
+						style="--pingColor:{settings.yara
+							? 'oklch(0.897 0.196 126.665)'
+							: 'rgb(var(--ctp-peach))'}"
+					>
+						<p>{settings.yara ? 'Active' : 'Disabled'}</p>
 						<div class="yara_ping relative">
 							<div class="yara_ping animate-ping-monitoring absolute"></div>
 						</div>
@@ -155,10 +177,10 @@
 
 <style>
 	.yara_ping {
-		--size: min(2vh, 1.5vw);
+		--size: min(1.5vh, 1.5vw);
 		height: var(--size);
 		width: var(--size);
-		background: oklch(0.897 0.196 126.665);
+		background: var(--pingColor);
 		border-radius: 50%;
 		margin-left: 0.5vw;
 	}
