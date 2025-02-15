@@ -73,4 +73,26 @@
 		threats = JSON.parse(threatResponse);
 	});
 
+	let displayInfo = $state({
+		name: ''
+	});
 </script>
+
+<div>
+	<h1 class="text-center">Quarantined Threats</h1>
+	<div class="mainCont">
+		{#each threats as threat, i}
+			<button
+				class="entry"
+				onclick={() => {
+					displayInfo = threats[i];
+				}}
+			>
+				<div>
+					<BugIcon />
+					<h2>{threat.name}</h2>
+				</div>
+			</button>
+		{/each}
+	</div>
+</div>
