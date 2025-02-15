@@ -9,7 +9,9 @@
 	});
 
 	import FullScan from '../../components/+FullScan.svelte';
+	import CustomScan from '../../components/+CustomScan.svelte';
 </script>
+
 {#if status.status == 'scan'}
 	yo
 {:else}
@@ -27,6 +29,9 @@
 		</button>
 		<button
 			class="scanButton row-start-2"
+			onclick={() => {
+				status.status = 'custom';
+			}}
 		>
 			<div>
 				<h2>Custom Scan</h2>
@@ -65,6 +70,15 @@
 	</div>
 	{#if status.status == 'full'}
 		<FullScan bind:option={status.status} />
+		<button
+			aria-label="close popup"
+			onclick={() => {
+				status.status = 'idle';
+			}}
+			class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
+		></button>
+	{:else if status.status == 'custom'}
+		<CustomScan bind:option={status.status} />
 		<button
 			aria-label="close popup"
 			onclick={() => {
