@@ -42,3 +42,38 @@
 	</div>
 </div>
 
+<style>
+	.fullSystemConfirmation {
+		background: rgb(var(--ctp-base));
+		padding: 3vh 5vw;
+		border-radius: 2vh;
+		h2 {
+			font-size: min(3vh, 3vw);
+			font-weight: 600;
+		}
+		.confirms {
+			gap: min(2vh, 2vw);
+			margin: 2vh 0 0;
+			button {
+				font-size: min(2.5vh, 2.5vw);
+				padding: min(3vh, 3vw);
+				font-weight: 600;
+				border: 2px solid var(--buttColor);
+				border-radius: 0.7vh;
+				color: var(--buttColor);
+				transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+			}
+			button:hover {
+				background: var(--buttColor);
+				color: rgb(var(--ctp-mantle));
+			}
+		}
+	}
+	.confirms :global(svg) {
+		height: min(7vh, 7vw);
+		width: stretch;
+	}
+	.confirms {
+		--buttColor: rgb(var(--ctp-blue));
+	}
+</style>
