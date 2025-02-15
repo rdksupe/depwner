@@ -1,4 +1,6 @@
 <script>
+	import { BugIcon } from 'lucide-svelte';
+	import ThreatInfoPopup from '../../components/+ThreatInfoPopup.svelte';
 	let threats = $state([
 		{
 			name: 'virus2.exe',
@@ -96,6 +98,9 @@
 		{/each}
 	</div>
 </div>
+{#if displayInfo.name}
+	<ThreatInfoPopup bind:displayInfo />
+{/if}
 
 <style>
 	h1 {
