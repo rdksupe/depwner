@@ -1,15 +1,16 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let logs = $state([
-		{
-			scanType: 'Full',
-			filesScanned: 45372,
-			threats: 2,
-			time: 1737729873000,
-			folder: '/home/harshit/Harshit_Work/pclub/'
-		}
-	]);
+	let logs = $state();
+	// let logs = $state([
+	// 	{
+	// 		scanType: 'Full',
+	// 		filesScanned: 45372,
+	// 		threats: 2,
+	// 		time: 1737729873000,
+	// 		folder: '/home/harshit/Harshit_Work/pclub/'
+	// 	}
+	// ]);
 	let threats = $state(0);
 	let totalThreatsFound = $derived.by(() => {
 		let i = 0;
