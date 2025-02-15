@@ -198,3 +198,124 @@
 	</div>
 </div>
 
+<style>
+	#scanTime {
+		background: rgb(var(--ctp-crust));
+		border-radius: 1vh;
+		padding: 0 min(1vw);
+		/* text-align: center; */
+		font-size: min(2vh, 1.9vw);
+		font-weight: 500;
+		border: 0.2vh solid rgb(var(--ctp-crust));
+	}
+	#scanTime:focus {
+		border: 0.2vh solid rgb(var(--ctp-text));
+		display: block;
+	}
+	select {
+		background: rgb(var(--ctp-crust));
+		border-radius: 1vh;
+		padding: 0 min(1vw);
+		/* text-align: center; */
+		font-size: min(2vh, 1.9vw);
+		font-weight: 500;
+		border: 0.2vh solid rgb(var(--ctp-crust));
+	}
+	select:focus {
+		border: 0.2vh solid rgb(var(--ctp-text));
+	}
+	.settingsField {
+		display: flex;
+		align-content: center;
+		justify-content: center;
+		/* max-width: 80vh; */
+		/* width: 60vw; */
+		gap: 1vw;
+	}
+	h3 {
+		font-size: min(3vh, 2.5vw);
+	}
+	.toggleButton {
+		--toggleWidth: min(7vh, 7vw);
+		--toggleHeight: min(3.5vh, 3.5vw);
+		display: grid;
+		place-items: center;
+	}
+
+	#checkboxInput,
+	.checkboxDay {
+		display: none;
+	}
+	.toggleSwitch {
+		width: var(--toggleWidth);
+		height: var(--toggleHeight);
+		border-radius: 100vh;
+		transition-duration: 0.2s;
+	}
+
+	.toggleSwitch::after {
+		--toggleSizeFrac: 0.6;
+		--toggleMarginFrac: 0.2;
+		content: '';
+		position: absolute;
+		height: calc(var(--toggleSizeFrac) * var(--toggleHeight));
+		width: calc(var(--toggleSizeFrac) * var(--toggleHeight));
+		left: calc(var(--toggleMarginFrac) * var(--toggleHeight));
+		background-color: transparent;
+		border-radius: 100%;
+		transition-duration: 0.2s;
+		border: calc(0.15 * var(--toggleHeight)) solid white;
+	}
+
+	#checkboxInput:checked + .toggleSwitch::after {
+		/* transform: translateX(100%); */
+		left: calc(
+			var(--toggleWidth) - (var(--toggleSizeFrac) + var(--toggleMarginFrac)) * var(--toggleHeight)
+		);
+		transition-duration: 0.2s;
+		background-color: white;
+	}
+	/* Switch background change */
+	#checkboxInput:checked + .toggleSwitch {
+		background-color: rgb(var(--ctp-blue));
+		transition-duration: 0.2s;
+	}
+
+	.checkboxDay:checked + .toggleDay,
+	.checkboxDay:checked:hover + .toggleDay {
+		border: solid 0.3vh rgb(var(--ctp-blue));
+		color: rgb(var(--ctp-crust));
+		background: rgb(var(--ctp-blue));
+	}
+	.checkboxDay:hover + .toggleDay {
+		border: solid 0.3vh rgb(var(--ctp-blue));
+		color: rgb(var(--ctp-blue));
+	}
+	.toggleDay {
+		padding: min(0.5vh, 0.5vw) min(1.2vh, 1.2vw);
+		margin: min(1vh, 1vw);
+		border-radius: 1vh;
+		transition-duration: 0.2s;
+		border: solid 0.3vh rgb(var(--ctp-text));
+		font-weight: 800;
+	}
+
+	.mainCont {
+		background: rgb(var(--ctp-base));
+		height: 85vh;
+		width: stretch;
+		margin: 0 5vw;
+		max-width: 110vh;
+		border-radius: 1.5vh;
+		text-align: center;
+		display: grid;
+		align-items: center;
+	}
+	h1 {
+		font-size: min(5vh, 5vw);
+		font-weight: 700;
+	}
+	input {
+		color-scheme: dark;
+	}
+</style>
