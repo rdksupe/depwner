@@ -93,8 +93,8 @@
 		const settingsResponse = await depwnerPreferences.get();
 		settings = JSON.parse(settingsResponse);
 		const threatResponse = await depwnerStatus.getThreats();
-		const threatObj = JSON.parse(threatResponse);
-		threats = Object.keys(threatObj).length;
+		const threatArr = JSON.parse(threatResponse);
+		threats = threatArr.length;
 	});
 
 	let dashStatus = $derived.by(() => {

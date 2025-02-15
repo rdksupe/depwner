@@ -22,8 +22,8 @@
 		let statsObj = await JSON.parse(depwnerStatus.getStats());
 		logs = statsObj;
 		const threatResponse = await depwnerStatus.getThreats();
-		const threatObj = JSON.parse(threatResponse);
-		threats = Object.keys(threatObj).length;
+		const threatArr = JSON.parse(threatResponse);
+		threats = threatArr.length;
 	});
 </script>
 
