@@ -1,6 +1,22 @@
 <script lang="ts">
-	const hashDatabases = ['loremIpsum', 'hydra', 'McAfee', 'Random', 'yoooooooo'];
-	const yaraDatabases = ['hydra', 'xylent', 'lauda', 'lassan', 'CHE bhai'];
+	const hashDatabases = [
+		'Malpedia',
+		'EmbeeResearch',
+		'Microsoft',
+		'AvastTI',
+		'Arkbird SOLG',
+		'Signature Base',
+		'Elastic',
+		'CadoSecurity'
+	];
+	const yaraDatabases = [
+		'Malpedia',
+		'Dragon Threat Labs',
+		'Microsoft',
+		'FireEye-RT',
+		'RussianPanda',
+		'GodModeRules'
+	];
 
 	let status = $state({
 		status: 'idle',
