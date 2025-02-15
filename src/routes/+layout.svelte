@@ -12,6 +12,6 @@
 	</main>
 </div>
 
-<p class="text-catp-subtext0" style="position: absolute;left:46.5%;bottom:0;margin:auto;">
+<p class="text-catp-subtext0" style="position: fixed;left:46.5%;bottom:0;margin:auto;">
 	<strong>dePWNer</strong> by team pwnedRaccoons
 </p>
