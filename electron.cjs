@@ -99,11 +99,11 @@ const openFileDialog = async () => {
 }
 
 const openFolderDialog = async () => {
-    const { cancelled, folderPaths } = await dialog.showOpenDialog(win, { title: "Choose folder to scan", properties: ["openDirectory"] })
+    const { cancelled, filePaths } = await dialog.showOpenDialog(win, { title: "Choose folder to scan", properties: ["openDirectory"] })
     if (cancelled) {
         return "User Cancelled"
     } else {
-        return folderPaths[0]
+        return filePaths[0]
     }
 }
 
