@@ -18,8 +18,7 @@
 			},
 			time: '13:00'
 		},
-		locations: [
-		]
+		locations: []
 	});
 	onMount(async () => {
 		let settingsResponse = await depwnerPreferences.get();
@@ -89,7 +88,7 @@
 						onclick={async () => {
 							let folder = await electronFilesystem.getFolder();
 							console.log(folder);
-							if (folder != 'user cancelled') {
+							if (folder != 'user cancelled' && !settings.locations.includes(folder)) {
 								settings.locations.push(folder);
 							}
 						}}>Add Path to Locations</button
