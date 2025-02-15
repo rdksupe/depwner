@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	let settings = $state({
 		yara: true,
 		schedule: {
@@ -18,6 +20,21 @@
 		locations: ['']
 	});
 	onMount(async () => {
+		let settingsResponse = await depwnerPreferences.get();
+		settings = JSON.parse(settingsResponse);
+	});
+	// let temp = $derived.by(() => {
+	// 	const yo = settings;
+	// 	console.log(yo);
+	// 	return yo;
+	// });
+	$effect(() => {
+		depwnerPreferences.set(JSON.stringify(settings));
+	});
+	// $effect(() => {
+	// 	console.log('setting changed');
+	// 	yo = settings;
+	// });
 </script>
 
 <div class="mainCont">
