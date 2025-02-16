@@ -50,13 +50,13 @@
 		<!-- <p>You can set your preferences here.</p> -->
 		<div class="grid justify-center">
 			<div class="headingInfo">
-				<h2>Active Filesystem Monitoring</h2>
+				<h2>YARA Rules Based Detection</h2>
 				<button>
 					<Info />
 				</button>
 			</div>
 			{#if !settings.yara}
-				<p class="text-catp-red">disabling this is not recommended!</p>
+				<p class="text-catp-red">Only disable if facing performance issues</p>
 			{/if}
 			<div class="settingsField">
 				<h3>Enable</h3>
