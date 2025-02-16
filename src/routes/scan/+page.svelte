@@ -32,7 +32,31 @@
 		<div class="statusPannel row-span-2">
 			<!-- <button class="lastReportButton">Last Scan Report</button> -->
 			<h3>Active Hash Datasets</h3>
+			<div class="grid place-items-center">
+				<div>
+					{#each hashDatabases as hashDatabase}
+						<div class="entry flex items-center justify-end">
+							<p><span class="font-bold">{hashDatabase}</span>&nbsp;&nbsp;Active</p>
+							<div class="pinger relative">
+								<div class="pinger animate-ping-monitoring absolute"></div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
 			<h3 class="mt-[2vh]">Active Yara Datasets</h3>
+			<div class="grid place-items-center">
+				<div>
+					{#each yaraDatabases as yaraDatabase}
+						<div class="entry flex items-center justify-end">
+							<p><span class="font-bold">{yaraDatabase}</span>&nbsp;&nbsp;Active</p>
+							<div class="pinger relative">
+								<div class="pinger animate-ping-monitoring absolute"></div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
 		</div>
 	</div>
 {/if}
