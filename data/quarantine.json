@@ -1,12 +1,14 @@
 {
 	"file/virus1.exe": {
 		"name": "TrojanOrSmth",
+		"oldPath": "/home/user/homework",
 		"hash": "",
 		"yaraRule": "",
 		"deepseekResponse": ""
 	},
 	"file/virus2.exe": {
 		"name": "dangerous Virus",
+		"oldPath": "/some/path/bruh",
 		"hash": "",
 		"yaraRule": "",
 		"deepseekResponse": ""
