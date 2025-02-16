@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte';
+
 	let logs = $state([
 		{
 			scanType: 'Full',
@@ -15,6 +17,13 @@
 			i += log.threats;
 		});
 		return i;
+	});
+	onMount(async () => {
+		let statsObj = await JSON.parse(depwnerStatus.getStats());
+		logs = statsObj;
+		const threatResponse = await depwnerStatus.getThreats();
+		const threatObj = JSON.parse(threatResponse);
+		threats = Object.keys(threatObj).length;
 	});
 </script>
 
