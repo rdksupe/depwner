@@ -1,1 +1,20 @@
-{"yara":false,"schedule":{"active":true,"freq":"weekly","days":{"sun":true,"mon":false,"tue":true,"wed":false,"thu":true,"fri":false,"sat":false},"time":"12:43"},"locations":[""]}
+{
+	"yara": true,
+	"schedule": {
+		"active": true,
+		"freq": "weekly",
+		"days": {
+			"sun": true,
+			"mon": false,
+			"tue": false,
+			"wed": false,
+			"thu": false,
+			"fri": false,
+			"sat": false
+		},
+		"time": "13:00"
+	},
+	"locations": [
+		""
+	]
+}
