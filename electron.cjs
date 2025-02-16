@@ -47,9 +47,7 @@ function createWindow() {
 
 const settingsPath = path.join(__dirname, './data/settings.json');
 const logsPath = path.join(__dirname, './data/logs.json');
-const quarantine = path.join(__dirname, './data/quarantine/')
-const status = "idle"
-let settings;
+const quarantine = path.join(__dirname, './data/quarantine.json');
 
 const getSettings = async () => {
     let settingsObject = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'))
