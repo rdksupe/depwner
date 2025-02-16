@@ -1,20 +1,23 @@
-{
-	"1737729873": {
+[
+	{
 		"scanType": "Full",
 		"filesScanned": 45372,
 		"threats": 2,
+		"time": 1737729873,
 		"Folder": ""
 	},
-	"1738680273": {
+	{
 		"scanType": "Folder",
 		"filesScanned": 320,
 		"threats": 0,
+		"time": 1738680273,
 		"Folder": ""
 	},
-	"1739112273": {
+	{
 		"scanType": "User",
 		"filesScanned": 34398,
 		"threats": 2,
+		"time": 1739112273,
 		"Folder": ""
 	}
-}
+]
