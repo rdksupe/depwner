@@ -63,7 +63,10 @@ const getThreats = async () => {
     return threatsObject
 }
 
-const getStats = () => {  // HARDCODED
+const getStats = async () => {
+    let statsObject = fs.readFileSync(logsPath, 'utf-8')
+    console.log("Logs Fetched")
+    return statsObject
 
 }
 
