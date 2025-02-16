@@ -1,8 +1,9 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs');
 let win;
 
+let setting;
 // const exePath = app.getPath('exe');
 // var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
 // basePath = "./backend";
@@ -112,11 +113,12 @@ app.whenReady().then(() => {
     ipcMain.on("setSettings", setSettings)
     ipcMain.handle("selectFile", openFileDialog)
     ipcMain.handle("selectFolder", openFolderDialog)
+
     createWindow()
 
-    async () => {
-        settings = await getSettings();
-    }
+        (async () => {
+            setting = await getSettings();
+        })();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
