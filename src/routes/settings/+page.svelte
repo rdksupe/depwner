@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { Info, Trash2 } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+
 	let settings = $state({
 		yara: true,
 		schedule: {
@@ -31,6 +34,13 @@
 			'skkshfkhsklf',
 			'skkshfkhsklf'
 		]
+	});
+	onMount(async () => {
+		let settingsResponse = await depwnerPreferences.get();
+		settings = JSON.parse(settingsResponse);
+	});
+	$effect(() => {
+		depwnerPreferences.set(JSON.stringify(settings));
 	});
 </script>
 
