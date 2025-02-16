@@ -1,0 +1,14 @@
+{
+	"file/virus1.exe": {
+		"name": "TrojanOrSmth",
+		"hash": "",
+		"yaraRule": "",
+		"deepseekResponse": ""
+	},
+	"file/virus2.exe": {
+		"name": "dangerous Virus",
+		"hash": "",
+		"yaraRule": "",
+		"deepseekResponse": ""
+	}
+}
