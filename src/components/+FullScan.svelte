@@ -18,7 +18,7 @@
 		<h2 class="text-center">Start Full System Scan?</h2>
 		<p class="text-left">These paths will be scanned-</p>
 		{#each paths as path}
-			<p>{path}</p>
+			<p class="font-extrabold">{path}</p>
 		{/each}
 		<div class="flex justify-center">
 			<div class="confirms grid grid-cols-2 justify-center">
