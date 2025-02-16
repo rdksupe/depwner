@@ -8,6 +8,7 @@
 		progress: '10'
 	});
 
+	import FullScan from '../../components/+FullScan.svelte';
 </script>
 {#if status.status == 'scan'}
 	yo
@@ -15,6 +16,9 @@
 	<div class="mainCont grid text-center">
 		<button
 			class="scanButton row-start-1"
+			onclick={() => {
+				status.status = 'full';
+			}}
 		>
 			<div>
 				<h2>Full System Scan</h2>
@@ -59,6 +63,16 @@
 			</div>
 		</div>
 	</div>
+	{#if status.status == 'full'}
+		<FullScan bind:option={status.status} />
+		<button
+			aria-label="close popup"
+			onclick={() => {
+				status.status = 'idle';
+			}}
+			class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
+		></button>
+	{/if}
 {/if}
 
 <style>
