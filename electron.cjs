@@ -70,8 +70,16 @@ const getStats = async () => {
 
 }
 
-const setSettings = (settings) => {
-
+const setSettings = async (_, settings) => {
+    console.log("Settings Written")
+    // let settingsJson = JSON.stringify(settings)
+    fs.writeFileSync(settingsPath, settings, err => {
+        if (err) {
+            console.error(err);
+        } else {
+            setting = settings
+        }
+    })
 }
 
 const getScanStatus = () => {
@@ -101,6 +109,7 @@ app.whenReady().then(() => {
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
+    ipcMain.on("setSettings", setSettings)
     ipcMain.handle("selectFile", openFileDialog)
     ipcMain.handle("selectFolder", openFolderDialog)
     createWindow()
