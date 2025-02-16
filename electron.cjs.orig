@@ -3,16 +3,20 @@ const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
 
-let win;
-let watcher = null;
+<<<<<<< HEAD
 let status = "idle"
 let setting;
 
+=======
+let win;
+let watcher = null;
+>>>>>>> origin/chokidar
 // const exePath = app.getPath('exe');
 // var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
 // basePath = "./backend";
 //
 // console.log(basePath);
+const settingsPath = path.join(__dirname, './data/settings.json');
 
 function createWindow() {
     // if (process.platform == 'windows') {
@@ -101,15 +105,18 @@ function startWatcher() {
     console.log("Watcher started!");
 }
 
-const settingsPath = path.join(__dirname, './data/settings.json');
 const logsPath = path.join(__dirname, './data/logs.json');
 const quarantine = path.join(__dirname, './data/quarantine.json');
 
+<<<<<<< HEAD
 const getSettings = async () => {
     let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
     console.log("Settings Fetched")
     return settingsObject
 }
+=======
+const getThreats = () => {
+>>>>>>> origin/chokidar
 
 const getThreats = async () => {
     // let threatsObject = JSON.parse(fs.readFileSync(quarantine, 'utf-8'))
@@ -160,22 +167,28 @@ const openFolderDialog = async () => {
 }
 
 app.whenReady().then(() => {
-    ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
+<<<<<<< HEAD
     ipcMain.on("setSettings", setSettings)
     ipcMain.handle("selectFile", openFileDialog)
     ipcMain.handle("selectFolder", openFolderDialog)
-    ipcMain.handle("reloadWatcher", () => {
-        console.log("Reloading watcher...");
-        startWatcher();
-    });
+
     createWindow()
 
         (async () => {
             setting = await getSettings();
         })();
+
+=======
+    ipcMain.handle("getSettings", async () => JSON.parse(fs.readFileSync(settingsPath, 'utf-8')));
+    ipcMain.handle("reloadWatcher", () => {
+        console.log("Reloading watcher...");
+        startWatcher();
+    });
+    createWindow()
+>>>>>>> origin/chokidar
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
