@@ -3,72 +3,105 @@ const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
 
+const settingsPath = path.join(__dirname, './data/settings.json');
+const logsPath = path.join(__dirname, './data/logs.json');
+const quarantine = path.join(__dirname, './data/quarantine.json');
+
 let win;
+
 let watcher = null;
-let status = "idle"
-let setting;
+
+///////////// TODO Begin //////////////////
+//
+// 0) hashChecking and yaraChecking
+// 1) setScanStatus
+// 2) startManualScan
+//
+//////////// TODO End ////////////////////
 
 // const exePath = app.getPath('exe');
 // var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
 // basePath = "./backend";
-//
-// console.log(basePath);
+
+let status = {
+    status: 'idle', // idle if no manual scan / scan if manual scan
+    type: 'full', // 'full' Full Scan / 'custom' Custom Scan
+    progress: '0' // The number of files scanned
+}
+const setScanStatus = () => {
+    // Should set the status based on what's going on
+    // See status definition
+}
+const getScanStatus = () => {
+    return status
+}
+
+
+let settings = {
+    "yara": true,
+    "schedule": {
+        "active": true,
+        "freq": "weekly",
+        "days": {
+            "sun": true,
+            "mon": false,
+            "tue": false,
+            "wed": false,
+            "thu": false,
+            "fri": false,
+            "sat": false
+        },
+        "time": "13:00"
+    },
+    "locations": [""]
+}
+const setSettings = async (_, setting) => {
+    console.log("Settings Written")
+    fs.writeFileSync(settingsPath, setting, err => {
+        if (err) {
+            console.error(err);
+        } else {
+            settings = setting
+        }
+    })
+}
+const getSettings = async () => {
+    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
+    console.log("Settings Fetched")
+    return settingsObject
+}
+
+
+const getThreats = async () => {
+    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
+    console.log("Threats Fetched")
+    return threatsObject
+}
+
+
+const startManualScan = (pathToScan, type) => {
+    // pathToScan- file or directory
+    // type- Full or Custom (for the logs)
+    // Update state after each filescan
+    // Take into consideration if YARA is enabled
+}
+
 
 function createWindow() {
-    // if (process.platform == 'windows') {
-    //     let backend = path.join(process.cwd(), './engine.exe');
-    //     let execfile = require('child_process').execFile;
-    //     execfile(
-    //         backend,
-    //         {
-    //             windowsHide: true,
-    //         },
-    //         (err, stdout, stderr) => {
-    //             if (err) {
-    //                 console.log(err);
-    //             }
-    //             if (stdout) {
-    //                 console.log(stdout);
-    //             }
-    //             if (stderr) {
-    //                 console.log(stderr);
-    //             }
-    //         }
-    //     )
-    // }
     win = new BrowserWindow({
         width: 800,
         height: 600,
-        // frame: false,
         autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
-            // nodeIntegration: true,
-            // contextIsolation: false
         }
     })
 
-    // win.loadFile('./build/index.html'); 
-    
-    // startWatcher();
-    win.loadFile('./build/index.html').then(() => {
-        console.log("Main window loaded, starting watcher...");
-        startWatcher(); 
-    });
-}
-
-function loaddirs() {
-    try {
-        const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-        return settings.locations || [];
-    } catch (error) {
-        console.error("Error loading settings:", error);
-        return [];
-    }
+    win.loadFile('./build/index.html');
 }
 
 function startWatcher() {
-    const dirs = loaddirs();
+    const dirs = settings.locations;
 
     if (dirs.length === 0) {
         console.warn("No dirs to watch.");
@@ -101,23 +134,6 @@ function startWatcher() {
     console.log("Watcher started!");
 }
 
-const settingsPath = path.join(__dirname, './data/settings.json');
-const logsPath = path.join(__dirname, './data/logs.json');
-const quarantine = path.join(__dirname, './data/quarantine.json');
-
-const getSettings = async () => {
-    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
-    console.log("Settings Fetched")
-    return settingsObject
-}
-
-const getThreats = async () => {
-    // let threatsObject = JSON.parse(fs.readFileSync(quarantine, 'utf-8'))
-    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
-    console.log("Threats Fetched")
-    return threatsObject
-}
-
 const getStats = async () => {
     let statsObject = fs.readFileSync(logsPath, 'utf-8')
     console.log("Logs Fetched")
@@ -125,21 +141,6 @@ const getStats = async () => {
 
 }
 
-const setSettings = async (_, settings) => {
-    console.log("Settings Written")
-    // let settingsJson = JSON.stringify(settings)
-    fs.writeFileSync(settingsPath, settings, err => {
-        if (err) {
-            console.error(err);
-        } else {
-            setting = settings
-        }
-    })
-}
-
-const getScanStatus = () => {
-    return status
-}
 
 const openFileDialog = async () => {
     const { cancelled, filePaths } = await dialog.showOpenDialog(win, { title: "Choose file to scan", properties: ["openFile"] })
@@ -165,6 +166,7 @@ app.whenReady().then(() => {
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
     ipcMain.on("setSettings", setSettings)
+    ipcMain.on("startManualScan", startManualScan)
     ipcMain.handle("selectFile", openFileDialog)
     ipcMain.handle("selectFolder", openFolderDialog)
     ipcMain.handle("reloadWatcher", () => {
@@ -173,9 +175,12 @@ app.whenReady().then(() => {
     });
     createWindow()
 
-        (async () => {
-            setting = await getSettings();
-        })();
+    console.log("Main window loaded, starting watcher...");
+    startWatcher();
+
+    (async () => {
+        settings = await getSettings();
+    })();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
