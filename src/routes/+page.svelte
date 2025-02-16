@@ -93,10 +93,6 @@
 	setDashStatus(currentStatus);
 </script>
 
-<svelte:head>
-	<title>DePWNer</title>
-</svelte:head>
-
 <div class="dashContainer grid grid-cols-4 text-center">
 	<HomeButton href="scan.html">
 		<RefreshCcw />
