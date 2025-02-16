@@ -31,3 +31,17 @@
 		<h3>TotalScanned</h3>
 	</div>
 </div>
+
+<style>
+	.table {
+		display: grid;
+		grid-template-columns: repeat(6, auto);
+		h3 {
+			text-align: center;
+		}
+	}
+	.overallContainer {
+		height: 100%;
+		width: 100%;
+	}
+</style>
