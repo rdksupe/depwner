@@ -5,6 +5,7 @@ let win;
 
 let status = "idle"
 let setting;
+
 // const exePath = app.getPath('exe');
 // var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
 // basePath = "./backend";
