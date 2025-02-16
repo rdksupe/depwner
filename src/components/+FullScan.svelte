@@ -1,9 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
 
+	let paths = $state(['/home/harshit']);
+
 	onMount(async () => {
 		let settings = await depwnerPreferences.get();
-		paths = settings.locations;
+		paths = JSON.parse(settings).locations;
 	});
 
 	let { option = $bindable() } = $props();
