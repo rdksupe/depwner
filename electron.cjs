@@ -56,8 +56,11 @@ const getSettings = async () => {
     return settingsObject
 }
 
-const getThreats = () => { // HARDCODED
-
+const getThreats = async () => {
+    // let threatsObject = JSON.parse(fs.readFileSync(quarantine, 'utf-8'))
+    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
+    console.log("Threats Fetched")
+    return threatsObject
 }
 
 const getStats = () => {  // HARDCODED
