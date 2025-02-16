@@ -71,11 +71,31 @@ const getScanStatus = () => {
     return status
 }
 
+const openFileDialog = async () => {
+    const { cancelled, filePaths } = await dialog.showOpenDialog(win, { title: "Choose file to scan", properties: ["openFile"] })
+    if (cancelled) {
+        return "User Cancelled"
+    } else {
+        return filePaths[0]
+    }
+}
+
+const openFolderDialog = async () => {
+    const { cancelled, folderPaths } = await dialog.showOpenDialog(win, { title: "Choose folder to scan", properties: ["openDirectory"] })
+    if (cancelled) {
+        return "User Cancelled"
+    } else {
+        return folderPaths[0]
+    }
+}
+
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
+    ipcMain.handle("selectFile", openFileDialog)
+    ipcMain.handle("selectFolder", openFolderDialog)
     createWindow()
 
     async () => {

@@ -10,3 +10,8 @@ contextBridge.exposeInMainWorld("depwnerPreferences", {
     get: () => ipcRenderer.invoke("getSettings"),
     set: (newSettings) => ipcRenderer.send("setSettings", newSettings),
 })
+
+contextBridge.exposeInMainWorld("electronFilesystem", {
+    getFile: () => ipcRenderer.invoke("selectFile"),
+    getFolder: () => ipcRenderer.invoke("selectFolder")
+})
