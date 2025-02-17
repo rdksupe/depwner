@@ -7,8 +7,14 @@ import { spawnSync } from "child_process";
 import process from "process";
 import readline from "readline"; // <-- new import
 
-// Updated loadCsvToBloom using Set
+// Updated loadCsvToBloom using Set with caching
 export async function loadCsvToBloom(csvFile) {
+  // If CSV data is already loaded, return cached data.
+  if (global.preloadedCsvData) {
+    console.log("Using preloaded CSV Data");
+    return global.preloadedCsvData;
+  }
+  
   const md5Set = new Set();
   const signatures = {};
   let hashCount = 0;
@@ -45,7 +51,9 @@ export async function loadCsvToBloom(csvFile) {
     rl.on("close", () => {
       console.log("Loaded CSV MD5 hashes into Set:");
       console.log(`MD5: ${hashCount}`);
-      resolve({ bloomFilters: { md5: md5Set }, signatures });
+      const result = { bloomFilters: { md5: md5Set }, signatures };
+      global.preloadedCsvData = result;
+      resolve(result);
     });
     rl.on("error", (err) => reject(err));
   });
@@ -96,7 +104,9 @@ function computeHashes(filePath) {
 // Run YARA scan using an external command.
 function runYaraScan(filePath, rulesPath = "../output.yarc") {
   try {
-    const cmd = "./yr";
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    // Update the command to point to the YARA binary inside the scanner directory.
+    const cmd = path.join(__dirname, "yr");
     const args = ["scan", "-C", rulesPath, filePath];
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
     console.log("YARA scan result:", result); 

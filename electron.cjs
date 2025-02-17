@@ -147,6 +147,22 @@ function startWatcher() {
 
     console.log("Chokidar is watching:", settings.locations);
 
+    // Updated event handlers to trigger manual scan.
+    const attachWatcherEvents = (watcherInstance) => {
+        watcherInstance.on("add", (filePath) => {
+            console.log(`File added: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "add", filePath });
+            // Automatically scan the new file.
+            startManualScan(filePath, "custom");
+        });
+        watcherInstance.on("change", (filePath) => {
+            console.log(`File changed: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "change", filePath });
+            // Automatically scan the changed file.
+            startManualScan(filePath, "custom");
+        });
+    };
+
     if (watcher) {
         console.log("Stopping previous watcher...");
         watcher.close().then(() => {
@@ -155,17 +171,7 @@ function startWatcher() {
                 ignoreInitial: true,
                 ignorePermissionErrors: true,
             });
-
-            watcher.on("add", (filePath) => {
-                console.log(`File added: ${filePath}`);
-                if (win) win.webContents.send("fileEvent", { event: "add", filePath });
-            });
-
-            watcher.on("change", (filePath) => {
-                console.log(`File changed: ${filePath}`);
-                if (win) win.webContents.send("fileEvent", { event: "change", filePath });
-            });
-
+            attachWatcherEvents(watcher);
             console.log("Watcher restarted!");
         });
     } else {
@@ -174,17 +180,7 @@ function startWatcher() {
             ignoreInitial: true,
             ignorePermissionErrors: true,
         });
-
-        watcher.on("add", (filePath) => {
-            console.log(`File added: ${filePath}`);
-            if (win) win.webContents.send("fileEvent", { event: "add", filePath });
-        });
-
-        watcher.on("change", (filePath) => {
-            console.log(`File changed: ${filePath}`);
-            if (win) win.webContents.send("fileEvent", { event: "change", filePath });
-        });
-
+        attachWatcherEvents(watcher);
         console.log("Watcher started!");
     }
 }
@@ -256,7 +252,7 @@ app.whenReady().then(() => {
     startWatcher();
 
     // Pre-load CSV database.
-    preloadCsv();
+    preloadCsv(); // shouls this be awaited ?
 
     // (async () => {
     //     settings = await getSettings();
