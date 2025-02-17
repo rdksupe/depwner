@@ -53,17 +53,17 @@ let settings = {
         },
         "time": "13:00"
     },
-    "locations": [""]
+    "locations": []
 }
 const setSettings = async (_, setting) => {
-    console.log("Settings Written")
-    fs.writeFileSync(settingsPath, setting, err => {
-        if (err) {
-            console.error(err);
-        } else {
-            settings = setting
-        }
-    })
+    try {
+        console.log("Settings Written");
+        fs.writeFileSync(settingsPath, setting);
+        settings = JSON.parse(setting);
+        startWatcher();
+    } catch (err) {
+        console.error("Error writing settings:", err);
+    }
 }
 const getSettings = async () => {
     let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
@@ -101,38 +101,55 @@ function createWindow() {
 }
 
 function startWatcher() {
-    const dirs = settings.locations;
-
-    if (dirs.length === 0) {
-        console.warn("No dirs to watch.");
+    if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
+        console.warn("No directories configured for watching.");
         return;
-    } else {
-        console.log("Chokidar is watching:", dirs);
     }
+
+    console.log("Chokidar is watching:", settings.locations);
 
     if (watcher) {
         console.log("Stopping previous watcher...");
-        watcher.close();
-    }
+        watcher.close().then(() => {
+            watcher = chokidar.watch(settings.locations, {
+                persistent: true,
+                ignoreInitial: true,
+                ignorePermissionErrors: true,
+            });
 
-    watcher = chokidar.watch(dirs, {
-        persistent: true,
-        ignoreInitial: true,
-        ignorePermissionErrors: true
-    });
+            watcher.on("add", (filePath) => {
+                console.log(`File added: ${filePath}`);
+                if (win) win.webContents.send("fileEvent", { event: "add", filePath });
+            });
 
-    watcher
-        .on('add', filePath => {
-            console.log(`File added: ${filePath}`);
-            if (win) win.webContents.send('fileEvent', { event: 'add', filePath });
-        })
-        .on('change', filePath => {
-            console.log(`File changed: ${filePath}`);
-            if (win) win.webContents.send('fileEvent', { event: 'change', filePath });
+            watcher.on("change", (filePath) => {
+                console.log(`File changed: ${filePath}`);
+                if (win) win.webContents.send("fileEvent", { event: "change", filePath });
+            });
+
+            console.log("Watcher restarted!");
+        });
+    } else {
+        watcher = chokidar.watch(settings.locations, {
+            persistent: true,
+            ignoreInitial: true,
+            ignorePermissionErrors: true,
         });
 
-    console.log("Watcher started!");
+        watcher.on("add", (filePath) => {
+            console.log(`File added: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "add", filePath });
+        });
+
+        watcher.on("change", (filePath) => {
+            console.log(`File changed: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "change", filePath });
+        });
+
+        console.log("Watcher started!");
+    }
 }
+
 
 const getStats = async () => {
     let statsObject = fs.readFileSync(logsPath, 'utf-8')
@@ -173,14 +190,20 @@ app.whenReady().then(() => {
         console.log("Reloading watcher...");
         startWatcher();
     });
+    try {
+        settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+        console.log("Settings Loaded:", settings);
+    } catch (err) {
+        console.error("Error loading settings:", err);
+    }
     createWindow()
 
     console.log("Main window loaded, starting watcher...");
     startWatcher();
 
-    (async () => {
-        settings = await getSettings();
-    })();
+    // (async () => {
+    //     settings = await getSettings();
+    // })();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()

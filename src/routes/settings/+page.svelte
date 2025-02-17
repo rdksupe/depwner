@@ -19,20 +19,6 @@
 			time: '13:00'
 		},
 		locations: [
-			'/home/harshit',
-			'/oieiourioewioer',
-			'ifsfiodsfuiofus',
-			'yo',
-			'khkjdshkjahsk',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf',
-			'skkshfkhsklf'
 		]
 	});
 	onMount(async () => {
