@@ -3,21 +3,28 @@
 		"scanType": "Full",
 		"filesScanned": 45372,
 		"threats": 2,
-		"time": 1737729873,
+		"time": 1737729873000,
+		"folder": "/home/harshit/Harshit_Work/pclub/"
+	},
+	{
+		"scanType": "Full",
+		"filesScanned": 45372,
+		"threats": 2,
+		"time": 1737799873000,
 		"folder": ""
 	},
 	{
 		"scanType": "Folder",
 		"filesScanned": 320,
 		"threats": 0,
-		"time": 1738680273,
+		"time": 1738680273000,
 		"folder": ""
 	},
 	{
 		"scanType": "User",
 		"filesScanned": 34398,
 		"threats": 2,
-		"time": 1739112273,
+		"time": 1739112273000,
 		"folder": ""
 	}
 ]
