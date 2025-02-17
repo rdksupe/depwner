@@ -28,13 +28,13 @@ let status = {
     type: 'full', // 'full' Full Scan / 'custom' Custom Scan
     progress: '0' // The number of files scanned
 }
-const setScanStatus = () => {
-    // Should set the status based on what's going on
-    // See status definition
-}
-const getScanStatus = () => {
-    return status
-}
+// const setScanStatus = () => {
+//     // Should set the status based on what's going on
+//     // See status definition
+// }
+// const getScanStatus = () => {
+//     return status
+// }
 
 
 let settings = {
@@ -79,12 +79,51 @@ const getThreats = async () => {
 }
 
 
-const startManualScan = (pathToScan, type) => {
-    // pathToScan- file or directory
-    // type- Full or Custom (for the logs)
-    // Update state after each filescan
-    // Take into consideration if YARA is enabled
-}
+// NEW: Global manual scan status state.
+let manualScanStatus = {
+  status: 'idle', // 'idle' or 'scanning'
+  type: null,     // 'full' or 'custom'
+  progress: 0,    // Could be percent or count
+  output: null    // Raw scanner output
+};
+
+// Updated getScanStatus to return the raw scanner output.
+const getScanStatus = () => {
+    return manualScanStatus.output;
+};
+
+// New setScanStatus to update state based on scan type.
+const setScanStatus = (scanType, progress, output = null) => {
+    manualScanStatus.status = progress < 100 ? 'scanning' : 'idle';
+    manualScanStatus.type = scanType;
+    manualScanStatus.progress = progress;
+    manualScanStatus.output = output;
+};
+
+// Implement startManualScan to scan a file or folder.
+const startManualScan = async (pathToScan, type) => {
+    // Update status to scanning with 0 progress.
+    console.log("Starting manual scan:", pathToScan, type);
+    setScanStatus(type, 0);
+    let options = { dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
+    try {
+        if (fs.statSync(pathToScan).isDirectory()) {
+            options.folderPath = pathToScan;
+        } else {
+            options.filePath = pathToScan;
+        }
+        // Dynamically import scanner.mjs for scanInput.
+        const { scanInput } = await import('./scanner/scanner.mjs');
+        const result = await scanInput(options);
+        // Update state with raw output
+        setScanStatus(type, 100, result);
+        if (win) win.webContents.send("scanStatus", manualScanStatus);
+    } catch (err) {
+        console.error("Error during manual scan:", err);
+        setScanStatus(type, 100, { error: err.message });
+        if (win) win.webContents.send("scanStatus", manualScanStatus);
+    }
+};
 
 
 function createWindow() {
@@ -177,13 +216,28 @@ const openFolderDialog = async () => {
     }
 }
 
+// NEW: Pre-load CSV in app.whenReady() for faster future scans.
+const preloadCsv = async () => {
+    try {
+        const { loadCsvToBloom } = await import('./scanner/scanner.mjs');
+        // Use default CSV path as specified in run_scan.js ("./full.csv")
+        const csvData = await loadCsvToBloom("./scanner/full.csv");
+        global.preloadedCsvData = csvData;
+        console.log("CSV pre-loaded for faster future scans.");
+    } catch (err) {
+        console.error("Error pre-loading CSV:", err);
+    }
+};
+
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
     ipcMain.on("setSettings", setSettings)
-    ipcMain.on("startManualScan", startManualScan)
+    ipcMain.on("startManualScan", (event, pathToScan, type) => {
+        startManualScan(pathToScan, type);
+    });
     ipcMain.handle("selectFile", openFileDialog)
     ipcMain.handle("selectFolder", openFolderDialog)
     ipcMain.handle("reloadWatcher", () => {
@@ -200,6 +254,9 @@ app.whenReady().then(() => {
 
     console.log("Main window loaded, starting watcher...");
     startWatcher();
+
+    // Pre-load CSV database.
+    preloadCsv();
 
     // (async () => {
     //     settings = await getSettings();
