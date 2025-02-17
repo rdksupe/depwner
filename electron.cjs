@@ -37,24 +37,8 @@ let status = {
 // }
 
 
-let settings = {
-    "yara": true,
-    "schedule": {
-        "active": true,
-        "freq": "weekly",
-        "days": {
-            "sun": true,
-            "mon": false,
-            "tue": false,
-            "wed": false,
-            "thu": false,
-            "fri": false,
-            "sat": false
-        },
-        "time": "13:00"
-    },
-    "locations": []
-}
+var settings = require("./data/settings.json")
+
 const setSettings = async (_, setting) => {
     try {
         console.log("Settings Written");
