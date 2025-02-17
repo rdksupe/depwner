@@ -7,7 +7,7 @@
 			filesScanned: 45372,
 			threats: 2,
 			time: 1737729873,
-			Folder: '/home/harshit/Harshit_Work/pclub/'
+			folder: '/home/harshit/Harshit_Work/pclub/'
 		}
 	]);
 	let threats = $state(0);
@@ -38,6 +38,14 @@
 		<h3>Path Scanned</h3>
 		<h3>Threats</h3>
 		<h3>TotalScanned</h3>
+		{#each logs as scan}
+			<p>{scan.time}</p>
+			<p>{scan.time}</p>
+			<p>{scan.scanType}</p>
+			<p>{scan.folder}</p>
+			<p>{scan.threats}</p>
+			<p>{scan.filesScanned}</p>
+		{/each}
 	</div>
 </div>
 
