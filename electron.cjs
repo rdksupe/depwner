@@ -215,7 +215,7 @@ app.whenReady().then(() => {
     ipcMain.handle("getThreats", getThreats)
     ipcMain.handle("getScanStatus", getScanStatus)
     ipcMain.on("setSettings", setSettings)
-    ipcMain.on("startManualScan", (event, pathToScan, type) => {
+    ipcMain.on("startManualScan", (_, pathToScan, type) => {
         startManualScan(pathToScan, type);
     });
     ipcMain.handle("selectFile", openFileDialog)
@@ -236,11 +236,8 @@ app.whenReady().then(() => {
     startWatcher();
 
     // Pre-load CSV database.
-    preloadCsv(); // shouls this be awaited ?
+    preloadCsv();
 
-    // (async () => {
-    //     settings = await getSettings();
-    // })();
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
