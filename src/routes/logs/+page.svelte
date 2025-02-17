@@ -53,9 +53,7 @@
 	.table {
 		display: grid;
 		grid-template-columns: repeat(6, auto);
-		h3 {
-			text-align: center;
-		}
+		text-align: center;
 	}
 	.overallContainer {
 		height: 100%;
