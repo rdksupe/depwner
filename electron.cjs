@@ -19,110 +19,6 @@ let watcher = null;
 //
 //////////// TODO End ////////////////////
 
-// const exePath = app.getPath('exe');
-// var basePath = exePath.slice(0, exePath.lastIndexOf("\\"));
-// basePath = "./backend";
-
-let status = {
-    status: 'idle', // idle if no manual scan / scan if manual scan
-    type: 'full', // 'full' Full Scan / 'custom' Custom Scan
-    progress: '0' // The number of files scanned
-}
-// const setScanStatus = () => {
-//     // Should set the status based on what's going on
-//     // See status definition
-// }
-// const getScanStatus = () => {
-//     return status
-// }
-
-
-var settings = require("./data/settings.json")
-
-const setSettings = async (_, setting) => {
-    try {
-        console.log("Settings Written");
-        fs.writeFileSync(settingsPath, setting);
-        settings = JSON.parse(setting);
-        startWatcher();
-    } catch (err) {
-        console.error("Error writing settings:", err);
-    }
-}
-const getSettings = async () => {
-    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
-    console.log("Settings Fetched")
-    return settingsObject
-}
-
-
-const getThreats = async () => {
-    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
-    console.log("Threats Fetched")
-    return threatsObject
-}
-
-
-// NEW: Global manual scan status state.
-let manualScanStatus = {
-    status: 'idle', // 'idle' or 'scanning'
-    type: null,     // 'full' or 'custom'
-    progress: 0,    // Could be percent or count
-    output: null    // Raw scanner output
-};
-
-// Updated getScanStatus to return the raw scanner output.
-const getScanStatus = () => {
-    return manualScanStatus.output;
-};
-
-// New setScanStatus to update state based on scan type.
-const setScanStatus = (scanType, progress, output = null) => {
-    manualScanStatus.status = progress < 100 ? 'scanning' : 'idle';
-    manualScanStatus.type = scanType;
-    manualScanStatus.progress = progress;
-    manualScanStatus.output = output;
-};
-
-// Implement startManualScan to scan a file or folder.
-const startManualScan = async (pathToScan, type) => {
-    // Update status to scanning with 0 progress.
-    console.log("Starting manual scan:", pathToScan, type);
-    setScanStatus(type, 0);
-    let options = { dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
-    try {
-        if (fs.statSync(pathToScan).isDirectory()) {
-            options.folderPath = pathToScan;
-        } else {
-            options.filePath = pathToScan;
-        }
-        // Dynamically import scanner.mjs for scanInput.
-        const { scanInput } = await import('./scanner/scanner.mjs');
-        const result = await scanInput(options);
-        // Update state with raw output
-        setScanStatus(type, 100, result);
-        if (win) win.webContents.send("scanStatus", manualScanStatus);
-    } catch (err) {
-        console.error("Error during manual scan:", err);
-        setScanStatus(type, 100, { error: err.message });
-        if (win) win.webContents.send("scanStatus", manualScanStatus);
-    }
-};
-
-
-function createWindow() {
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
-    })
-
-    win.loadFile('./build/index.html');
-}
-
 function startWatcher() {
     if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
         console.warn("No directories configured for watching.");
@@ -167,6 +63,92 @@ function startWatcher() {
         attachWatcherEvents(watcher);
         console.log("Watcher started!");
     }
+}
+
+async function getStatus() {
+    return scanStatus
+}
+
+var settings = require("./data/settings.json")
+
+const setSettings = async (_, setting) => {
+    try {
+        console.log("Settings Written");
+        fs.writeFileSync(settingsPath, setting);
+        settings = JSON.parse(setting);
+        startWatcher();
+    } catch (err) {
+        console.error("Error writing settings:", err);
+    }
+}
+const getSettings = async () => {
+    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
+    console.log("Settings Fetched")
+    return settingsObject
+}
+
+
+const getThreats = async () => {
+    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
+    console.log("Threats Fetched")
+    return threatsObject
+}
+
+
+let scanStatus = {
+    status: 'idle', // idle if no manual scan / scan if manual scan
+    type: 'full', // 'full' Full Scan / 'custom' Custom Scan
+    progress: 0, // The number of files scanned
+    filesToScan: 100,
+    currentFile: '',
+}
+const startManualScan = async (pathToScan, type) => {
+    console.log("Starting manual scan:", pathToScan, type);
+
+    global.scanStatus = {
+        status: 'scan',
+        type: type,
+        progress: 0,
+        currentFile: '',
+    }
+
+    let options;
+    if (settings.yara) {
+        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
+    } else {
+        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/overFit.csv", yaraPath: "" };
+    }
+
+    try {
+        if (fs.statSync(pathToScan).isDirectory()) {
+            options.folderPath = pathToScan;
+        } else {
+            options.filePath = pathToScan;
+        }
+        // Dynamically import scanner.mjs for scanInput.
+        const { scanInput } = await import('./scanner/scanner.mjs');
+        const result = await scanInput(options);
+        global.scanStatus = 'completed'
+
+    } catch (err) {
+        console.error("Error during manual scan:", err);
+        global.scanStatus.status = 'idle';
+        if (win) win.webContents.send("scanStatus", manualScanStatus);
+    }
+};
+
+
+function createWindow() {
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    })
+
+    win.loadFile('./build/index.html');
 }
 
 
