@@ -4,20 +4,20 @@
 		"filesScanned": 45372,
 		"threats": 2,
 		"time": 1737729873,
-		"Folder": ""
+		"folder": ""
 	},
 	{
 		"scanType": "Folder",
 		"filesScanned": 320,
 		"threats": 0,
 		"time": 1738680273,
-		"Folder": ""
+		"folder": ""
 	},
 	{
 		"scanType": "User",
 		"filesScanned": 34398,
 		"threats": 2,
 		"time": 1739112273,
-		"Folder": ""
+		"folder": ""
 	}
 ]
