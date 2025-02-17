@@ -6,7 +6,7 @@
 			scanType: 'Full',
 			filesScanned: 45372,
 			threats: 2,
-			time: 1737729873,
+			time: 1737729873000,
 			folder: '/home/harshit/Harshit_Work/pclub/'
 		}
 	]);
@@ -39,8 +39,8 @@
 		<h3>Threats</h3>
 		<h3>TotalScanned</h3>
 		{#each logs as scan}
-			<p>{scan.time}</p>
-			<p>{scan.time}</p>
+			<p>{new Date(scan.time).toLocaleTimeString()}</p>
+			<p>{new Date(scan.time).toLocaleDateString()}</p>
 			<p>{scan.scanType}</p>
 			<p>{scan.folder}</p>
 			<p>{scan.threats}</p>
