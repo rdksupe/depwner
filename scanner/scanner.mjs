@@ -6,7 +6,20 @@ import crypto from "crypto";
 import { spawnSync } from "child_process";
 import process from "process";
 import readline from "readline"; // <-- new import
-
+function loadWhitelist() {
+  const whitelistPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'whitelist.txt');
+  const whitelist = new Set();
+  
+  if (fs.existsSync(whitelistPath)) {
+    const content = fs.readFileSync(whitelistPath, 'utf-8');
+    content.split('\n').forEach(line => {
+      const hash = line.trim();
+      if (hash) whitelist.add(hash);
+    });
+    console.log(`Loaded ${whitelist.size} whitelist hashes`);
+  }
+  return whitelist;
+}
 // Updated loadCsvToBloom using Set with caching
 export async function loadCsvToBloom(csvFile) {
   // If CSV data is already loaded, return cached data.
@@ -48,7 +61,16 @@ export async function loadCsvToBloom(csvFile) {
   });
 
   return new Promise((resolve, reject) => {
-    rl.on("close", () => {
+    // if (whitelist.has(hashes.md5)) {
+    //   return {
+    //     matched: false,
+    //     result: {
+    //       type: "whitelist",
+    //       hash: hashes.md5,
+    //       file: filePath,
+    //     },
+    //   };
+      rl.on("close", () => {
       console.log("Loaded CSV MD5 hashes into Set:");
       console.log(`MD5: ${hashCount}`);
       const result = { bloomFilters: { md5: md5Set }, signatures };
@@ -57,36 +79,6 @@ export async function loadCsvToBloom(csvFile) {
     });
     rl.on("error", (err) => reject(err));
   });
-}
-
-// Updated loadBloomFilter using Set
-function loadBloomFilter(hashDir = "virusshare_hashes") {
-  const md5Set = new Set();
-  if (!fs.existsSync(hashDir)) {
-    console.log(`Hash directory '${hashDir}' not found, skipping Set creation`);
-    return md5Set;
-  }
-
-  let hashCount = 0;
-  const files = fs.readdirSync(hashDir);
-  for (const filename of files) {
-    const filepath = path.join(hashDir, filename);
-    try {
-      const content = fs.readFileSync(filepath, "utf-8");
-      const lines = content.split(/\r?\n/);
-      for (const line of lines) {
-        const hashStr = line.trim();
-        if (hashStr) {
-          md5Set.add(hashStr);
-          hashCount++;
-        }
-      }
-    } catch (err) {
-      console.error(`Error reading ${filepath}: ${err}`);
-    }
-  }
-  console.log(`Loaded ${hashCount} hashes into Set`);
-  return md5Set;
 }
 
 // Compute multiple hashes (SHA256, MD5, SHA1) of a file.
@@ -102,7 +94,7 @@ function computeHashes(filePath) {
 }
 
 // Run YARA scan using an external command.
-function runYaraScan(filePath, rulesPath = "../output.yarc") {
+function runYaraScan(filePath, rulesPath = "./output.yarc") {
   try {
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
     // Update the command to point to the YARA binary inside the scanner directory.
@@ -120,16 +112,55 @@ function runYaraScan(filePath, rulesPath = "../output.yarc") {
   }
 }
 
-// Updated scanFile: run YARA scan only if no hash-based match found.
-function scanFile(filePath, bloomDbs1, signatures, bloomFilter2, yaraRules) {
+// New function to load whitelist
+
+
+// New function to add hash to whitelist
+function addToWhitelist(hash) {
+  const whitelistPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'whitelist.txt');
+  fs.appendFileSync(whitelistPath, hash + '\n');
+}
+
+// Modified scanFile function to automatically whitelist clean files
+function scanFile(filePath, bloomDbs1, signatures, yaraRules) {
+  const whitelist = loadWhitelist();
   const hashes = computeHashes(filePath);
+  
   if (!hashes) {
     return { matched: false, result: "hash_error" };
   }
 
-  // Check primary hash-based match.
+  // Check whitelist first
+  if (whitelist.has(hashes.md5)) {
+    return {
+      matched: false,
+      result: {
+        type: "whitelist",
+        hash: hashes.md5,
+        file: filePath,
+      },
+    };
+  }
+
+  // If no DB is provided, run YARA scan directly
+  if (!bloomDbs1) {
+    const yaraResult = runYaraScan(filePath, yaraRules);
+    if (yaraResult) {
+      return {
+        matched: true,
+        result: {
+          type: "yara",
+          matches: yaraResult,
+          file: filePath,
+        },
+      };
+    }
+    return { matched: false, result: null };
+  }
+
+  // If DB is provided, check hashes first
+  // Check hash-based match
   if (bloomDbs1.md5.has(hashes.md5) && signatures[hashes.md5]) {
-    console.log("Match found using primary hash.");
     return {
       matched: true,
       result: {
@@ -143,24 +174,9 @@ function scanFile(filePath, bloomDbs1, signatures, bloomFilter2, yaraRules) {
     };
   }
 
-  // Check secondary hash-based match.
-  if (bloomFilter2.has(hashes.md5)) {
-    console.log("Match found using secondary hash.");
-    return {
-      matched: true,
-      result: {
-        type: "secondary_bloom",
-        hash: hashes.md5,
-        file: filePath,
-      },
-    };
-  }
-
-  // If no hash match was found, run YARA scan.
-  console.log("No hash match found, running YARA scan.");
+  // Run YARA scan
   const yaraResult = runYaraScan(filePath, yaraRules);
   if (yaraResult) {
-    console.log("YARA match found.");
     return {
       matched: true,
       result: {
@@ -171,13 +187,25 @@ function scanFile(filePath, bloomDbs1, signatures, bloomFilter2, yaraRules) {
     };
   }
 
-  return { matched: false, result: null };
+  // If no matches found, add to whitelist
+  addToWhitelist(hashes.md5);
+  return {
+    matched: false,
+    result: {
+      type: "new_whitelist",
+      hash: hashes.md5,
+      file: filePath,
+    },
+  };
 }
 
 // Recursively get all files from a directory.
 function getAllFiles(dir) {
   let results = [];
   const list = fs.readdirSync(dir);
+  // let num_of_files = list.length;
+
+
   for (const file of list) {
     const fullPath = path.join(dir, file);
     const stat = fs.statSync(fullPath);
@@ -187,37 +215,49 @@ function getAllFiles(dir) {
       results.push(fullPath);
     }
   }
-  return results;
+  return results ;
 }
 
-// Scan a folder recursively using all detection methods.
-function scanFolder(folder, bloomDbs1, signatures, bloomFilter2, yaraRules) {
+// Simplified scanFolder
+function scanFolder(folder, bloomDbs1, signatures, yaraRules) {
   const allFiles = getAllFiles(folder);
   if (allFiles.length === 0) {
     console.log(JSON.stringify({ error: "No files found to scan." }, null, 2));
     return;
   }
+
   const totalFiles = allFiles.length;
   const results = {
     scan_summary: {
       total_files: totalFiles,
       matches: {
         primary_bloom: 0,
-        secondary_bloom: 0,
         yara: 0,
       },
+      whitelisted: 0,
+      new_whitelisted: 0,
     },
     matched_files: [],
+    whitelisted_files: [],
+    new_whitelisted_files: [],
   };
 
   console.log(`Scanning ${totalFiles} files...`);
   let count = 0;
   for (const filePath of allFiles) {
-    const { matched, result } = scanFile(filePath, bloomDbs1, signatures, bloomFilter2, yaraRules);
-    if (matched) {
-      results.scan_summary.matches[result.type] += 1;
-      results.matched_files.push(result);
+    let scanResult = scanFile(filePath, bloomDbs1, signatures, yaraRules);
+    
+    if (scanResult.result?.type === "whitelist") {
+      results.scan_summary.whitelisted++;
+      results.whitelisted_files.push(scanResult.result);
+    } else if (scanResult.result?.type === "new_whitelist") {
+      results.scan_summary.new_whitelisted++;
+      results.new_whitelisted_files.push(scanResult.result);
+    } else if (scanResult.matched) {
+      results.scan_summary.matches[scanResult.result.type] += 1;
+      results.matched_files.push(scanResult.result);
     }
+    
     count++;
     process.stdout.write(`\rScanned: ${count}/${totalFiles}`);
   }
@@ -242,25 +282,43 @@ function formatMem(usage) {
   };
 }
 
-// Exportable scanInput function: accepts an options object and returns JSON scan results.
+// Simplified scanInput - remove autoWhitelist option
 export async function scanInput(options) {
-  // options: { dbPath, bloomDir, yaraPath, filePath, folderPath }
-  if (!options.dbPath) throw new Error("--db option is required");
-  if (!options.filePath && !options.folderPath)
+  // options: { dbPath, yaraPath, filePath, folderPath }
+  if (!options.filePath && !options.folderPath) {
     throw new Error("Either filePath or folderPath option is required");
+  }
 
   const startTime = Date.now();
   console.log("Initial Memory Usage:", formatMem(process.memoryUsage()));
 
-  const { bloomFilters, signatures } = await loadCsvToBloom(options.dbPath);
-  const bloomFilter2 = loadBloomFilter(options.bloomDir || "virusshare_hashes");
-  console.log("Databases loaded, ready to scan");
+  let bloomFilters = null;
+  let signatures = null;
+
+  if (options.dbPath) {
+    const dbData = await loadCsvToBloom(options.dbPath);
+    bloomFilters = dbData.bloomFilters;
+    signatures = dbData.signatures;
+    console.log("Database loaded, ready to scan");
+  } else {
+    console.log("No database provided, using YARA-only scan");
+  }
 
   let results;
   if (options.filePath) {
-    results = scanFile(options.filePath, bloomFilters, signatures, bloomFilter2, options.yaraPath || "./packages/full/yara-rules-full.yar");
+    results = scanFile(
+      options.filePath,
+      bloomFilters,
+      signatures,
+      options.yaraPath || "./output.yarc"
+    );
   } else {
-    results = scanFolder(options.folderPath, bloomFilters, signatures, bloomFilter2, options.yaraPath || "./packages/full/yara-rules-full.yar");
+    results = scanFolder(
+      options.folderPath,
+      bloomFilters,
+      signatures,
+      options.yaraPath || "./output.yarc"
+    );
   }
 
   console.log("Scan completed in", (Date.now() - startTime) / 1000, "seconds");
@@ -268,18 +326,16 @@ export async function scanInput(options) {
   return results;
 }
 
-// For command-line usage.
+// Updated command-line handling
 if (import.meta.url === new URL(process.argv[1], import.meta.url).href) {
   (async () => {
     const args = process.argv.slice(2);
-    let dbPath = null, bloomDir = "virusshare_hashes", yaraPath = "./packages/full/yara-rules-full.yar", filePath = null, folderPath = null;
+    let dbPath = null, yaraPath = "./output.yarc", filePath = null, folderPath = null;
+    
     for (let i = 0; i < args.length; i++) {
       switch (args[i]) {
         case "--db":
           dbPath = args[++i];
-          break;
-        case "--bloom-dir":
-          bloomDir = args[++i];
           break;
         case "--yara":
           yaraPath = args[++i];
@@ -295,8 +351,9 @@ if (import.meta.url === new URL(process.argv[1], import.meta.url).href) {
           process.exit(1);
       }
     }
+
     try {
-      const result = await scanInput({ dbPath, bloomDir, yaraPath, filePath, folderPath });
+      const result = await scanInput({ dbPath, yaraPath, filePath, folderPath });
       console.log(JSON.stringify(result, null, 2));
     } catch (err) {
       console.error(err);
