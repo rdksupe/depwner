@@ -14,16 +14,16 @@ export async function loadCsvToBloom(csvFile) {
     console.log("Using preloaded CSV Data");
     return global.preloadedCsvData;
   }
-  
+
   const md5Set = new Set();
   const signatures = {};
   let hashCount = 0;
   let md5Index, firstSeenIndex, signatureIndex;
-  
+
   const stream = fs.createReadStream(csvFile, "utf-8");
   const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
   let headerProcessed = false;
-  
+
   rl.on("line", (line) => {
     if (!headerProcessed) {
       const header = line.split(",").map(col => col.trim().replace(/^["']|["']$/g, "").toLowerCase());
@@ -46,7 +46,7 @@ export async function loadCsvToBloom(csvFile) {
       }
     }
   });
-  
+
   return new Promise((resolve, reject) => {
     rl.on("close", () => {
       console.log("Loaded CSV MD5 hashes into Set:");
@@ -109,7 +109,7 @@ function runYaraScan(filePath, rulesPath = "../output.yarc") {
     const cmd = path.join(__dirname, "yr");
     const args = ["scan", "-C", rulesPath, filePath];
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
-    console.log("YARA scan result:", result); 
+    console.log("YARA scan result:", result);
     if (result.status === 0 && result.stdout.trim()) {
       return result.stdout.trim();
     }
