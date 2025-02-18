@@ -130,15 +130,13 @@ let scanStatus = {
     status: 'idle', // idle if no manual scan / scan if manual scan
     type: 'full', // 'full' Full Scan / 'custom' Custom Scan
     progress: 0, // The number of files scanned
-    threatsFound: 0,
+    threatsFound: [],
     filesToScan: 100,
     currentFile: '',
 }
 async function getStatus() {
     return JSON.stringify(scanStatus)
 }
-
-
 
 const getStats = async () => {
     let statsObject = fs.readFileSync(logsPath, 'utf-8')
