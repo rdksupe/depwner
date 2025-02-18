@@ -21,7 +21,13 @@
 	let status = $state({
 		status: 'idle',
 		type: 'full',
-		progress: '10'
+		progress: 82,
+		threatsFound: 2,
+		filesToScan: 100,
+		currentFile:
+			'/home/harshit/Videos/Gravity Falls/Gravity Falls Season 1 WEB-HD 720p x264 [Pahe.in]/Gravity.Falls.S01E01.720p.WEB-HD.x264.150MB-Pahe.in.mkv'
+	});
+
 	});
 
 	import FullScan from '../../components/+FullScan.svelte';
