@@ -6,97 +6,78 @@ const chokidar = require('chokidar');
 const settingsPath = path.join(__dirname, './data/settings.json');
 const logsPath = path.join(__dirname, './data/logs.json');
 const quarantine = path.join(__dirname, './data/quarantine.json');
+const cron = require('node-cron');
 
 let win;
 
 let watcher = null;
 
-function startWatcher() {
-    if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
-        console.warn("No directories configured for watching.");
+function scheduleScanning() {
+    if (!settings.schedule || !settings.schedule.active) {
+        console.log("Scheduling is disabled.");
         return;
     }
 
-    console.log("Chokidar is watching:", settings.locations);
+    console.log("Setting up scanning schedule...");
 
-    // Updated event handlers to trigger manual scan.
-    const attachWatcherEvents = (watcherInstance) => {
-        watcherInstance.on("add", (filePath) => {
-            console.log(`File added: ${filePath}`);
-            if (win) win.webContents.send("fileEvent", { event: "add", filePath });
-            // Automatically scan the new file.
-            startManualScan(filePath, "custom");
-        });
-        watcherInstance.on("change", (filePath) => {
-            console.log(`File changed: ${filePath}`);
-            if (win) win.webContents.send("fileEvent", { event: "change", filePath });
-            // Automatically scan the changed file.
-            startManualScan(filePath, "custom");
-        });
-    };
+    cron.getTasks().forEach(task => task.stop());
 
-    if (watcher) {
-        console.log("Stopping previous watcher...");
-        watcher.close().then(() => {
-            watcher = chokidar.watch(settings.locations, {
-                persistent: true,
-                ignoreInitial: true,
-                ignorePermissionErrors: true,
-            });
-            attachWatcherEvents(watcher);
-            startManualScan(settings.locations, "autoScan")
-            console.log("Watcher restarted!");
+    const { freq, time, days } = settings.schedule;
+
+    function getCurrentTimeIn24HFormat() {
+        const now = new Date();
+        const userTime = now.toLocaleTimeString('en-GB', { hour12: false }); // Get 24H format
+        return userTime.slice(0, 5); // Extract HH:MM
+    }
+
+    if (freq === "hourly") {
+        cron.schedule("0 * * * *", () => {
+            console.log("Running hourly scan...");
+            if (settings.locations.length > 0) {
+                settings.locations.forEach(location => startManualScan(location, "custom"));
+            } else {
+                console.warn("No locations set for scanning.");
+            }
         });
-    } else {
-        watcher = chokidar.watch(settings.locations, {
-            persistent: true,
-            ignoreInitial: true,
-            ignorePermissionErrors: true,
+    } else if (freq === "daily") {
+        const [hour, minute] = time.split(":").map(Number);
+        cron.schedule(`${minute} ${hour} * * *`, () => {
+            const currentTime = getCurrentTimeIn24HFormat();
+            console.log(`Running daily scan at ${currentTime}...`);
+            if (settings.locations.length > 0) {
+                settings.locations.forEach(location => startManualScan(location, "custom"));
+            } else {
+                console.warn("No locations set for scanning.");
+            }
         });
-        attachWatcherEvents(watcher);
-        startManualScan(settings.locations, "autoScan")
-        console.log("Watcher started!");
+    } else if (freq === "weekly") {
+        const [hour, minute] = time.split(":").map(Number);
+        const dayMap = {
+            sun: 0,
+            mon: 1,
+            tue: 2,
+            wed: 3,
+            thu: 4,
+            fri: 5,
+            sat: 6
+        };
+
+        Object.entries(days).forEach(([day, active]) => {
+            if (active) {
+                cron.schedule(`${minute} ${hour} * * ${dayMap[day]}`, () => {
+                    const currentTime = getCurrentTimeIn24HFormat();
+                    console.log(`Running weekly scan on ${day} at ${currentTime}...`);
+                    if (settings.locations.length > 0) {
+                        settings.locations.forEach(location => startManualScan(location, "custom"));
+                    } else {
+                        console.warn("No locations set for scanning.");
+                    }
+                });
+            }
+        });
     }
 }
 
-
-var settings = require("./data/settings.json")
-
-const setSettings = async (_, setting) => {
-    try {
-        console.log("Settings Written");
-        fs.writeFileSync(settingsPath, setting);
-        settings = JSON.parse(setting);
-        startWatcher();
-    } catch (err) {
-        console.error("Error writing settings:", err);
-    }
-}
-const getSettings = async () => {
-    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
-    console.log("Settings Fetched")
-    return settingsObject
-}
-
-
-const getThreats = async () => {
-    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
-    console.log("Threats Fetched")
-    return threatsObject
-}
-
-
-let scanStatus = {
-    status: 'idle', // idle if no manual scan / scan if manual scan
-    type: 'full', // 'full' Full Scan / 'custom' Custom Scan
-    progress: 0, // The number of files scanned
-    threatsFound: 0,
-    filesToScan: 100,
-    currentFile: '',
-}
-async function getStatus() {
-    return JSON.stringify(scanStatus)
-}
 
 const startManualScan = async (pathToScan, type) => {
     console.log("Starting manual scan:", pathToScan, type);
@@ -135,24 +116,101 @@ const startManualScan = async (pathToScan, type) => {
     } catch (err) {
         console.error("Error during manual scan:", err);
         global.scanStatus.status = 'idle';
-        if (win) win.webContents.send("scanStatus", manualScanStatus);
+        // if (win) win.webContents.send("scanStatus", manualScanStatus);
     }
 };
 
+function startWatcher() {
+    if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
+        console.warn("No directories configured for watching.");
+        return;
+    }
 
-function createWindow() {
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
-    })
+    console.log("Chokidar is watching:", settings.locations);
 
-    win.loadFile('./build/index.html');
+    // Updated event handlers to trigger manual scan.
+    const attachWatcherEvents = (watcherInstance) => {
+        watcherInstance.on("add", (filePath) => {
+            console.log(`File added: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "add", filePath });
+            // Automatically scan the new file.
+            startManualScan(filePath, "custom");
+        });
+        watcherInstance.on("change", (filePath) => {
+            console.log(`File changed: ${filePath}`);
+            if (win) win.webContents.send("fileEvent", { event: "change", filePath });
+            // Automatically scan the changed file.
+            startManualScan(filePath, "custom");
+        });
+    };
+
+    if (watcher) {
+        console.log("Stopping previous watcher...");
+        watcher.close().then(() => {
+            watcher = chokidar.watch(settings.locations, {
+                persistent: true,
+                ignoreInitial: true,
+                ignorePermissionErrors: true,
+            });
+            attachWatcherEvents(watcher);
+            settings.locations.forEach((location) => {
+                startManualScan(location, "autoScan")
+            })
+            console.log("Watcher restarted!");
+        });
+    } else {
+        watcher = chokidar.watch(settings.locations, {
+            persistent: true,
+            ignoreInitial: true,
+            ignorePermissionErrors: true,
+        });
+        attachWatcherEvents(watcher);
+        settings.locations.forEach((location) => {
+            startManualScan(location, "autoScan")
+        })
+        console.log("Watcher started!");
+    }
 }
 
+
+var settings = require("./data/settings.json")
+
+const setSettings = async (_, setting) => {
+    try {
+        console.log("Settings Written");
+        fs.writeFileSync(settingsPath, setting);
+        settings = JSON.parse(setting);
+        startWatcher();
+        scheduleScanning()
+    } catch (err) {
+        console.error("Error writing settings:", err);
+    }
+}
+const getSettings = async () => {
+    let settingsObject = fs.readFileSync(settingsPath, 'utf-8')
+    console.log("Settings Fetched")
+    return settingsObject
+}
+
+
+const getThreats = async () => {
+    let threatsObject = fs.readFileSync(quarantine, 'utf-8')
+    console.log("Threats Fetched")
+    return threatsObject
+}
+
+
+let scanStatus = {
+    status: 'idle', // idle if no manual scan / scan if manual scan
+    type: 'full', // 'full' Full Scan / 'custom' Custom Scan
+    progress: 0, // The number of files scanned
+    threatsFound: [],
+    filesToScan: 100,
+    currentFile: '',
+}
+async function getStatus() {
+    return JSON.stringify(scanStatus)
+}
 
 const getStats = async () => {
     let statsObject = fs.readFileSync(logsPath, 'utf-8')
@@ -197,6 +255,20 @@ const preloadCsv = async () => {
     }
 };
 
+
+function createWindow() {
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    })
+
+    win.loadFile('./build/index.html');
+}
+
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
@@ -214,7 +286,7 @@ app.whenReady().then(() => {
     });
     try {
         settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-        global.settings  = settings ; 
+        global.settings = settings;
         console.log("Settings Loaded:", settings);
     } catch (err) {
         console.error("Error loading settings:", err);
@@ -227,7 +299,7 @@ app.whenReady().then(() => {
 
     // Pre-load CSV database.
     preloadCsv();
-
+    scheduleScanning()
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
