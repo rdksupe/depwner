@@ -24,7 +24,7 @@
 				'A data-stealing malware variant focused on capturing sensitive information, such as login credentials and financial data, from infected systems, often distributed through malicious websites and phishing emails.'
 		},
 		{
-			name: 'virus2.exe',
+			name: 'virus2.exelkflkdhhrwerkhkwhefkwheklhwklehkwehtkhtekhjkth',
 			type: 'dangerous Virus',
 			oldPath: '/some/path/bruh',
 			hash: '',
@@ -106,6 +106,19 @@
 {/if}
 
 <style>
+	button {
+		overflow: hidden;
+	}
+	button div {
+		display: grid;
+		place-items: center;
+	}
+	button div h2 {
+		display: block;
+		text-overflow: ellipsis;
+		overflow-wrap: anywhere;
+		padding: min(1.5vh, 1.5vw);
+	}
 	h1 {
 		font-size: min(5vh, 5vw);
 		font-weight: 800;
@@ -115,7 +128,7 @@
 	.mainCont {
 		display: grid;
 		width: 80vw;
-		grid-template-columns: repeat(auto-fill, minmax(min(30vh, 30vw), 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(21vh, 21vw), 1fr));
 		gap: min(5vh, 5vw);
 		place-items: center;
 		padding: min(5vh, 5vw);
@@ -130,12 +143,12 @@
 		/* padding: min(5vh, 5vw); */
 
 		:global(svg) {
-			--size: min(15vh, 15vw);
+			--size: min(10vh, 10vw);
 			height: var(--size);
 			width: var(--size);
 		}
 		h2 {
-			font-size: min(3.5vh, 3.5vw);
+			font-size: min(2vh, 2vw);
 			font-weight: 600;
 		}
 	}
