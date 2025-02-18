@@ -195,7 +195,7 @@ app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
-    ipcMain.handle("getScanStatus", getScanStatus)
+    // ipcMain.handle("getScanStatus", getScanStatus)
     ipcMain.on("setSettings", setSettings)
     ipcMain.on("startManualScan", (_, pathToScan, type) => {
         startManualScan(pathToScan, type);
@@ -208,6 +208,7 @@ app.whenReady().then(() => {
     });
     try {
         settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+        global.settings  = settings ; 
         console.log("Settings Loaded:", settings);
     } catch (err) {
         console.error("Error loading settings:", err);
