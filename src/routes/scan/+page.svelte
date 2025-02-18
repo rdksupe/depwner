@@ -32,12 +32,55 @@
 
 	import FullScan from '../../components/+FullScan.svelte';
 	import CustomScan from '../../components/+CustomScan.svelte';
+	import { RefreshCcw } from 'lucide-svelte';
 </script>
 
-{#if status.status == 'scan'}
-	yo
-{:else}
-	<div class="mainCont grid text-center">
+<div class="mainCont grid text-center {status.status == 'scan' ? 'scanning' : ''}">
+	{#if status.status == 'scan'}
+		<div class="scanPannel row-span-2">
+			<div>
+				<h1 class="flex items-center justify-center gap-2">
+					{#if status.type == 'full'}
+						Full Scan in Progress
+					{:else if status.type == 'custom'}
+						Custom Scan in Progress
+					{/if}
+					<div class="spin">
+						<RefreshCcw size="1.5rem" />
+					</div>
+				</h1>
+				<div class="statusData">
+					<p class="key font-bold">Files Scanned:</p>
+					&nbsp;
+					<p>
+						{status.progress}/{status.filesToScan}
+					</p>
+				</div>
+				<div class="statusData">
+					<p class="key font-bold">Threats Found:</p>
+					&nbsp;
+					<p>
+						{status.threatsFound}
+					</p>
+				</div>
+				<div class="statusData">
+					<p class="key font-bold">Scanning:</p>
+					<p dir="rtl" class="value currentFile">
+						{status.currentFile}
+					</p>
+				</div>
+				<div class="progressBar">
+					<div class="progressBack relative">
+						<div
+							class="progressBack progress absolute"
+							style="right:{100 - (status.progress * 100) / status.filesToScan}%;"
+						></div>
+					</div>
+					<p><span>{Math.round((status.progress * 1000) / status.filesToScan) / 10}</span>%</p>
+				</div>
+			</div>
+		</div>
+	{:else}
 		<button
 			class="scanButton row-start-1"
 			onclick={() => {
@@ -60,55 +103,55 @@
 				<p>Scan a particular File or Folder</p>
 			</div>
 		</button>
-		<div class="statusPannel row-span-2">
-			<!-- <button class="lastReportButton">Last Scan Report</button> -->
-			<h3>Active Hash Datasets</h3>
-			<div class="grid place-items-center">
-				<div>
-					{#each hashDatabases as hashDatabase}
-						<div class="entry flex items-center justify-end">
-							<p><span class="font-bold">{hashDatabase}</span>&nbsp;&nbsp;Active</p>
-							<div class="pinger relative">
-								<div class="pinger animate-ping-monitoring absolute"></div>
-							</div>
+	{/if}
+	<div class="statusPannel row-span-2">
+		<!-- <button class="lastReportButton">Last Scan Report</button> -->
+		<h3>Active Hash Datasets</h3>
+		<div class="grid place-items-center">
+			<div>
+				{#each hashDatabases as hashDatabase}
+					<div class="entry flex items-center justify-end">
+						<p><span class="font-bold">{hashDatabase}</span>&nbsp;&nbsp;Active</p>
+						<div class="pinger relative">
+							<div class="pinger animate-ping-monitoring absolute"></div>
 						</div>
-					{/each}
-				</div>
+					</div>
+				{/each}
 			</div>
-			<h3 class="mt-[2vh]">Active Yara Datasets</h3>
-			<div class="grid place-items-center">
-				<div>
-					{#each yaraDatabases as yaraDatabase}
-						<div class="entry flex items-center justify-end">
-							<p><span class="font-bold">{yaraDatabase}</span>&nbsp;&nbsp;Active</p>
-							<div class="pinger relative">
-								<div class="pinger animate-ping-monitoring absolute"></div>
-							</div>
+		</div>
+		<h3 class="mt-[2vh]">Active Yara Datasets</h3>
+		<div class="grid place-items-center">
+			<div>
+				{#each yaraDatabases as yaraDatabase}
+					<div class="entry flex items-center justify-end">
+						<p><span class="font-bold">{yaraDatabase}</span>&nbsp;&nbsp;Active</p>
+						<div class="pinger relative">
+							<div class="pinger animate-ping-monitoring absolute"></div>
 						</div>
-					{/each}
-				</div>
+					</div>
+				{/each}
 			</div>
 		</div>
 	</div>
-	{#if status.status == 'full'}
-		<FullScan bind:option={status.status} />
-		<button
-			aria-label="close popup"
-			onclick={() => {
-				status.status = 'idle';
-			}}
-			class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
-		></button>
-	{:else if status.status == 'custom'}
-		<CustomScan bind:option={status.status} />
-		<button
-			aria-label="close popup"
-			onclick={() => {
-				status.status = 'idle';
-			}}
-			class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
-		></button>
-	{/if}
+</div>
+{#if status.status == 'full'}
+	<FullScan bind:option={status.status} />
+	<button
+		aria-label="close popup"
+		onclick={() => {
+			status.status = 'idle';
+		}}
+		class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
+	></button>
+{:else if status.status == 'custom'}
+	<CustomScan bind:option={status.status} />
+	<button
+		aria-label="close popup"
+		onclick={() => {
+			status.status = 'idle';
+		}}
+		class="absolute left-0 top-0 z-10 h-[100vh] w-[100vw] bg-black opacity-60"
+	></button>
 {/if}
 
 <style>
