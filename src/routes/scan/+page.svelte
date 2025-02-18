@@ -33,6 +33,22 @@
 		status = JSON.parse(statusObj);
 	});
 
+	let interval = $state(15000)
+	$effect(()=>{
+		console.log("Effect called")
+		console.log(status)
+	
+		const updateStatus = setInterval(async()=>{
+			if(JSON.parse(JSON.stringify(status)).status == 'scan'){
+				interval = 1000;
+			}else{
+				interval = 15000;
+			}
+			const statusObj = await depwnerStatus.getScanStatus();
+				status = JSON.parse(statusObj);
+		},interval)
+	})
+
 	import FullScan from '../../components/+FullScan.svelte';
 	import CustomScan from '../../components/+CustomScan.svelte';
 	import { RefreshCcw } from 'lucide-svelte';

@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"chokidar": "^4.0.3",
+		"node-cron": "^3.0.3",
 		"sqlite3": "^5.1.7"
 	}
 }

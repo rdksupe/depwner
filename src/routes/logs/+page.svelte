@@ -20,11 +20,13 @@
 		return i;
 	});
 	onMount(async () => {
-		let statsObj = await JSON.parse(depwnerStatus.getStats());
-		logs = statsObj;
+		const statsObj = await depwnerStatus.getStats();
+		logs = JSON.parse(statsObj);
+		console.log(statsObj)
 		const threatResponse = await depwnerStatus.getThreats();
 		const threatArr = JSON.parse(threatResponse);
 		threats = threatArr.length;
+		console.log(threatArr.length);
 	});
 </script>
 

@@ -6,6 +6,7 @@ const chokidar = require('chokidar');
 const settingsPath = path.join(__dirname, './data/settings.json');
 const logsPath = path.join(__dirname, './data/logs.json');
 const quarantine = path.join(__dirname, './data/quarantine.json');
+const cron = require('node-cron');
 
 let win;
 
@@ -35,15 +36,14 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        // Dynamically import scanner.mjs for scanInput.
-        const { scanInput } = await import('./scanner/scanner.mjs');
+        const { scanInput } = await import('./scanner/scanner.cjs');
         const result = await scanInput(options);
         global.scanStatus = 'completed'
 
     } catch (err) {
         console.error("Error during manual scan:", err);
         global.scanStatus.status = 'idle';
-        if (win) win.webContents.send("scanStatus", manualScanStatus);
+        // if (win) win.webContents.send("scanStatus", manualScanStatus);
     }
 };
 
@@ -108,6 +108,7 @@ const setSettings = async (_, setting) => {
         fs.writeFileSync(settingsPath, setting);
         settings = JSON.parse(setting);
         startWatcher();
+        scheduleScanning()
     } catch (err) {
         console.error("Error writing settings:", err);
     }
@@ -167,13 +168,17 @@ const openFolderDialog = async () => {
 // NEW: Pre-load CSV in app.whenReady() for faster future scans.
 const preloadCsv = async () => {
     try {
-        const { loadCsvToBloom } = await import('./scanner/scanner.mjs');
-        // Use default CSV path as specified in run_scan.js ("./full.csv")
-        const csvData = await loadCsvToBloom("./scanner/full.csv");
+        const { loadCsvToBloom } = await import('./scanner/scanner.cjs');
+        // Initialize database and import CSV if needed
+        const dbPath = path.join(__dirname, 'scanner', 'malware_hashes.db');
+        const csvPath = path.join(__dirname, 'scanner', 'full.csv');
+        
+        // Try to load DB first, if it fails or is empty, it will import from CSV
+        const csvData = await loadCsvToBloom(fs.existsSync(dbPath) ? dbPath : csvPath);
         global.preloadedCsvData = csvData;
-        console.log("CSV pre-loaded for faster future scans.");
+        console.log("Database initialized successfully");
     } catch (err) {
-        console.error("Error pre-loading CSV:", err);
+        console.error("Error initializing database:", err);
     }
 };
 
@@ -221,7 +226,7 @@ app.whenReady().then(() => {
 
     // Pre-load CSV database.
     preloadCsv();
-
+    scheduleScanning()
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow()
