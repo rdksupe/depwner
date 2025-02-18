@@ -11,14 +11,6 @@ let win;
 
 let watcher = null;
 
-///////////// TODO Begin //////////////////
-//
-// 0) hashChecking and yaraChecking
-// 1) setScanStatus
-// 2) startManualScan
-//
-//////////// TODO End ////////////////////
-
 function startWatcher() {
     if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
         console.warn("No directories configured for watching.");
