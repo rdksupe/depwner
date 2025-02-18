@@ -44,6 +44,7 @@ function startWatcher() {
                 ignorePermissionErrors: true,
             });
             attachWatcherEvents(watcher);
+            startManualScan(settings.locations, "autoScan")
             console.log("Watcher restarted!");
         });
     } else {
@@ -53,6 +54,7 @@ function startWatcher() {
             ignorePermissionErrors: true,
         });
         attachWatcherEvents(watcher);
+        startManualScan(settings.locations, "autoScan")
         console.log("Watcher started!");
     }
 }
@@ -207,6 +209,7 @@ app.whenReady().then(() => {
     } catch (err) {
         console.error("Error loading settings:", err);
     }
+
     createWindow()
 
     console.log("Main window loaded, starting watcher...");
