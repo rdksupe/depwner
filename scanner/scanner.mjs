@@ -93,11 +93,14 @@ function computeHashes(filePath) {
   }
 }
 
-// Run YARA scan using an external command.
+// Modify runYaraScan to check settings
 function runYaraScan(filePath, rulesPath = "./output.yarc") {
+  if (!global.settings?.yara) {
+    return null;
+  }
+
   try {
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    // Update the command to point to the YARA binary inside the scanner directory.
     const cmd = path.join(__dirname, "yr");
     const args = ["scan", "-C", rulesPath, filePath];
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
@@ -282,8 +285,10 @@ function formatMem(usage) {
   };
 }
 
-// Simplified scanInput - remove autoWhitelist option
+// Update scanInput to load settings
 export async function scanInput(options) {
+  // loadSettings(); // Load settings at start
+  
   // options: { dbPath, yaraPath, filePath, folderPath }
   if (!options.filePath && !options.folderPath) {
     throw new Error("Either filePath or folderPath option is required");
@@ -320,6 +325,7 @@ export async function scanInput(options) {
       options.yaraPath || "./output.yarc"
     );
   }
+  console.log("Yara status" + global.settings.yara)
 
   console.log("Scan completed in", (Date.now() - startTime) / 1000, "seconds");
   console.log("Final Memory Usage:", formatMem(process.memoryUsage()));
