@@ -35,13 +35,15 @@
 		<!-- <p>You can set your preferences here.</p> -->
 		<div class="grid justify-center">
 			<div class="headingInfo">
-				<h2>YARA Rules Based Detection</h2>
+				<h2>Advanced Dataset</h2>
 				<button>
 					<Info />
 				</button>
 			</div>
 			{#if !settings.yara}
 				<p class="text-catp-red">Only disable if facing performance issues</p>
+			{:else}
+				<p>Enabling may hinder performance on outdated systems</p>
 			{/if}
 			<div class="settingsField">
 				<h3>Enable</h3>
@@ -152,14 +154,6 @@
 			}
 		}
 	}
-	/* .addPath { */
-	/* 	background: rgb(var(--ctp-crust)); */
-	/* 	border-radius: 1vh; */
-	/* 	padding: 0 min(1.5vh, 1.7vw); */
-	/* 	font-size: min(3vh, 3vw); */
-	/* 	font-weight: 700; */
-	/* 	border: 0.2vh solid rgb(var(--ctp-crust)); */
-	/* } */
 	.locationSettings button {
 		background: rgb(var(--ctp-mantle));
 		color: rgb(var(--ctp-blue));
@@ -175,26 +169,6 @@
 		background: rgb(var(--ctp-blue));
 		color: rgb(var(--ctp-mantle));
 	}
-	/* #locationInput { */
-	/* 	background: rgb(var(--ctp-crust)); */
-	/* 	border-radius: 1vh; */
-	/* 	padding: min(1vh, 1vw) min(1vw); */
-	/* 	font-size: min(2vh, 1.9vw); */
-	/* 	font-weight: 500; */
-	/* 	border: 0.2vh solid rgb(var(--ctp-crust)); */
-	/* 	width: stretch; */
-	/* } */
-	/* select { */
-	/* 	background: rgb(var(--ctp-crust)); */
-	/* 	border-radius: 1vh; */
-	/* 	padding: 0 min(1vw); */
-	/* 	font-size: min(2vh, 1.9vw); */
-	/* 	font-weight: 500; */
-	/* 	border: 0.2vh solid rgb(var(--ctp-crust)); */
-	/* } */
-	/* select:focus { */
-	/* 	border: 0.2vh solid rgb(var(--ctp-text)); */
-	/* } */
 	.headingInfo {
 		display: flex;
 		align-items: center;
@@ -227,7 +201,7 @@
 		font-size: min(3vh, 2.5vw);
 	}
 	h2 {
-		font-size: min(4vh, 4vw);
+		font-size: min(3vh, 3vw);
 		font-weight: 800;
 	}
 	/* h1 { */
