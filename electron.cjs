@@ -172,7 +172,7 @@ const preloadCsv = async () => {
         // Initialize database and import CSV if needed
         const dbPath = path.join(__dirname, 'scanner', 'malware_hashes.db');
         const csvPath = path.join(__dirname, 'scanner', 'full.csv');
-        
+
         // Try to load DB first, if it fails or is empty, it will import from CSV
         const csvData = await loadCsvToBloom(fs.existsSync(dbPath) ? dbPath : csvPath);
         global.preloadedCsvData = csvData;
