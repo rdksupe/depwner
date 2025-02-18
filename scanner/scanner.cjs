@@ -7,6 +7,7 @@ const { spawnSync } = require("child_process");
 const process = require("process");
 const sqlite3 = require('sqlite3');
 const { promisify } = require('util');
+const { showThreatNotification, showScanStartNotification, showScanCompleteNotification } = require('./notifications.cjs');
 
 function loadWhitelist() {
   const whitelistPath = path.join(__dirname, 'whitelist.txt');
@@ -383,6 +384,8 @@ async function scanFolder(folder, dbConnection, yaraRules) {
   }
 
   const totalFiles = allFiles.length;
+  showScanStartNotification(totalFiles);
+  
   const results = {
     scan_summary: {
       total_files: totalFiles,
@@ -415,6 +418,13 @@ async function scanFolder(folder, dbConnection, yaraRules) {
       results.matched_files.push(scanResult.result);
 
       global.scanStatus.threatsFound.push(scanResult.result.file);
+
+      // Show notification for detected threat
+      showThreatNotification(
+        path.basename(scanResult.result.file),
+        scanResult.result.quarantined
+      );
+
       ////////////////////////////////////////////////
       ///////// NOTIFICATION /////////////////////////
       ////////////////////////////////////////////////
@@ -445,7 +455,13 @@ async function scanFolder(folder, dbConnection, yaraRules) {
   results.scan_summary.total_matches = totalMatches;
   results.scan_summary.match_percentage = totalFiles > 0 ? (totalMatches / totalFiles) * 100 : 0;
 
+  showScanCompleteNotification(
+    totalFiles, 
+    results.scan_summary.total_matches
+  );
+  
   console.log(JSON.stringify(results, null, 2));
+  return results;
 }
 
 function formatMem(usage) {
