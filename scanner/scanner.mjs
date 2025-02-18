@@ -93,11 +93,14 @@ function computeHashes(filePath) {
   }
 }
 
-// Run YARA scan using an external command.
+// Modify runYaraScan to check settings
 function runYaraScan(filePath, rulesPath = "./output.yarc") {
+  if (!global.settings?.yara) {
+    return null;
+  }
+
   try {
     const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    // Update the command to point to the YARA binary inside the scanner directory.
     const cmd = path.join(__dirname, "yr");
     const args = ["scan", "-C", rulesPath, filePath];
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
@@ -119,6 +122,37 @@ function runYaraScan(filePath, rulesPath = "./output.yarc") {
 function addToWhitelist(hash) {
   const whitelistPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'whitelist.txt');
   fs.appendFileSync(whitelistPath, hash + '\n');
+}
+
+// Add new quarantine functions
+function moveToQuarantine(filePath) {
+  const quarantinePath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/quarantine');
+  if (!fs.existsSync(quarantinePath)) {
+    fs.mkdirSync(quarantinePath, { recursive: true });
+  }
+  
+  const fileName = path.basename(filePath);
+  const newPath = path.join(quarantinePath, fileName);
+  
+  try {
+    fs.renameSync(filePath, newPath);
+    return newPath;
+  } catch (err) {
+    console.error(`Failed to move file to quarantine: ${err}`);
+    return null;
+  }
+}
+
+function updateQuarantineJson(fileInfo) {
+  const quarantineJsonPath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/quarantine.json');
+  let quarantineList = [];
+  
+  if (fs.existsSync(quarantineJsonPath)) {
+    quarantineList = JSON.parse(fs.readFileSync(quarantineJsonPath, 'utf-8'));
+  }
+
+  quarantineList.push(fileInfo);
+  fs.writeFileSync(quarantineJsonPath, JSON.stringify(quarantineList, null, 2));
 }
 
 // Modified scanFile function to automatically whitelist clean files
@@ -146,12 +180,25 @@ function scanFile(filePath, bloomDbs1, signatures, yaraRules) {
   if (!bloomDbs1) {
     const yaraResult = runYaraScan(filePath, yaraRules);
     if (yaraResult) {
+      const quarantinePath = moveToQuarantine(filePath);
+      if (quarantinePath) {
+        updateQuarantineJson({
+          name: path.basename(filePath),
+          type: "YARA Detection",
+          oldPath: filePath,
+          hash: hashes.md5,
+          yaraRule: yaraResult,
+          severiety: "",
+          deepseekResponse: ""
+        });
+      }
       return {
         matched: true,
         result: {
           type: "yara",
           matches: yaraResult,
           file: filePath,
+          quarantined: quarantinePath ? true : false
         },
       };
     }
@@ -161,6 +208,18 @@ function scanFile(filePath, bloomDbs1, signatures, yaraRules) {
   // If DB is provided, check hashes first
   // Check hash-based match
   if (bloomDbs1.md5.has(hashes.md5) && signatures[hashes.md5]) {
+    const quarantinePath = moveToQuarantine(filePath);
+    if (quarantinePath) {
+      updateQuarantineJson({
+        name: path.basename(filePath),
+        type: signatures[hashes.md5].signature || "Unknown",
+        oldPath: filePath,
+        hash: hashes.md5,
+        yaraRule: "",
+        severiety: "",
+        deepseekResponse: ""
+      });
+    }
     return {
       matched: true,
       result: {
@@ -170,6 +229,7 @@ function scanFile(filePath, bloomDbs1, signatures, yaraRules) {
         first_seen: signatures[hashes.md5].first_seen,
         signature: signatures[hashes.md5].signature,
         file: filePath,
+        quarantined: quarantinePath ? true : false
       },
     };
   }
@@ -177,12 +237,25 @@ function scanFile(filePath, bloomDbs1, signatures, yaraRules) {
   // Run YARA scan
   const yaraResult = runYaraScan(filePath, yaraRules);
   if (yaraResult) {
+    const quarantinePath = moveToQuarantine(filePath);
+    if (quarantinePath) {
+      updateQuarantineJson({
+        name: path.basename(filePath),
+        type: "YARA Detection",
+        oldPath: filePath,
+        hash: hashes.md5,
+        yaraRule: yaraResult,
+        severiety: "",
+        deepseekResponse: ""
+      });
+    }
     return {
       matched: true,
       result: {
         type: "yara",
         matches: yaraResult,
         file: filePath,
+        quarantined: quarantinePath ? true : false
       },
     };
   }
@@ -282,8 +355,10 @@ function formatMem(usage) {
   };
 }
 
-// Simplified scanInput - remove autoWhitelist option
+// Update scanInput to load settings
 export async function scanInput(options) {
+  // loadSettings(); // Load settings at start
+  
   // options: { dbPath, yaraPath, filePath, folderPath }
   if (!options.filePath && !options.folderPath) {
     throw new Error("Either filePath or folderPath option is required");
@@ -291,6 +366,7 @@ export async function scanInput(options) {
 
   const startTime = Date.now();
   console.log("Initial Memory Usage:", formatMem(process.memoryUsage()));
+  console.log(global.quarantine)
 
   let bloomFilters = null;
   let signatures = null;
@@ -320,6 +396,7 @@ export async function scanInput(options) {
       options.yaraPath || "./output.yarc"
     );
   }
+  console.log("Yara status" + global.settings.yara)
 
   console.log("Scan completed in", (Date.now() - startTime) / 1000, "seconds");
   console.log("Final Memory Usage:", formatMem(process.memoryUsage()));
