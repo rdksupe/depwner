@@ -65,9 +65,6 @@ function startWatcher() {
     }
 }
 
-async function getStatus() {
-    return scanStatus
-}
 
 var settings = require("./data/settings.json")
 
@@ -102,6 +99,10 @@ let scanStatus = {
     filesToScan: 100,
     currentFile: '',
 }
+async function getStatus() {
+    return JSON.stringify(scanStatus)
+}
+
 const startManualScan = async (pathToScan, type) => {
     console.log("Starting manual scan:", pathToScan, type);
 
@@ -195,7 +196,7 @@ app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
     ipcMain.handle("getThreats", getThreats)
-    ipcMain.handle("getScanStatus", getScanStatus)
+    ipcMain.handle("getScanStatus", getStatus)
     ipcMain.on("setSettings", setSettings)
     ipcMain.on("startManualScan", (_, pathToScan, type) => {
         startManualScan(pathToScan, type);
