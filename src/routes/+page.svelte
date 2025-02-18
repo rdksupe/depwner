@@ -16,7 +16,8 @@
 	const statusMessages = {
 		Okay: {
 			title: 'Secure',
-			message: 'No Threats were found.<br/>All Services are Active',
+			message:
+				'No Threats were found.<br/><span class="text-lime-300">All Services are Active</span>',
 			fix: '',
 			link: '',
 			icon: ShieldCheckIcon,
@@ -51,13 +52,14 @@
 			color: 'rgb(var(--ctp-yellow))'
 		},
 		YaraDisabled: {
-			title: 'Feature Disabled',
-			message: 'Active Monitoring was disabled',
+			title: 'Secure',
+			message:
+				'No Threats were found.<br/><span class="text-catp-peach">Advanced Database is Disabled though</span>',
 			fix: 'Enable Now',
 			link: 'settings.html',
-			icon: ShieldAlertIcon,
+			icon: ShieldCheckIcon,
 			backIcon: ShieldIcon,
-			color: 'rgb(var(--ctp-peach))'
+			color: 'oklch(0.897 0.196 126.665)'
 		}
 		// FeatureDisabled: {
 		// 	title: 'Features Disabled',
@@ -72,7 +74,7 @@
 
 	// let settings = $state();
 	let settings = $state({
-		// 	yara: true,
+		yara: true,
 		schedule: {
 			active: true,
 			freq: 'weekly',
@@ -152,12 +154,7 @@
 			<div class="statusButtons">
 				<a href="settings.html" class="statusCardList">
 					<p>Active Monitoring</p>
-					<div
-						class="flex items-center"
-						style="--pingColor:{settings.yara
-							? 'oklch(0.897 0.196 126.665)'
-							: 'rgb(var(--ctp-peach))'}"
-					>
+					<div class="flex items-center" style="--pingColor:oklch(0.897 0.196 126.665)">
 						<p>{settings.yara ? 'Active' : 'Disabled'}</p>
 						<div class="yara_ping relative">
 							<div class="yara_ping animate-ping-monitoring absolute"></div>
