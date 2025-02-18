@@ -11,6 +11,42 @@ let win;
 
 let watcher = null;
 
+const startManualScan = async (pathToScan, type) => {
+    console.log("Starting manual scan:", pathToScan, type);
+
+    global.scanStatus = {
+        status: 'scan',
+        type: type,
+        progress: 0,
+        threatsFound: 0,
+        currentFile: '',
+    }
+
+    let options;
+    if (settings.yara) {
+        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
+    } else {
+        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/overFit.csv", yaraPath: "" };
+    }
+
+    try {
+        if (fs.statSync(pathToScan).isDirectory()) {
+            options.folderPath = pathToScan;
+        } else {
+            options.filePath = pathToScan;
+        }
+        // Dynamically import scanner.mjs for scanInput.
+        const { scanInput } = await import('./scanner/scanner.mjs');
+        const result = await scanInput(options);
+        global.scanStatus = 'completed'
+
+    } catch (err) {
+        console.error("Error during manual scan:", err);
+        global.scanStatus.status = 'idle';
+        if (win) win.webContents.send("scanStatus", manualScanStatus);
+    }
+};
+
 function startWatcher() {
     if (!settings || !Array.isArray(settings.locations) || settings.locations.length === 0) {
         console.warn("No directories configured for watching.");
@@ -44,7 +80,9 @@ function startWatcher() {
                 ignorePermissionErrors: true,
             });
             attachWatcherEvents(watcher);
-            startManualScan(settings.locations, "autoScan")
+            settings.locations.forEach((location) => {
+                startManualScan(location, "autoScan")
+            })
             console.log("Watcher restarted!");
         });
     } else {
@@ -54,7 +92,9 @@ function startWatcher() {
             ignorePermissionErrors: true,
         });
         attachWatcherEvents(watcher);
-        startManualScan(settings.locations, "autoScan")
+        settings.locations.forEach((location) => {
+            startManualScan(location, "autoScan")
+        })
         console.log("Watcher started!");
     }
 }
@@ -98,55 +138,6 @@ async function getStatus() {
     return JSON.stringify(scanStatus)
 }
 
-const startManualScan = async (pathToScan, type) => {
-    console.log("Starting manual scan:", pathToScan, type);
-
-    global.scanStatus = {
-        status: 'scan',
-        type: type,
-        progress: 0,
-        threatsFound: 0,
-        currentFile: '',
-    }
-
-    let options;
-    if (settings.yara) {
-        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
-    } else {
-        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/overFit.csv", yaraPath: "" };
-    }
-
-    try {
-        if (fs.statSync(pathToScan).isDirectory()) {
-            options.folderPath = pathToScan;
-        } else {
-            options.filePath = pathToScan;
-        }
-        // Dynamically import scanner.mjs for scanInput.
-        const { scanInput } = await import('./scanner/scanner.mjs');
-        const result = await scanInput(options);
-        global.scanStatus = 'completed'
-
-    } catch (err) {
-        console.error("Error during manual scan:", err);
-        global.scanStatus.status = 'idle';
-        if (win) win.webContents.send("scanStatus", manualScanStatus);
-    }
-};
-
-
-function createWindow() {
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
-    })
-
-    win.loadFile('./build/index.html');
-}
 
 
 const getStats = async () => {
@@ -188,6 +179,20 @@ const preloadCsv = async () => {
     }
 };
 
+
+function createWindow() {
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+        }
+    })
+
+    win.loadFile('./build/index.html');
+}
+
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
@@ -205,7 +210,7 @@ app.whenReady().then(() => {
     });
     try {
         settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-        global.settings  = settings ; 
+        global.settings = settings;
         console.log("Settings Loaded:", settings);
     } catch (err) {
         console.error("Error loading settings:", err);
