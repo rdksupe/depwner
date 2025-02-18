@@ -61,6 +61,7 @@
 	}
 	p {
 		font-size: min(2.5vh, 2.5vw);
+		overflow-wrap: anywhere;
 	}
 	p span {
 		font-size: min(3vh, 3vw);
