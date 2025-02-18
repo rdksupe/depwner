@@ -118,7 +118,9 @@
 			color: var(--ctp-macchiato-crust);
 		}
 		.navTile:hover {
-			background: var(--ctp-macchiato-surface0);
+			/* background: var(--ctp-macchiato-crust); */
+			background: var(--ctp-macchiato-crust);
+			color: var(--ctp-macchiato-blue);
 		}
 		.top {
 			:global(svg) {
