@@ -155,6 +155,60 @@
 {/if}
 
 <style>
+	.progressBar {
+		display: flex;
+		align-items: center;
+		gap: 0.7vw;
+		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		.progressBack {
+			width: stretch;
+			background: repeating-linear-gradient(
+					135deg,
+					rgb(var(--ctp-surface0)) 0 1vh,
+					rgb(var(--ctp-surface2)) 0 2vh
+				)
+				0/100%;
+			border-radius: 0.5vh;
+			height: min(1.6vh, 1.6vw);
+			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		}
+		.progress {
+			background: repeating-linear-gradient(135deg, #658ce6 0 1vh, rgb(var(--ctp-blue)) 0 2vh)
+				0/100% no-repeat;
+			left: 0;
+			right: 50%;
+		}
+	}
+	.statusData {
+		width: 40vw;
+		display: flex;
+		.value {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			/* white-space: nowrap; */
+			text-wrap: nowrap;
+			overflow-wrap: break-word;
+		}
+	}
+	@keyframes spin {
+		to {
+			transform: rotate(-360deg);
+		}
+	}
+	.spin {
+		animation: spin 1.5s linear infinite;
+	}
+	.scanPannel {
+		width: 100%;
+		background: rgb(var(--ctp-base));
+		border-radius: 1.5vh;
+		display: grid;
+		place-items: center;
+	}
+	h1 {
+		font-size: min(3vh, 2.5vw);
+		font-weight: 800;
+	}
 	.entry {
 		margin: 0.5vh 0;
 	}
@@ -162,6 +216,20 @@
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 1fr 1fr;
 		gap: min(2vh, 2vw);
+	}
+	.mainCont.scanning {
+		grid-template-columns: 1.5fr 0.5fr;
+		.statusPannel {
+			width: max-content;
+			padding: 5vh 6vw;
+		}
+		h3 {
+			font-size: min(3vh, 2.5vw);
+			font-weight: 700;
+		}
+		p {
+			font-size: min(1.8vh, 1.8vw);
+		}
 	}
 	.scanButton {
 		background: rgb(var(--ctp-base));
