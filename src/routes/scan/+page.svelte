@@ -28,11 +28,15 @@
 			'/home/harshit/Videos/Gravity Falls/Gravity Falls Season 1 WEB-HD 720p x264 [Pahe.in]/Gravity.Falls.S01E01.720p.WEB-HD.x264.150MB-Pahe.in.mkv'
 	});
 
+	onMount(async () => {
+		const statusObj = depwnerStatus.getScanStatus();
+		status = JSON.parse(statusObj);
 	});
 
 	import FullScan from '../../components/+FullScan.svelte';
 	import CustomScan from '../../components/+CustomScan.svelte';
 	import { RefreshCcw } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 </script>
 
 <div class="mainCont grid text-center {status.status == 'scan' ? 'scanning' : ''}">
