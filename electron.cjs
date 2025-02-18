@@ -18,15 +18,21 @@ const startManualScan = async (pathToScan, type) => {
         status: 'scan',
         type: type,
         progress: 0,
-        threatsFound: 0,
+        threatsFound: [],
         currentFile: '',
     }
 
     let options;
     if (settings.yara) {
-        options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
+        options = { 
+            dbPath: "./scanner/malware_hashes.db", 
+            yaraPath: "./scanner/output.yarc" 
+        };
     } else {
-        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/overFit.csv", yaraPath: "" };
+        options = { 
+            dbPath: "./scanner/malware_hashes.db", 
+            yaraPath: "" 
+        };
     }
 
     try {
@@ -35,8 +41,7 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        // Dynamically import scanner.mjs for scanInput.
-        const { scanInput } = await import('./scanner/scanner.mjs');
+        const { scanInput } = await import('./scanner/scanner.cjs');
         const result = await scanInput(options);
         global.scanStatus = 'completed'
 
@@ -167,13 +172,17 @@ const openFolderDialog = async () => {
 // NEW: Pre-load CSV in app.whenReady() for faster future scans.
 const preloadCsv = async () => {
     try {
-        const { loadCsvToBloom } = await import('./scanner/scanner.mjs');
-        // Use default CSV path as specified in run_scan.js ("./full.csv")
-        const csvData = await loadCsvToBloom("./scanner/full.csv");
+        const { loadCsvToBloom } = await import('./scanner/scanner.cjs');
+        // Initialize database and import CSV if needed
+        const dbPath = path.join(__dirname, 'scanner', 'malware_hashes.db');
+        const csvPath = path.join(__dirname, 'scanner', 'full.csv');
+        
+        // Try to load DB first, if it fails or is empty, it will import from CSV
+        const csvData = await loadCsvToBloom(fs.existsSync(dbPath) ? dbPath : csvPath);
         global.preloadedCsvData = csvData;
-        console.log("CSV pre-loaded for faster future scans.");
+        console.log("Database initialized successfully");
     } catch (err) {
-        console.error("Error pre-loading CSV:", err);
+        console.error("Error initializing database:", err);
     }
 };
 
