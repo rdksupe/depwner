@@ -7,6 +7,7 @@ const { spawnSync } = require("child_process");
 const process = require("process");
 const sqlite3 = require('sqlite3');
 const { promisify } = require('util');
+const { showThreatNotification, showScanStartNotification, showScanCompleteNotification } = require('./notifications.cjs');
 
 function loadWhitelist() {
   const whitelistPath = path.join(__dirname, 'whitelist.txt');
@@ -185,7 +186,9 @@ function runYaraScan(filePath, rulesPath = "./output.yarc") {
 
   try {
     const cmd = path.join(__dirname, "yr");
+    console.log(cmd) ; 
     const args = ["scan", "-C", rulesPath, filePath];
+    console.log(args);
     const result = spawnSync(cmd, args, { encoding: "utf-8" });
     console.log("YARA scan result:", result);
     if (result.status === 0 && result.stdout.trim()) {
@@ -373,7 +376,7 @@ function getAllFiles(dir) {
   return results;
 }
 
-async function scanFolder(folder, dbConnection , yaraRules) {
+async function scanFolder(folder, dbConnection, yaraRules) {
   const allFiles = getAllFiles(folder);
   if (allFiles.length === 0) {
     console.log(JSON.stringify({ error: "No files found to scan." }, null, 2));
@@ -381,6 +384,8 @@ async function scanFolder(folder, dbConnection , yaraRules) {
   }
 
   const totalFiles = allFiles.length;
+  showScanStartNotification(totalFiles);
+  
   const results = {
     scan_summary: {
       total_files: totalFiles,
@@ -413,6 +418,13 @@ async function scanFolder(folder, dbConnection , yaraRules) {
       results.matched_files.push(scanResult.result);
 
       global.scanStatus.threatsFound.push(scanResult.result.file);
+
+      // Show notification for detected threat
+      showThreatNotification(
+        path.basename(scanResult.result.file),
+        scanResult.result.quarantined
+      );
+
       ////////////////////////////////////////////////
       ///////// NOTIFICATION /////////////////////////
       ////////////////////////////////////////////////
@@ -443,7 +455,13 @@ async function scanFolder(folder, dbConnection , yaraRules) {
   results.scan_summary.total_matches = totalMatches;
   results.scan_summary.match_percentage = totalFiles > 0 ? (totalMatches / totalFiles) * 100 : 0;
 
+  showScanCompleteNotification(
+    totalFiles, 
+    results.scan_summary.total_matches
+  );
+  
   console.log(JSON.stringify(results, null, 2));
+  return results;
 }
 
 function formatMem(usage) {
@@ -462,6 +480,10 @@ async function scanInput(options) {
     throw new Error("Either filePath or folderPath option is required");
   }
 
+  if (!options.whitelistPath) {
+    console.log("No whitelist path provided, using default whitelist location");
+  }
+
   const startTime = Date.now();
   console.log("Initial Memory Usage:", formatMem(process.memoryUsage()));
   console.log(global.quarantine);
@@ -475,20 +497,20 @@ async function scanInput(options) {
     console.log("No database provided, using YARA-only scan");
   }
 
+  const yaraRules = options.yaraPath || "./output.yarc";
+
   let results;
   if (options.filePath) {
     results = await scanFile(
       options.filePath,
       dbConnection,
-      null,
-      options.yaraPath || "./output.yarc"
+      yaraRules
     );
   } else {
     results = await scanFolder(
       options.folderPath,
       dbConnection,
-      null,
-      options.yaraPath || "./output.yarc"
+      yaraRules
     );
   }
   console.log("Yara status" + global.settings.yara);
@@ -506,7 +528,7 @@ module.exports = {
 if (require.main === module) {
   (async () => {
     const args = process.argv.slice(2);
-    let dbPath = null, yaraPath = "./output.yarc", filePath = null, folderPath = null;
+    let dbPath = null, yaraPath = "./output.yarc", filePath = null, folderPath = null, whitelistPath = null;
     
     for (let i = 0; i < args.length; i++) {
       switch (args[i]) {
@@ -522,6 +544,9 @@ if (require.main === module) {
         case "--folder":
           folderPath = args[++i];
           break;
+        case "--whitelist":
+          whitelistPath = args[++i];
+          break;
         default:
           console.error(`Unknown argument: ${args[i]}`);
           process.exit(1);
@@ -529,7 +554,7 @@ if (require.main === module) {
     }
 
     try {
-      const result = await scanInput({ dbPath, yaraPath, filePath, folderPath });
+      const result = await scanInput({ dbPath, yaraPath, filePath, folderPath, whitelistPath });
       console.log(dbPath);
       console.log(JSON.stringify(result, null, 2));
     } catch (err) {
