@@ -18,9 +18,6 @@ function showThreatNotification(fileName, isQuarantined) {
         silent: false
       }).show();
 
-      
-
-
     } else {
       // Renderer process notification
       new window.Notification(NOTIFICATION_TITLE, {
@@ -68,9 +65,8 @@ function showScanStartNotification(numFiles) {
 
 function showScanCompleteNotification(numFiles, threatsFound) {
   const NOTIFICATION_TITLE = threatsFound > 0 ? '⚠️ Scan Complete' : '✅ Scan Complete';
-  const NOTIFICATION_BODY = `Scanned ${numFiles} files.\n${
-    threatsFound > 0 ? `Found ${threatsFound} threats!` : 'No threats found.'
-  }`;
+  const NOTIFICATION_BODY = `Scanned ${numFiles} files.\n${threatsFound > 0 ? `Found ${threatsFound} threats!` : 'No threats found.'
+    }`;
 
   try {
     if (isMainProcess()) {
