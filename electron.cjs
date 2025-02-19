@@ -27,7 +27,7 @@ const startManualScan = async (pathToScan, type) => {
     if (settings.yara) {
         options = { whitelist: "./scanner/whitelist.txt", dbPath: "./scanner/full.csv", yaraPath: "./scanner/output.yarc" };
     } else {
-        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./scanner/overFit.csv", yaraPath: "" };
+        options = { whitelist: "./scanner/overWhite.txt", dbPath: "./data/hash.csv", yaraPath: "" };
     }
 
     try {

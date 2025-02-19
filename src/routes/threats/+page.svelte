@@ -19,7 +19,7 @@
 			oldPath: '/some/path/bruh/virus2.exe',
 			hash: '',
 			yaraRule: '',
-			severiety: '7.2',
+			severity: '7.2',
 			deepseekResponse:
 				'A data-stealing malware variant focused on capturing sensitive information, such as login credentials and financial data, from infected systems, often distributed through malicious websites and phishing emails.'
 		},
@@ -45,7 +45,7 @@
 			oldPath: '/some/path/bruh',
 			hash: '',
 			yaraRule: '',
-			severiety: '7.1',
+			severity: '7.1',
 			deepseekResponse: ''
 		},
 		{

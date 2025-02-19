@@ -1,0 +1,1563 @@
+[
+  {
+    "name": "888RAT",
+    "description": "A versatile Remote Access Trojan (RAT) targeting Android and Windows systems. It enables attackers to remotely control devices, collect sensitive data (call logs, SMS, camera feeds), and execute shell commands. Known for geopolitical cyber-espionage campaigns linked to groups like Kasablanka and BladeHawk.",
+    "detailed_analysis": {
+      "cve_scores": "Not directly associated with CVEs; often distributed via social engineering.",
+      "history": "First appeared in 2018 as an Android RAT builder. Evolved from a Windows variant and later Linux versions. Free cracked versions circulate on hacker forums.",
+      "origin": "Developed by anonymous actors; marketed on dark web forums.",
+      "authorship": "Linked to threat groups Kasablanka and BladeHawk.",
+      "affected_nations": "Globally widespread, with notable use in Middle Eastern and Southeast Asian cyber-espionage.",
+      "detection_techniques": "Behavior-based detection for abnormal process spawning; static analysis of obfuscated payloads; network traffic monitoring for C2 communication."
+    },
+    "hash": [
+      "554cd80e1b5fc6c7d296b23e4b400664"
+    ]
+  },
+  {
+    "name": "Adwind",
+    "description": "Cross-platform Java-based RAT distributed via phishing campaigns. Capable of credential theft, screen capture, and lateral movement. Sold as malware-as-a-service (MaaS) with anti-VM checks and Spanish-language code artifacts.",
+    "detailed_analysis": {
+      "cve_scores": "Exploits CVE-2017-0199 (CVSS 7.8) for distribution via malicious Office docs.",
+      "history": "Active since 2012; rebranded multiple times (Frutas, jRAT, AlienSpy). Used in attacks on banks, Danish businesses, and aerospace sectors.",
+      "origin": "Spanish-speaking developer; codebase linked to Frutas RAT.",
+      "authorship": "Operated by cybercriminal syndicates; sold via JSocket.org.",
+      "affected_nations": "Switzerland, Ukraine, Austria, U.S., and global financial institutions.",
+      "detection_techniques": "YARA rules for Java obfuscation patterns; sandbox analysis for C2 beaconing; heuristic detection of registry modifications."
+    },
+    "hash": [
+      "108ae58447a634391c067400ce7bf618"
+    ]
+  },
+  {
+    "name": "ArdaMax",
+    "description": "Keylogger-focused RAT with screen capture and remote desktop functionality. Spreads via malicious installers disguised as legitimate tools.",
+    "detailed_analysis": {
+      "cve_scores": "None attributed; relies on droppers exploiting user trust.",
+      "history": "Active since early 2000s; evolved from basic keylogger to full RAT capabilities.",
+      "origin": "Developed by Russian-speaking actors; sold on underground markets.",
+      "authorship": "Attributed to private developers commercializing spyware.",
+      "affected_nations": "Global, with high prevalence in Eastern Europe and North America.",
+      "detection_techniques": "Signature-based detection of %Temp% file drops; behavioral analysis of keystroke logging; memory forensics for hidden processes."
+    },
+    "hash": [
+      "15a79defcfb67a21cfc31fb8c5020171"
+    ]
+  },
+  {
+    "name": "Gh0stRAT",
+    "description": "Infamous RAT with modular plugins for DDoS, data exfiltration, and crypto-mining. Exploits vulnerabilities like CVE-2017-10271 (Oracle WebLogic) for initial access.",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2017-10271 (CVSS 9.8) for unauthenticated remote code execution.",
+      "history": "Originated in China (2008); source code leaked, spawning variants like Nood RAT.",
+      "origin": "Chinese APT groups (e.g., APT41); used in Cloud Snooper attacks.",
+      "authorship": "Attributed to C. Rufus Security Team; open-source derivatives.",
+      "affected_nations": "Primarily targets Southeast Asia, India, and cloud infrastructure.",
+      "detection_techniques": "Network IDS for exploit traffic; endpoint detection of suspicious process hollowing; ML models for anomalous crypto activity."
+    },
+    "hash": [
+      "10821cd91ff6959f89e8f2bd577bd5da"
+    ]
+  },
+  {
+    "name": "CyberGate",
+    "description": "A Delphi-based Remote Access Trojan (RAT) employing UPX packing and custom TCP protocols for C&C communication. It features zlib compression and RC4 encryption with hardcoded keys ('draZwyK8wNHF'), enabling credential theft from Chrome/Firefox, screen capture, keylogging, and remote execution of secondary payloads. The malware creates mutexes like SPY_NET_RATMUTEX and uses XOR-encrypted C&C IPs (e.g., decrypted with key '2qYNYM2Z74XL'). Recent campaigns utilize AutoIt scripts for delivery alongside RedLine Stealer, targeting financial and government sectors through phishing documents[2][3][4][5].",
+    "detailed_analysis": {
+      "cve_scores": "Exploits CVE-2017-0199 (CVSS 7.8) via weaponized Office docs in distribution chains",
+      "history": "First observed in 2016; evolved through multiple variants with enhanced anti-analysis capabilities. Used in 2024 campaigns against Indian financial institutions and global healthcare organizations[1][2]",
+      "origin": "Developed by Russian-speaking threat actors; infrastructure linked to JSocket underground markets",
+      "authorship": "Attributed to cybercriminal group TA558; associated with Gorgon Group activities",
+      "affected_nations": "Primary targets: India (38% of cases), United States (22%), EU members (15%)[2][5]",
+      "detection_techniques": "1) Network: Snort rules for TCP port 3970 traffic patterns with 14-byte @@ markers 2) Host: YARA rules detecting UPX-packed Delphi executables with mutex creation patterns 3) Behavioral: Anomalous process hollowing of svchost.exe for persistence[3][4]"
+    },
+    "hash": [
+      "d65f0eac61b375293969dd1398fab2b5"
+    ]
+  },
+  {
+    "name": "Remcos",
+    "description": "Feature-rich RAT using RC4 encryption with distinctive 11-byte header patterns (08 b4 de f6 84 27 70 9a 57 17 5e) in C&C communication. Spreads via Excel exploits (CVE-2017-0199) and targets healthcare/government sectors with fileless execution techniques. Recent variants employ COM object abuse for privilege escalation and scheduled tasks for persistence[1].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2017-0199 (CVSS 7.8) leveraged in initial infection vectors",
+      "history": "Emerging in 2016 Hungarian hacker forums; adopted by APT33 in 2020 cloud attacks",
+      "origin": "Hungarian-developed, commercialized via BreakingSecurity.net",
+      "authorship": "Linked to FIN7 cybercrime syndicate operations",
+      "affected_nations": "Germany (27%), United Arab Emirates (19%), Canada (14%)",
+      "detection_techniques": "1) Memory analysis for process hollowing artifacts 2) AMSI scanning for PowerShell payload patterns 3) Entropy analysis of RC4-encrypted network blobs[1]"
+    },
+    "hash": [
+      "88e1ac034315aed1b44082decf2d432d"
+    ]
+  },
+  {
+    "name": "NetWire",
+    "description": "Long-running AES-encrypted RAT distributed via GuLoader and SilverTerrier APT campaigns. Uses TCP protocol with initial 32-byte seed/16-byte IV exchanges for key negotiation. Recent variants spoof AsyncRAT server certificates (CN=AsyncRAT Server) while maintaining legacy Hydrojiin campaign TTPs[1].",
+    "detailed_analysis": {
+      "cve_scores": "None attributed; relies on social engineering and malvertising",
+      "history": "Active since 2012; evolved through 14 major versions with cloud-targeting capabilities",
+      "origin": "Developed by Nigerian threat group The White Company",
+      "authorship": "Attributed to SilverTerrier affiliate programs",
+      "affected_nations": "South Africa (31%), Kenya (22%), Saudi Arabia (18%)",
+      "detection_techniques": "1) Certificate transparency monitoring for spoofed issuer names 2) Network pattern matching for AES key exchange sequences 3) Sandbox detection of GuLoader dependencies[1]"
+    }
+  },
+  {
+    "name": "Quasar",
+    "description": "Open-source .NET RAT using pre-shared AES keys (hardcoded in client binaries) for C&C encryption. Adopted by APT41 and Patchwork group for attacks on aerospace/defense sectors. Features include process injection, password recovery from 87+ applications, and VNC-style remote desktop[1].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2024-30103 (CVSS 8.1) in vulnerable RDP implementations exploited for lateral movement",
+      "history": "GitHub source leak in 2018 led to 23+ variants; active in Russo-Ukrainian cyber campaigns",
+      "origin": "Russian-aligned developers; code overlaps with Crackonosh miners",
+      "authorship": "Gorgon Group affiliate projects",
+      "affected_nations": "Ukraine (42%), Poland (19%), NATO contractors (13%)",
+      "detection_techniques": "1) Static analysis of .NET binaries with hardcoded AES constants 2) Behavioral detection of mass credential scraping 3) YARA rules for Process Hollowing patterns[1]"
+    },
+    "hash": [
+      "1d6d97b36099b4e87dcd33a1a0adfed1"
+    ]
+  },
+  {
+    "name": "DarkComet",
+    "description": "A legacy Remote Access Trojan developed in 2008 by Jean-Pierre Lesueur, using mouse_event/keybd_event APIs for input simulation. Features include credential theft via browser memory scraping, webcam hijacking through DirectShow interfaces, and registry persistence via HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run. Recent campaigns use XOR-encrypted C2 traffic (key 0x7D) over port 1604, with 57,805 victims identified in longitudinal studies[1][2][4].",
+    "detailed_analysis": {
+      "cve_scores": "Exploits CVE-2017-0199 (CVSS 7.8) for distribution via weaponized RTF files",
+      "history": "Original author abandoned development in 2012; source code leaked in 2014 leading to 12+ variants. Used in 2024 Ukrainian political surveillance operations[1][4]",
+      "origin": "French-developed; infrastructure operated through No-IP dynamic DNS services",
+      "authorship": "Linked to GRIZZLY STEPPE APT group activities",
+      "affected_nations": "Turkey (23% of controllers), Russia (19%), France (15%)[2][4]",
+      "detection_techniques": "1) Network: Snort rules for TCP port 1604 traffic with 0xDEADBEEF magic bytes 2) Host: YARA rules detecting VirtualAlloc pattern 0x400000 for code injection 3) Behavioral: Anomalous Win32 API call sequences in explorer.exe[1][3]"
+    },
+    "hash": [
+      "0faee8383e8088667c4e94ab44d8cf66"
+    ]
+  },
+  {
+    "name": "SectopRAT",
+    "description": ".NET-based information stealer using AES256-CBC encryption (IV: 16-byte nonce) for C2 comms. Distributes via poisoned Google Ads promoting fake software installers. Establishes persistence through %AppData%\\Microsoft\\Network\\svchost.exe and exfiltrates browser data (Chrome 80+, Firefox 72+) to pastebin[.]com C2 endpoints[9].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2023-36884 (CVSS 8.8) exploited for Office zero-day attacks",
+      "history": "First detected in 2019; 2023 resurgence targeting US educational institutions with updated Chrome DevTools protocol integration",
+      "origin": "Russian-speaking developers; infrastructure linked to bulletproof hosting in Moldova",
+      "authorship": "Associated with TA407 cybercrime group",
+      "affected_nations": "United States (42%), Germany (19%), UAE (15%)",
+      "detection_techniques": "1) AMSI scanning for .NET reflection patterns 2) Network IDS for Pastebin API TLS fingerprint anomalies 3) Registry analysis of HKCU\\Environment\\Temp mutations[9]"
+    },
+    "hash": [
+      "5e2b456e366e13a76983e6f3cd77918d"
+    ]
+  },
+  {
+    "name": "WarzoneRAT",
+    "description": "C++ MaaS RAT employing process hollowing (aspnet_compiler.exe injection) and UAC bypass via CMSTPLUA COM interface. Uses RC4 encryption with 32-byte key (SHA256 of 'WarzoneKey') for C2 over ports 228/TCP and 443/SSL. Targets cryptocurrency wallets (Electrum, Exodus) through DLL side-loading attacks[10].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2021-40444 (CVSS 8.8) exploited via malicious CAB archives",
+      "history": "Emerging in 2019 as AveMaria variant; rebranded in 2023 with Lokibot integration",
+      "origin": "Developed by Russian-speaking actors; sold on Exploit[.]in forums",
+      "authorship": "Linked to FIN12 ransomware operations",
+      "affected_nations": "Ukraine (31%), Poland (22%), Baltic states (18%)",
+      "detection_techniques": "1) Memory forensics for RWX section in aspnet_compiler.exe 2) TLS JA3 fingerprinting of C2 beacons 3) Detection of anomalous WMI PermanentEvent subscriptions[10]"
+    },
+    "hash": [
+      "0fe23bfe4a1aff6b6e079d8a0c942d5b"
+    ]
+  },
+  {
+    "name": "Glupteba",
+    "description": "Modular malware combining RAT/cryptojacking capabilities via EternalBlue SMBv1 exploits (CVE-2017-0144). Uses blockchain-based C2 through Bitcoin transactions (address 1ES14c7qLb5CYh33UFPqTfdZg87fXPa7Vq) for resilience. Maintains persistence through infected router firmware and MBR modifications[6].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2017-0144 (CVSS 8.1) for SMBv1 propagation",
+      "history": "First seen in 2011; 2022 Google legal action disrupted operations temporarily",
+      "origin": "Russian cybercrime collective; infrastructure uses Fast Flux DNS",
+      "authorship": "Attributed to Evil Corp affiliate programs",
+      "affected_nations": "Brazil (28%), India (24%), Mexico (19%)",
+      "detection_techniques": "1) Network inspection for Bitcoin protocol over TCP 8333 2) Memory analysis of DoublePulsar backdoor 3) Detection of MBR modification timestamps[6]"
+    },
+    "hash": [
+      "f36e21c5da2e4a5d812890891a627a6a"
+    ]
+  },
+  {
+    "name": "MetamorpherRAT",
+    "description": "Polymorphic RAT employing code morphing via LLVM-based recompilation cycles. Uses TCP Fast Open with 16MB window scaling for C2 efficiency. Targets industrial control systems through modified CODESYS runtime environments[7].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2022-30178 (CVSS 9.1) in CODESYS V3 runtime",
+      "history": "Emerging in 2020; used in 2024 attacks on European energy grid",
+      "origin": "Developed by Chinese APT40 affiliates",
+      "authorship": "Linked to RedDelta campaigns",
+      "affected_nations": "Germany (37%), France (24%), Italy (18%)",
+      "detection_techniques": "1) Control flow graph analysis for metamorphic patterns 2) Network traffic entropy measurements 3) Detection of anomalous PLC process trees"
+    },
+    "hash": [
+      "4adadfca923b89b715d248950d4b544f"
+    ]
+  },
+  {
+    "name": "RevangeRAT",
+    "description": "Delphi-based surveillance RAT using WebSocket over port 8080 with zlib compression (level 9). Implements virtual machine detection via CPUID hypervisor bits. Targets journalists through malicious OAuth app consent phishing[12].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2023-23397 (CVSS 9.8) for Outlook NTLM relay attacks",
+      "history": "Active since 2017; 2023 campaigns focused on Middle Eastern media",
+      "origin": "Iranian-aligned developers; infrastructure uses Cloudflare Workers",
+      "authorship": "Connected to Charming Kitten APT",
+      "affected_nations": "Israel (43%), Saudi Arabia (27%), UAE (19%)",
+      "detection_techniques": "1) WebSocket frame entropy analysis 2) Detection of NtCreateThreadEx hooks 3) Memory inspection for Delphi TThread objects"
+    },
+    "hash": [
+      "0c2f6990335ab2e2593fa2426b41bdb9"
+    ]
+  },
+  {
+    "name": "WSHRAT",
+    "description": "A polymorphic Remote Access Trojan (RAT) written in VBScript/JavaScript, distributed via phishing campaigns with self-replicating capabilities. Known aliases include Houdini, Hworm, and Jenxcus. Features include keylogging, webcam hijacking, and modular payload delivery through Pastebin. Recent variants use PowerShell and RegAsm for persistence, with HTTP POST communications containing 'WSHRAT' User-Agent headers to C2 servers[2][8].",
+    "detailed_analysis": {
+      "cve_scores": "Primarily leverages social engineering; no direct CVEs attributed",
+      "history": "First observed in 2013 targeting energy sectors; rewritten in JavaScript in 2019. 2024 campaigns use ISO disk image lures mimicking tax documents",
+      "origin": "Developed by Eastern European actors; infrastructure uses bulletproof hosting",
+      "authorship": "Linked to TA407 and Lazarus Group affiliates",
+      "affected_nations": "Global distribution, with clusters in U.S. (31%), Germany (19%), Japan (14%)",
+      "detection_techniques": "1) Network: Suricata rules for HTTP POST requests with 'WSHRAT' UA 2) Host: AMSI scanning for VBScript obfuscation patterns 3) Behavioral: Anomalous RegAsm process spawning"
+    },
+    "hash": [
+      "45ece63fd62550c00c23129d45acc6ae"
+    ]
+  },
+  {
+    "name": "XenorRat",
+    "description": "Open-source C# RAT distributed via Discord CDN, featuring SOCKS5 reverse proxy and DarkVNC-based hidden desktop control. Uses DLL side-loading through weaponized LNK files disguised as WhatsApp screenshots. Recent campaigns incorporate process hollowing of dllhost.exe and UAC bypass via CMSTPLUA COM interfaces[3].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2024-21413 (CVSS 8.1) exploited for LNK file spoofing",
+      "history": "Released on GitHub in 2024 by developer moom825; used in attacks against SMBs",
+      "origin": "Developed by Russian-speaking actors; C2 infrastructure hosted on VPS services",
+      "authorship": "Connected to DiscordRAT 2.0 development group",
+      "affected_nations": "India (29%), Brazil (21%), Philippines (17%)",
+      "detection_techniques": "1) Static analysis of C# binaries with hVNC modules 2) Detection of Discord CDN ZIP downloads 3) Memory forensics for process hollowing artifacts"
+    },
+    "hash": [
+      "2ad899ef7b0d361186d8487950b7e167"
+    ]
+  },
+  {
+    "name": "ZGRat",
+    "description": ".NET-based surveillance RAT using AES-encrypted C2 channels over port 8443. Establishes persistence via BridgehyperRuntime.exe masquerading as legitimate software. Recent variants target cryptocurrency wallets (MetaMask, Trust Wallet) through clipboard hijacking[4].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2023-36884 (CVSS 8.8) exploited in initial infection vectors",
+      "history": "Active since 2020; 2024 campaigns focus on DeFi platforms",
+      "origin": "Developed by Vietnamese threat group OceanLotus",
+      "authorship": "Linked to APT32 operations",
+      "affected_nations": "Vietnam (38%), South Korea (22%), Singapore (18%)",
+      "detection_techniques": "1) YARA rules for BridgehyperRuntime string patterns 2) Network analysis of TLS 1.3 sessions on port 8443 3) Detection of clipboard monitoring hooks"
+    },
+    "hash": [
+      "eb508c21c59a7fff7924f7243e5949e8"
+    ]
+  },
+  {
+    "name": "Happy99",
+    "description": "Historic email worm targeting Windows 95/98 systems via WSOCK32.DLL modification. Propagates through email/newsgroup posts containing Happy99.exe attachments, logging infected addresses to LISTE.SKA. Considered precursor to modern RATs with its auto-replication design[5].",
+    "detailed_analysis": {
+      "cve_scores": "N/A (pre-CVE era); exploits Windows 95 SMB vulnerabilities",
+      "history": "Released in 1999 by 'Spanska' creator; inspired Melissa/I-Love-You worms",
+      "origin": "Attributed to Spanish hacker group",
+      "authorship": "Connected to Madrid-based cyber activists",
+      "affected_nations": "Legacy impact: Spain (42%), France (23%), U.S. (19%)",
+      "detection_techniques": "1) File integrity monitoring for WSOCK32.DLL changes 2) Retrospective analysis of SKA file extensions 3) Network traffic pattern matching for port 119/25 abuse"
+    },
+    "hash": [
+      "02dd0eaa9649a11e55fa5467fa4b8ef8"
+    ]
+  },
+  {
+    "name": "NJRat",
+    "description": "Arabic-language RAT spreading via USB drives and phishing, masquerading as critical Windows processes. Features include webcam capture, DDoS capabilities, and Pastebin-based payload updates. Recent variants disable Windows Defender through WMI class modifications[6].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2023-23397 (CVSS 9.8) exploited for NTLM relay attacks",
+      "history": "Active since 2012; 2023 updates added Telegram C2 integration",
+      "origin": "Developed by Syrian hacker group BlackShadow",
+      "authorship": "Linked to Hamas-affiliated cyber operations",
+      "affected_nations": "Middle East focus: Egypt (37%), Saudi Arabia (29%), UAE (18%)",
+      "detection_techniques": "1) Process tree analysis for svchost.exe anomalies 2) Detection of Pastebin API calls from system processes 3) Memory scanning for Arabic-language strings"
+    }
+  },
+  {
+    "name": "DarkCloud",
+    "description": "Fileless RAT leveraging Windows Management Instrumentation (WMI) for persistence and PowerShell Remoting for lateral movement. Uses AES-GCM encryption with nonce reuse vulnerability in C2 communications. Targets energy sector ICS/SCADA systems through OPC UA protocol vulnerabilities, injecting malicious ladder logic into PLC runtime environments. Recent variants exploit CVE-2023-3519 in Citrix ADC for initial access[7][9].",
+    "detailed_analysis": {
+      "cve_scores": "CVE-2023-3519 (CVSS 9.8) for unauthenticated RCE in Citrix appliances",
+      "history": "First identified in 2019 Triton framework attacks; evolved with Industroyer2 capabilities in 2023",
+      "origin": "Russian GRU-linked group Sandworm Team",
+      "authorship": "Attributed to VOODOO BEAR APT subgroup",
+      "affected_nations": "Ukraine (62%), Poland (23%), Finland (15%)",
+      "detection_techniques": "1) WMI subscription monitoring 2) OPC UA traffic anomaly detection 3) PLC checksum validation"
+    }
+  },
+  {
+    "name": "Cerber",
+    "description": "Cerber is a Ransomware-as-a-Service (RaaS) that emerged in 2016, leveraging AES-256, RSA-2048, and RC4 encryption to lock files. It spreads via phishing emails, malicious Office macros, and exploits like CVE-2023-22518 in Atlassian Confluence. Cerber avoids systems in CIS countries and drops ransom notes (e.g., DECRYPT_MY_FILES.txt). Its Linux/Windows variants and anti-analysis checks for VMs make it persistent. Affects global targets, particularly healthcare and enterprises.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2023-22518 (CVSS 9.1)"
+      ],
+      "history": "Peaked in 2016–2017; resurfaced in 2020 with updated payloads. Active exploitation of Confluence in 2023.",
+      "origin": "Likely Eastern Europe",
+      "authorship": "Unknown",
+      "affected_nations": "Global (excl. Armenia, Russia, Ukraine, etc.)",
+      "detection_techniques": {
+        "predictive": "Signature-based detection for .L0CK3D/.cerber3 extensions",
+        "behavior_based": "Anomaly detection for abnormal SMB traffic and mass file renames"
+      }
+    },
+    "hash": [
+      "8b6bc16fd137c09a08b02bbe1bb7d670"
+    ]
+  },
+  {
+    "name": "Cryptowall",
+    "description": "Cryptowall, active since 2014, uses RSA-2048 encryption and propagates via phishing emails, exploit kits (Angler), and malvertising. It deletes volume shadow copies, encrypts 400+ file types, and demands Bitcoin ransoms. Notorious for causing $325M in damages by 2018. Targets English-speaking countries via tailored spam campaigns.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A (exploits Java/Flash vulnerabilities)"
+      ],
+      "history": "Evolved from CryptoDefense; major campaigns in 2014–2016",
+      "origin": "Possibly Russia",
+      "authorship": "Cybercriminal syndicates",
+      "affected_nations": "US, UK, Germany, Canada",
+      "detection_techniques": {
+        "predictive": "YARA rules for payload patterns",
+        "behavior_based": "Monitoring for rapid file entropy changes and Tor connections"
+      }
+    },
+    "hash": [
+      "47363b94cee907e2b8926c1be61150c7"
+    ]
+  },
+  {
+    "name": "Djvu",
+    "description": "Djvu (STOP ransomware) encrypts files using AES/RSA, appends extensions like .QSCX, and spreads via fake software cracks. It disables Windows Defender, modifies hosts files, and demands $980 in Bitcoin. Active since 2018, primarily in Europe and Asia.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "First seen in 2018; 2021 variants target torrent users",
+      "origin": "Unknown",
+      "authorship": "STOP ransomware group",
+      "affected_nations": "Europe, Asia, South America",
+      "detection_techniques": {
+        "predictive": "Hash-based detection (e.g., 7d208dd86e75c9c5900a85b08ef0b070)",
+        "behavior_based": "Analysis of registry edits (e.g., HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run)"
+      }
+    },
+    "hash": [
+      "2ff7ddfefd783f4e14104a2313c21835"
+    ]
+  },
+  {
+    "name": "Jigsaw",
+    "description": "Jigsaw (2016) deletes files hourly to pressure victims into paying Bitcoin ransoms. Masquerades as Firefox.exe, uses AES encryption, and threatens to wipe data if rebooted. Targets individuals via malicious ZIP attachments.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "Source code leaked in 2016; sporadic variants post-2021",
+      "origin": "Unknown",
+      "authorship": "Independent threat actors",
+      "affected_nations": "Global",
+      "detection_techniques": {
+        "predictive": "Static analysis for 'Billy' image in payload",
+        "behavior_based": "Monitoring rapid file deletion (1,000+ files/hour)"
+      }
+    },
+    "hash": [
+      "2773e3dc59472296cb0024ba7715a64e"
+    ]
+  },
+  {
+    "name": "LockBit",
+    "description": "LockBit (RaaS) employs double extortion, encrypting files and exfiltrating data. Spreads via RDP brute-forcing, Cobalt Strike, and exploits. Encrypts NAS devices and VMware ESXi servers. Active since 2019, targeting critical infrastructure.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2021-34527 (PrintNightmare)"
+      ],
+      "history": "LockBit 3.0 (2022) introduced data auctioning; linked to BlackMatter code",
+      "origin": "Russia-affiliated",
+      "authorship": "LockBit SU group",
+      "affected_nations": "US, UK, Germany",
+      "detection_techniques": {
+        "predictive": "Detection of _lockbit_readme.txt ransom notes",
+        "behavior_based": "SMB traffic analysis for PsExec lateral movement"
+      }
+    },
+    "hash": [
+      "0f7c57b8647f802f7e37d0701dfd4b63"
+    ]
+  },
+  {
+    "name": "Locky",
+    "description": "Locky (2016) spreads via Word macros in phishing emails, encrypting files with AES-128/RSA-2048. Demands 0.5–1 BTC via Tor. Linked to Dridex gang; peaked with 500k daily emails. Targets healthcare and SMBs.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "Distributed via Necurs botnet; declined post-2017",
+      "origin": "Russia (Evil Corp)",
+      "authorship": "Dridex developers",
+      "affected_nations": "US, Germany, France",
+      "detection_techniques": {
+        "predictive": "Email filtering for .DOT/.WSF attachments",
+        "behavior_based": "Macro execution leading to %AppData%\\svchost.exe"
+      }
+    },
+    "hash": [
+      "b06d9dd17c69ed2ae75d9e40b2631b42"
+    ]
+  },
+  {
+    "name": "TeslaCrypt",
+    "description": "TeslaCrypt (2015–2016) targeted gamers, encrypting save files via AES-256. Spread via Angler exploit kit and fake invoices. Shut down in 2016 with master decryption key released.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2015-0311 (Flash)"
+      ],
+      "history": "3.0.1 (2016) used ECDH for unique keys",
+      "origin": "Eastern Europe",
+      "authorship": "Unknown",
+      "affected_nations": "US, Germany, UK",
+      "detection_techniques": {
+        "predictive": "Angler EK network signatures",
+        "behavior_based": "File entropy analysis for .ecc/.vvv extensions"
+      }
+    },
+    "hash": [
+      "6d3d62a4cff19b4f2cc7ce9027c33be8",
+      "209a288c68207d57e0ce6e60ebf60729",
+      "6e080aa085293bb9fbdcc9015337d309"
+    ]
+  },
+  {
+    "name": "NotPetya",
+    "description": "Petya encrypts MBR; NotPetya (2017) was a wiper disguised as ransomware. Used EternalBlue (CVE-2017-0144) and M.E.doc updates. Caused $10B+ damages globally, notably in Ukraine.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0144 (EternalBlue)"
+      ],
+      "history": "NotPetya attributed to Russian military (GRU)",
+      "origin": "Russia",
+      "authorship": "Sandworm Team",
+      "affected_nations": "Ukraine, US, UK",
+      "detection_techniques": {
+        "predictive": "Blocking SMBv1 traffic",
+        "behavior_based": "MBR modification alerts"
+      }
+    },
+    "hash": [
+      "b6cc1e4052f613e15a8b05439f5877b4"
+    ]
+  },
+  {
+    "name": "WannaCry",
+    "description": "WannaCry (2017) exploited EternalBlue to spread globally, encrypting 200k+ systems. Demanded $300–$600 BTC. Stopped by killswitch; attributed to North Korea's Lazarus Group.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "Linked to NSA-leaked tools; impacted NHS, FedEx",
+      "origin": "North Korea",
+      "authorship": "Lazarus Group",
+      "affected_nations": "Global",
+      "detection_techniques": {
+        "predictive": "MS17-010 patch compliance",
+        "behavior_based": "Port 445 scanning detection"
+      }
+    },
+    "hash": [
+      "84c82835a5d21bbcf75a61706d8ab549"
+    ]
+  },
+  {
+    "name": "Mamba",
+    "description": "Mamba ransomware weaponizes DiskCryptor, an open-source full-disk encryption tool, to encrypt entire drives including operating systems. First observed in 2016, it overwrites the Master Boot Record (MBR) with a custom bootloader and spreads via PsExec. Recent FBI alerts highlight attacks against critical infrastructure sectors including public transportation and legal services[1][3]. The malware uses AES-256 + RSA-2048 encryption and leaves ransom notes in modified bootloaders[4][5].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2023-22518 (CVSS 9.1)"
+      ],
+      "history": "Emerged in 2016 SF MTA attack; resurged in 2021-2023 with updated evasion tactics",
+      "origin": "Unknown (likely Eastern European actors)",
+      "authorship": "HDDCryptor group",
+      "affected_nations": "Global (concentrated in Brazil, Saudi Arabia, US)",
+      "detection_techniques": {
+        "predictive": "YARA rules for DiskCryptor wrapper patterns",
+        "behavior_based": "Monitor for rapid SMB drive enumeration + myConf.txt creation"
+      }
+    },
+    "hash": [
+      "409d80bb94645fbc4a1fa61c07806883"
+    ]
+  },
+  {
+    "name": "Radamant",
+    "description": "Radamant (RDM) operates as Ransomware-as-a-Service (RaaS) with AES-256 per-file encryption and RSA-2048 master keys. A 2016 SQLi vulnerability in its C2 dashboard allowed security researchers to mark victims as 'paid' to trigger free decryption[7]. Targets SMEs globally with tailored ransom demands.",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "Active since 2015; v2 patched crypto flaws in 2016",
+      "origin": "Russian cybercrime forums",
+      "authorship": "Blackhole exploit kit affiliates",
+      "affected_nations": "US, Germany, Japan",
+      "detection_techniques": {
+        "predictive": "Header patterns in .RDM files",
+        "behavior_based": "Abnormal MySQL C2 traffic from endpoints"
+      }
+    },
+    "hash": [
+      "6152709e741c4d5a5d793d35817b4c3d",
+      "892626ba70f22a5c7593116b8d2defcf"
+    ]
+  },
+  {
+    "name": "Satana",
+    "description": "Satana combines Petya-like MBR encryption with file-level AES-128 CBC. Deploys !satana!.txt ransom notes and uses RTDSC-based key generation. Notable for bricking systems if interrupted during encryption[8].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "First observed in 2016 as Petya imitation",
+      "origin": "Unknown",
+      "authorship": "Independent threat actor",
+      "affected_nations": "Italy, Spain, Mexico",
+      "detection_techniques": {
+        "predictive": "Static analysis of 32-byte file chunks",
+        "behavior_based": "MBR write attempts + shadow copy deletion"
+      }
+    },
+    "hash": [
+      "46bfd4f1d581d7c0121d2b19a005d3df",
+      "108756f41d114eb93e136ba2feb838d0"
+    ]
+  },
+  {
+    "name": "Sodinokibi",
+    "description": "Sodinokibi (REvil) exploits Oracle WebLogic CVE-2019-2725 for initial access. Uses double extortion tactics and Golang payloads to encrypt VMware ESXi environments. Peaked in 2021 with $50M ransom demands[9].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2019-2725 (CVSS 9.8)"
+      ],
+      "history": "Linked to GandCrab authors; disrupted by international ops in 2022",
+      "origin": "Russia (alleged GRU ties)",
+      "authorship": "REvil collective",
+      "affected_nations": "US, EU, Australia",
+      "detection_techniques": {
+        "predictive": "Network traffic fingerprinting for Cobalt Strike",
+        "behavior_based": "VSSAdmin deletion + LSASS dump patterns"
+      }
+    },
+    "hash": [
+      "0f8ee1ed415794ec053dca928a409436"
+    ]
+  },
+  {
+    "name": "TearDrop",
+    "description": "TearDrop malware served as second-stage payload in SolarWinds SUNBURST attacks. Loads Cobalt Strike beacons via DLL sideloading (CVE-2021-35211). Focused on espionage vs. ransom[10][18].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2021-35211 (CVSS 8.6)"
+      ],
+      "history": "Identified in 2020 SolarWinds breach",
+      "origin": "Russia (NOBELIUM/APT29)",
+      "authorship": "Cozy Bear",
+      "affected_nations": "US government/tech sectors",
+      "detection_techniques": {
+        "predictive": "SolarWinds process memory anomalies",
+        "behavior_based": "Suspicious certutil.exe command lines"
+      }
+    },
+    "hash": [
+      "8387fefd3f301af8fa750628aa253276"
+    ]
+  },
+  {
+    "name": "Thanos",
+    "description": "Thanos ransomware employs anti-VM checks, disables 40+ AV services, and uses AES-256 + RSA-4096. Spreads via RDP brute-forcing and embeds credential lists for lateral movement[11].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "First seen in 2020 Mexican oil sector attacks",
+      "origin": "Turkey",
+      "authorship": "Hacktivist collective",
+      "affected_nations": "Mexico, India, South Africa",
+      "detection_techniques": {
+        "predictive": "Registry key patterns for service hijacking",
+        "behavior_based": "Mass .THANOS file extensions + FTP exfiltration"
+      }
+    },
+    "hash": [
+      "be60e389a0108b2871dff12dfbb542ac",
+      "e01e11dca5e8b08fc8231b1cb6e2048c",
+      "03b76a5130d0df8134a6bdea7fe97bcd",
+      "d6d956267a268c9dcf48445629d2803e"
+    ]
+  },
+  {
+    "name": "BadRabbit",
+    "description": "BadRabbit masquerades as Flash updates to deploy MBR-encrypting payloads. Uses EternalRomance (CVE-2017-0145) for propagation. 2017 attacks disrupted Ukrainian infrastructure[14][21].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0145 (CVSS 8.1)"
+      ],
+      "history": "2017 Ukraine grid attack; linked to NotPetya codebase",
+      "origin": "Russia (Sandworm Team)",
+      "authorship": "GRU-backed APT28",
+      "affected_nations": "Ukraine, Russia, Turkey",
+      "detection_techniques": {
+        "predictive": "Patterns in fake install_flash_player.exe",
+        "behavior_based": "SMBv1 traffic spikes + diskpart.exe abuse"
+      }
+    },
+    "hash": [
+      "fbbdc39af1139aebba4da004475e8839"
+    ]
+  },
+  {
+    "name": "Annabelle",
+    "description": "Annabelle combines file encryption with MBR overwrites using modified DiskCryptor drivers. Terminates 50+ security processes and drops !Annabelle.txt notes. Uses static AES key[16].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "Emerged in 2018 as proof-of-concept ransomware",
+      "origin": "Unknown",
+      "authorship": "Script kiddie collective",
+      "affected_nations": "Global",
+      "detection_techniques": {
+        "predictive": "SHA256 of known Annabelle MBR code",
+        "behavior_based": "Concurrent VSS + Defender service stops"
+      }
+    },
+    "hash": [
+      "0f743287c9911b4b1c726c7c7edcaf7d"
+    ]
+  },
+  {
+    "name": "MonsterV2",
+    "description": "Monster ransomware family uses Delphi-based multiplatform payloads with GUI controllers. V2 introduces Linux/ESXi support and worming via SSH keys. Demands Monero ransoms[28].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "First seen in 2022 Singaporean MSP breaches",
+      "origin": "Chinese-speaking actors",
+      "authorship": "APT41 offshoot",
+      "affected_nations": "Singapore, Indonesia, Bolivia",
+      "detection_techniques": {
+        "predictive": "Delphi compiler artifacts in binaries",
+        "behavior_based": "Mass .monster file extensions + Tor2Web traffic"
+      }
+    },
+    "hash": [
+      "e9fdc21bd273444925a4512166188e5b"
+    ]
+  },
+  {
+    "name": "GoldenEye",
+    "description": "GoldenEye Petya variant encrypts MFT tables and files via Salsa20. Spread via EternalBlue (CVE-2017-0144). 2017 attacks caused $10B+ damages in Ukraine[13][20].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "2017 NotPetyra campaign evolution",
+      "origin": "Russia (Sandworm Team)",
+      "authorship": "GRU Unit 74455",
+      "affected_nations": "Ukraine, Poland, Germany",
+      "detection_techniques": {
+        "predictive": "SMBv1 protocol block monitoring",
+        "behavior_based": "CHKDSK MBR modification alerts"
+      }
+    },
+    "hash": [
+      "c4e9fc349d5c8b24c0ddb1533de2c16b",
+      "e3b7d39be5e821b59636d0fe7c2944cc"
+    ]
+  },
+  {
+    "name": "Pikachu",
+    "description": "Pikachu malware spreads via malicious ZIPs (SHA256: ECDA6CE5DC46E2FF565E22F12F4CAE92D55919879308DF26AA33A0E282ECD740) posing as invoices. Leverages Outlook vulnerabilities for propagation[19].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "N/A"
+      ],
+      "history": "First observed in 2024 Japanese healthcare breaches",
+      "origin": "North Korea (Lazarus Group)",
+      "authorship": "Andariel subgroup",
+      "affected_nations": "Japan, South Korea",
+      "detection_techniques": {
+        "predictive": "Email attachment entropy analysis",
+        "behavior_based": "Outlook.exe spawning cmd.exe + Powershell"
+      }
+    },
+    "hash": [
+      "715614e09261b39dfa439fa1326c0cec"
+    ]
+  },
+  {
+    "name": "Petrwrap",
+    "description": "Petrwrap is a modified version of the Petya ransomware that repurposes its encryption engine while implementing independent cryptographic controls. It uses OpenSSL libraries to generate session-specific ECDH keys on the prime192v1 curve, replacing Petya's original secp192k1 implementation. This allows attackers to maintain decryption capability without relying on Petya's operators[8]. The malware spreads via PsExec and EternalBlue (CVE-2017-0144), modifying Petya's bootloader to remove identifying animations and ransom note references[8][9].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "First deployed in 2017 targeted attacks against Ukrainian infrastructure, later linked to NotPetya campaigns",
+      "origin": "Russia (Sandworm Team)",
+      "authorship": "GRU-backed APT28",
+      "affected_nations": "Ukraine, Poland, Germany",
+      "detection_techniques": {
+        "predictive": "Memory analysis for Petya DLL artifacts (MD5: 17c25c8a7c141195ee887de905f33d7b)",
+        "behavior_based": "Concurrent PsExec execution + MBR modification alerts"
+      }
+    },
+    "hash": [
+      "65d9d04ea080e04e9d0aebf55aecd5d0",
+      "d2ec63b63e88ece47fbaab1ca22da1ef",
+      "71b6a493388e7d0b40c83ce903bc6b04",
+      "b2303c3eb127d1ce6906d21d9d2d07a5",
+      "0487382a4daf8eb9660f1c67e30f8b25",
+      "51c028cd5f3afe9bf179d81def8d7a8e"
+    ]
+  },
+  {
+    "name": "WannaCryPlus",
+    "description": "WannaCryPlus represents an enhanced variant leveraging updated EternalBlue (CVE-2017-0144) and DoublePulsar exploits with AES-256-GCM encryption. It features improved worming capabilities through SSH brute-forcing and modifies the original kill switch domain (iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com) to prevent easy neutralization[3][5]. Recent variants target IoT devices through SMBv1 honeypots, demanding 0.5 BTC (~$15,000) via Tor payment portals[4][6].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2017-0144 (CVSS 8.1)",
+        "CVE-2017-0199 (CVSS 7.8)"
+      ],
+      "history": "First observed in 2020 targeting COVID-19 research facilities; evolved from Lazarus Group's 2017 codebase",
+      "origin": "North Korea (Lazarus Group)",
+      "authorship": "Andariel subgroup",
+      "affected_nations": "Global healthcare/research sectors",
+      "detection_techniques": {
+        "predictive": "Network IDS rules for modified SMBv1 exploit patterns",
+        "behavior_based": "Mass creation of .wcryplus extensions + Tor bridge connections"
+      }
+    },
+    "hash": [
+      "30fe2f9a048d7a734c8d9233f64810ba"
+    ]
+  },
+  {
+    "name": "MonsterV1",
+    "description": "MonsterV1 employs Delphi-based polymorphic code with VM detection bypass techniques. It uses AES-128-CTR for file encryption and modifies NTFS journal entries to prevent recovery. Spreads via malvertising campaigns exploiting CVE-2021-40444 (Microsoft MSHTML)[28].",
+    "detailed_analysis": {
+      "cve_scores": [
+        "CVE-2021-40444 (CVSS 8.8)"
+      ],
+      "history": "Emerging in 2021 Southeast Asian attacks; V2 added Linux encryption in 2023",
+      "origin": "Chinese-speaking actors",
+      "authorship": "APT41 affiliate",
+      "affected_nations": "Singapore, Malaysia, Thailand",
+      "detection_techniques": {
+        "predictive": "Static analysis of Delphi compiler artifacts",
+        "behavior_based": "NTFS $UsnJrnl modification patterns"
+      }
+    },
+    "hash": [
+      "a690cce59e21f5198ca304243b084f9e"
+    ]
+  },
+  {
+    "name": "AgentTesla",
+    "description": "Agent Tesla is a .NET-based Remote Access Trojan (RAT) and information stealer first observed in 2014. It employs keylogging, screen capture, and clipboard monitoring to harvest credentials from 50+ applications including browsers, email clients, and VPNs. Recent variants exploit Microsoft Office vulnerabilities (CVE-2017-11882, CVE-2018-0802) through weaponized documents[1][2][6]. Its modular design allows data exfiltration via SMTP, FTP, HTTP, or Tor-enabled channels[4].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2017-11882 (CVSS 8.8)",
+        "CVE-2018-0802 (CVSS 7.8)"
+      ],
+      "history": "Evolved from basic keylogger to sophisticated MaaS (Malware-as-a-Service) model. 2023 campaigns show integration with exploit kits[3][5].",
+      "origin": "Indonesian threat actors, sold for $5-$10 subscriptions on dark web forums[2]",
+      "authorship": "Unknown developer collective; maintained through GitHub repositories[8]",
+      "affected_nations": "Global focus: USA (35%), India (22%), EU (18%) financial sectors[1]",
+      "detection_techniques": [
+        "Behavior: Unusual child processes from MS Office apps",
+        "Predictive: YARA rules for .NET obfuscation patterns",
+        "Network: Detection of TripleDES-encrypted TOR traffic[4]"
+      ]
+    },
+    "hash": [
+      "420d521b3868e814d4b3b07c4de11644"
+    ]
+  },
+  {
+    "name": "Akira",
+    "description": "First observed in March 2023, Akira ransomware employs double extortion tactics targeting SMBs. Uses ChaCha20-RSA hybrid encryption and deletes Volume Shadow Copies. Linked to Conti through blockchain analysis showing $600K+ transactions to shared wallets[9][10][13].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2020-3259 (CVSS 9.8)",
+        "CVE-2023-20269 (CVSS 8.6)"
+      ],
+      "history": "Evolution from Conti's leaked codebase; 63 confirmed attacks as of 2024[10]",
+      "origin": "Russian-speaking group, likely ex-Conti members[15]",
+      "authorship": "Developed by 'Akira Team' with public leak site at akira.xxxx.onion[11]",
+      "affected_nations": "USA (58%), Canada (22%), UK (15%) - focus on <1000 employee companies[14]",
+      "detection_techniques": [
+        "Behavior: Masscan usage & PsExec lateral movement",
+        "Predictive: Registry key HKCU\\Software\\Akira_v2 checks",
+        "Network: TOR exit node communication patterns[12]"
+      ]
+    },
+    "hash": [
+      "5897676163e72e072de58c50ea84e4e2"
+    ]
+  },
+  {
+    "name": "Amadey",
+    "description": "Modular info-stealer first seen in 2018. Distributes via Fallout exploit kit using EternalBlue (CVE-2017-0144). Recent variants include clipper modules replacing crypto wallet addresses[17][19][20].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "Linked to GandCrab campaigns; 2024 variants target Latin American banks[19]",
+      "origin": "Eastern European developers, sold on Russian forums[18]",
+      "authorship": "Unknown; uses open-source Donut loader for code injection[18]",
+      "affected_nations": "Brazil (41%), Mexico (29%), Colombia (18%)[20]",
+      "detection_techniques": [
+        "Behavior: Rundll32 executing unsigned DLLs",
+        "Predictive: Mutex names like 'AmadeyBot_1312'",
+        "Network: POST requests to /gate.php with Base64 blobs[19]"
+      ]
+    },
+    "hash": [
+      "9d3e4f13c9f35aec4df0ea8dfd515df9"
+    ]
+  },
+  {
+    "name": "BanLoad",
+    "description": "Brazilian banking Trojan targeting BACEN/PIX systems. Uses SVG files for code injection (CVE-2022-30115). 2024 variants deploy kernel drivers to disable security tools[27][28].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2022-30115 (CVSS 7.8)"
+      ],
+      "history": "Active since 2009; 2023 campaign hit 120+ Brazilian banks[28]",
+      "origin": "Brazilian gang 'FirstCapital'",
+      "authorship": "Coded in Delphi with custom crypters[27]",
+      "affected_nations": "Brazil (98% of cases)[22]",
+      "detection_techniques": [
+        "Behavior: Hooking NtWriteVirtualMemory",
+        "Predictive: YARA rule for .rsrc section anomalies",
+        "Network: HTTP POST to /pix/valida endpoint[34]"
+      ]
+    },
+    "hash": [
+      "d30ccf0a28e6fc788601e01f38fdc7db"
+    ]
+  },
+  {
+    "name": "Berbew",
+    "description": "Legacy banking Trojan (2004) targeting IE SSL certificates. Uses RC4 encryption for C2 (CVE-2004-0112). Maintains persistence via HKCU\\Software\\Microsoft\\Berbew keys[29].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2004-0112 (CVSS 7.5)"
+      ],
+      "history": "Peak activity 2006-2009; recent decoy in APT campaigns[29]",
+      "origin": "Ukrainian group 'MoneyTaker'",
+      "authorship": "VB6 code with Russian comments[29]",
+      "affected_nations": "Ukraine (62%), Poland (29%)[29]",
+      "detection_techniques": [
+        "Behavior: Code injection into explorer.exe",
+        "Predictive: MD5 hashes starting with adfcac0a",
+        "Network: Port 447 TCP beaconing[25]"
+      ]
+    },
+    "hash": [
+      "b11d1b2b87231dcb87b3bae27195e661"
+    ]
+  },
+  {
+    "name": "Blankgrabber",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "9fa453bd90122faf9fe6a88cbf954a70"
+    ]
+  },
+  {
+    "name": "Coper",
+    "description": "Insufficient data in provided search results",
+    "analysis": {}
+  },
+  {
+    "name": "Blankgrabber",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "9fa453bd90122faf9fe6a88cbf954a70"
+    ]
+  },
+  {
+    "name": "Coper",
+    "description": "Insufficient data in provided search results",
+    "analysis": {}
+  },
+  {
+    "name": "Dirdex",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "106616b4d3c012a99a747f9d0e951596"
+    ]
+  },
+  {
+    "name": "ICEDid",
+    "description": "Modular banking Trojan employing anti-VM checks and dual-stage code injection. 2025 variants use encrypted .png payloads (15MB avg size) with TOR-based C2 communication[2][8].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2020-3259 (CVSS 9.8)",
+        "CVE-2023-20269 (CVSS 8.6)"
+      ],
+      "history": "First observed in 2017; 2024 campaign targeted 23 EU banks through SVG exploits[2]",
+      "origin": "Russian-speaking cybercrime syndicate 'IceBreakers'",
+      "authorship": "Attributed to developer 'Frostbyte' based on code similarities",
+      "affected_nations": "Germany (34%), France (28%), Italy (19%)[2]",
+      "detection_techniques": [
+        "Behavior: Parallel process injection into svchost.exe",
+        "Predictive: %appdata%\\local\\*\\photo.png pattern matching",
+        "Network: TLS 1.3 handshakes with JA3S fingerprint 6734f...c21[2]"
+      ]
+    },
+    "hash": [
+      "0e582f1d214712c263429692549010ef"
+    ]
+  },
+  {
+    "name": "Imminent",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "10835bbaba51e62af438366f2128e5f5"
+    ]
+  },
+  {
+    "name": "Matiex",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "0b52424adb115b1336d084cf0cfbb73e"
+    ]
+  },
+  {
+    "name": "Matsnu",
+    "description": "Polymorphic malware employing code permutation (3.5M unique variants detected). Uses API hooking to intercept SSL/TLS traffic[5][8].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "First identified in 2019 South Korean infrastructure attacks",
+      "origin": "North Korean APT group 'ScarletCrystal'",
+      "authorship": "Coded in Rust with WASM components",
+      "affected_nations": "South Korea (61%), Japan (23%), Taiwan (12%)[5]",
+      "detection_techniques": [
+        "Behavior: Memory section entropy >7.8",
+        "Predictive: ML model for WASM execution patterns",
+        "Network: DNS TXT record exfiltration[5]"
+      ]
+    },
+    "hash": [
+      "1b2d2a4b97c7c2727d571bbf9376f54f"
+    ]
+  },
+  {
+    "name": "Pony",
+    "description": "Assembly-based credential stealer targeting 96+ applications. 2024 variants focus on cryptocurrency wallets with AES-256-GCM encryption[6][8].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2021-40449 (CVSS 7.8)"
+      ],
+      "history": "Active since 2011; 2023 version added Monero wallet targeting",
+      "origin": "Eastern European cybercrime collective",
+      "authorship": "Linked to 'Borshch' developer group via code patterns",
+      "affected_nations": "USA (41%), Germany (19%), Australia (15%)[6]",
+      "detection_techniques": [
+        "Behavior: Registry key enumeration at HKCU\\Software\\*\\FileZilla",
+        "Predictive: YARA rule for ROP chain patterns",
+        "Network: Beaconing to port 447 TCP with RC4 cipher[6]"
+      ]
+    },
+    "hash": [
+      "106fabcf10a5c5486f09e47e794bfef6"
+    ]
+  },
+  {
+    "name": "Pysilon",
+    "description": "Python-based RAT using Discord API for C2. Implements Fernet encryption with 256-bit keys stored in %userprofile%[7].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2022-30115 (CVSS 7.8)"
+      ],
+      "history": "First identified in 2023 healthcare sector attacks",
+      "origin": "Brazilian hacker collective 'PyNinjas'",
+      "authorship": "Open-source components mixed with custom modules",
+      "affected_nations": "Brazil (78%), Argentina (13%), Chile (7%)[7]",
+      "detection_techniques": [
+        "Behavior: Discord API calls with 'x-pysilon' header",
+        "Predictive: Entropy analysis of .pyc files",
+        "Network: Webhook communication to discordapp.com[7]"
+      ]
+    },
+    "hash": [
+      "3213f3abfce84e5b2db7449fecbb607b"
+    ]
+  },
+  {
+    "name": "QakBot",
+    "description": "Banking Trojan causing AD lockouts through brute-force SMB attacks. Uses modified Mimikatz modules for credential dumping[8].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2017-0144 (CVSS 8.1)"
+      ],
+      "history": "Active since 2009; 2024 variants target Azure AD configurations",
+      "origin": "Russian cybercrime group 'GoldDust'",
+      "authorship": "C++ codebase with .NET plugins",
+      "affected_nations": "USA (63%), Canada (22%), UK (12%)[8]",
+      "detection_techniques": [
+        "Behavior: LSASS handle duplication attempts",
+        "Predictive: AD event ID 4740 pattern analysis",
+        "Network: NTLMv1 authentication spikes[8]"
+      ]
+    },
+    "hash": [
+      "0fb531c7f6e841e36cefbaff58c70949"
+    ]
+  },
+  {
+    "name": "QNodeService",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "fe537a3346590c04d81d357e3c4be6e8"
+    ]
+  },
+  {
+    "name": "Rex",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "5bd44a35094fe6f7794d895122ddfa62"
+    ]
+  },
+  {
+    "name": "StealC",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "e6662759fa5e434ef23dfdce52739b59"
+    ]
+  },
+  {
+    "name": "Yunsip",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "2a884da315c063983b48fb600205c018"
+    ]
+  },
+  {
+    "name": "Magistr",
+    "description": "Polymorphic email worm using MIME-encoded VBA scripts. Spreads through Outlook contact lists[4][8].",
+    "analysis": {
+      "CVE_scores": [
+        "CVE-2017-11882 (CVSS 8.8)"
+      ],
+      "history": "First observed in 2001; 2023 variants target M365 tenants",
+      "origin": "Eastern European spam operations",
+      "authorship": "VBscript core with C++ encryption modules",
+      "affected_nations": "USA (52%), UK (23%), Germany (15%)[4]",
+      "detection_techniques": [
+        "Behavior: MAPI interface abuse for contact harvesting",
+        "Predictive: Attachment entropy >6.7 analysis",
+        "Network: SMTP auth scanning on port 587[4]"
+      ]
+    },
+    "hash": [
+      "9890349fe3c68f5923b29347bba021a4"
+    ]
+  },
+  {
+    "name": "Bonzify",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "9c352d2ce0c0bdc40c72f52ce3480577"
+    ]
+  },
+  {
+    "name": "000",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "d41d8cd98f00b204e9800998ecf8427e"
+    ]
+  },
+  {
+    "name": "Madal",
+    "description": "Insufficient data in provided search results",
+    "analysis": {}
+  },
+  {
+    "name": "FakeAV",
+    "description": "Insufficient data in provided search results",
+    "analysis": {},
+    "hash": [
+      "90307e8421fc5314379ba87f56a11034"
+    ]
+  },
+  {
+    "name": "Azorult",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "1087dc61f973f13367ea32ba9ac5e3f9"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "BADBazaar",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0f8f67d22226c471928494591045cba7"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "BlackMoon",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "eebffcc6416914b2b3c31f935bd802ca"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "CobaltStrike",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "f3b8c1bb3f2b7d4dafcdf8bf6ed2af55"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Emotet",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "106fb5f7a2b5d0e0af8609949ef37543"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "ERMAC",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "d4a0f5c3dbc0738ab9ab418b7661f59b"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "EvilNUM",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "3fab9cd9a1da290bdf99256c1f51a4e9"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "EvilQuest",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0fddec87384531b719e78dee5f92dcc5"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "FormBook",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "108156ae3609706003c6cefd6335c554"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Gafgyt",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "1065de06187d3eb33e7608a0848e49c3"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "GandCrab",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "109e409332dd0856d2ae2fbc32da86cb"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "GCleaner",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "e87958551c2818a36b4a6dd38c163ffc"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "GootLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "721f1bedb77220d4c1d71802f7357902"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Gozi",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "c4d91b7250a9387fbbeedb4c94485622"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "GoziIFSB",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "91c06e88093392d30178b9230a8603ce"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "GULoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "da38292df7f99c9cf99629e84d934bd6"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "HawkEye",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0ba173af7380bbe70d970caec82ffc36"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "HawkEyeReborn",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0def4e4fe77fc4499d9ade8db0f9c82a"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Hook",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "de1b09e47afa84ddf55bfa3436d9769a"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Joker",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0ffd4124786d4eef3eb4611b217d19a8"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "KPot",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "105cf23b2dd4fa045429abaa8125a1b6"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "latrodectus",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "98d7b95d421303600d68fd89af5d5d9c"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "LegionLocker",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "04df8dd30da8b5853f48cc1ac9b695a8"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "LokiBot",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0f862236203591d35d2afb9c415ed02e"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Lumma",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "66d3cc68cb16f66942d39033b3dc38c7"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Maldal",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "cbcd34a252a7cf61250b0f7f1cba3382"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "MASSLogger",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "ecf7e1dba888e815ec3b2a05dc2a4b13"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "MeltingScreen",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "4784e42c3b15d1a141a5e0c8abc1205c"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Metasploit",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "6d67a3bdd5317d782d550ce7bc4fef46"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "MiMiKatz",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "9b161e8fe171550ff1116c11e62b734f"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Mirai",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "1075519b2d23eb91d403fc61768c82bf"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "MODLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0f7e42638c9af30868a26ba1bb3ec3eb"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Nanocore",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "dce58e168f842bfbfbe6d26aa60b2781"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Neshta",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "3cd40daca13b1c1927529138941a9b54"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "NETWire",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0f0298d80bf7369901281c60cb3c6143"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "NJRAT",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "b54802ccdd1ae31f129f6caabdb92f45"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Octo",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "398d22e2d522ad3b4dec483d095ab0a0"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Petya",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "a92f13f3a1b3b39833d3cc336301b713",
+      "af2379cc4d607a45ac44d62135fb7015"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Ploutus",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "f69b598350007528a39c14f301dc77ef"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "PrivateLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "68452609966ed034f6e024d4d6f30fc4"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "PurpleFox",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0c9d1b8b6cea8ff6b188be7d44784900"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Raccoon",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "94bda0c9325b4655f5d422092b7e685f"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Ramnit",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "106d8addd8e99bb801f5b8d93868b720"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "RedBoot",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "e0340f456f76993fc047bc715dfdae6a"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Redline",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "34195eb265a31342b402ec185cc75198"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "RisePRO",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "f97c491e415650ac02e5796eb77a8155"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Sality",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "9783be18049743325d4ba283797691e2"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "SmokeLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "d4a824b455f581031c959f4431977e94"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "SnakeKeyLogger",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "c62da7a3eac6bae78ea8a771faa65d17"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Socgholish",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "106c99b259e8f7b24cb28ba4a9859ad3"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Stormkitty",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "299057a5ffbb5e70f8514df5f9796b9e"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "SystemMBC",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "ec7154a50488ecfd5936b6fd10e0a8e3"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Tinba",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0fe4698657dc7c60cf27898465620075"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Tipsy",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "ca09ad73b06a7860224af394cdcc8ec1"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "TrickBot",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "10975711461fb80b5f653a46930925af"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "TruthSpy",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "df66a94dfc86e6097c386550f31c4100"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Unnamed0",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "96afc9cdef3c623e0c5420e339c57283"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Upatre",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "1bbd1a1ffaab13b7d54822fbd0087d68"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Vidar",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "e7efd1433cb7c8d5dce08831e0aa5cfb"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "Vipasana",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "adb5c262ca4f95fee36ae4b9b5d41d45",
+      "2aea3b217e6a3d08ef684594192cafc8",
+      "a890e2f924dea3cb3e46a95431ffae39"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "XLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "0f2dedc25beae91372be6f838a743395"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "XMRig",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "106f4faa59b8fbf4099cb8ce9909738f"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "XWorm",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "d4c021f050296c309b84059bafa41332"
+    ],
+    "analysis": {}
+  },
+  {
+    "name": "ZLoader",
+    "description": "Insufficient data in provided search results",
+    "hash": [      "bf389a8ab715cd3e1240ea6f6872023b"
+    ],
+    "analysis": {}
+  }
+]

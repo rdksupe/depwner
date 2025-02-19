@@ -17,11 +17,23 @@
 			<p>
 				<span class="font-extrabold"
 					>{#if key == 'oldPath'}
-						Orignal Path
+						Original Path
 					{:else if key == 'deepseekResponse'}
 						AI Analysis
 					{:else if key == 'name'}
 						File Name
+					{:else if key =='cve_scores'}
+						CVE
+					{:else if key =='history'}
+						History
+					{:else if key =='origin'}
+						Origin
+					{:else if key =='authorship'}
+						Authorship
+					{:else if key =='affected_nations'}
+						Affected Nations
+					{:else if key =='detection_techniques'}
+						Detection Techniques			
 					{:else}
 						{key}
 					{/if}:</span

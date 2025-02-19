@@ -8,6 +8,37 @@ const process = require("process");
 const sqlite3 = require('sqlite3');
 const { promisify } = require('util');
 const { showThreatNotification, showScanStartNotification, showScanCompleteNotification } = require('./notifications.cjs');
+const csv = require("csv-parser");
+
+const hashFilePath = "data/hash.csv";
+const infoFilePath = "data/info.json";
+
+function getDirectoryNameForHash(targetHash) {
+  return new Promise((resolve, reject) => {
+    let foundDirectory = null;
+    fs.createReadStream(hashFilePath)
+      .pipe(csv())
+      .on("data", (row) => {
+        console.log(targetHash,row["MD5 Hash"])
+        if (row["MD5 Hash"] === targetHash) {
+          foundDirectory = row["Directory Name"];
+          
+        }
+      })
+      .on("end", () => resolve(foundDirectory))
+      .on("error", (err) => reject(err));
+  });
+}
+
+function getMalwareInfo(directoryName) {
+  try {
+    const data = JSON.parse(fs.readFileSync(infoFilePath, "utf8"));
+    return data.find((entry) => entry.name === directoryName) || null;
+  } catch (err) {
+    console.error("Error reading info.json:", err);
+    return null;
+  }
+}
 
 function loadWhitelist() {
   const whitelistPath = path.join(__dirname, 'whitelist.txt');
@@ -228,8 +259,16 @@ function updateQuarantineJson(fileInfo) {
   const quarantineJsonPath = path.join(__dirname, '../data/quarantine.json');
   let quarantineList = [];
   
-  if (fs.existsSync(quarantineJsonPath)) {
-    quarantineList = JSON.parse(fs.readFileSync(quarantineJsonPath, 'utf-8'));
+  try {
+    if (fs.existsSync(quarantineJsonPath)) {
+      const content = fs.readFileSync(quarantineJsonPath, 'utf-8').trim();
+      if (content) {
+        quarantineList = JSON.parse(content);
+      }
+    }
+  } catch (err) {
+    console.error("Error reading quarantine.json:", err);
+    quarantineList = []; 
   }
 
   quarantineList.push(fileInfo);
@@ -259,6 +298,54 @@ async function scanFile(filePath, dbConnection, yaraRules) {
       },
     };
   }
+  const directoryName = await getDirectoryNameForHash(hashes.md5);
+  console.log("dir name:",directoryName);
+  if (!directoryName) {
+    console.log("No matching directory found for hash:", hashes.md5);
+  }
+
+  const malwareInfo = getMalwareInfo(directoryName);
+  if (!malwareInfo) {
+    console.log("No malware info found for directory:", directoryName);
+  }
+  if (malwareInfo) {
+    const quarantinePath = moveToQuarantine(filePath);
+    if (quarantinePath) {
+      const data = {
+        name: path.basename(filePath),
+        type: directoryName,
+        oldPath: filePath,
+        hash: hashes.md5,
+        description: malwareInfo?.description,
+        cve_scores: malwareInfo?.detailed_analysis?.cve_scores,
+        history: malwareInfo?.detailed_analysis?.history,
+        origin: malwareInfo?.detailed_analysis?.origin,
+        authorship: malwareInfo?.detailed_analysis?.authorship,
+        affected_nations: malwareInfo?.detailed_analysis?.affected_nations,
+        detection_techniques: malwareInfo?.detailed_analysis?.detection_techniques,
+      };
+
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)
+      );
+
+      if (Object.keys(filteredData).length > 0) {
+        updateQuarantineJson(filteredData);
+      }
+      
+      return {
+        matched: true,
+        result: {
+          type: "primary_bloom",
+          hash_type: "md5",
+          hash: hashes.md5,
+          signature: directoryName,
+          file: filePath,
+          quarantined: !!quarantinePath
+        },
+      };
+    }
+  }
 
   if (dbConnection) {
     console.log('Checking database for hash match...');
@@ -275,8 +362,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           oldPath: filePath,
           hash: hashes.md5,
           yaraRule: "",
-          severiety: "",
-          deepseekResponse: ""
+          severity: "",
         });
       }
       return {
@@ -305,8 +391,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           oldPath: filePath,
           hash: hashes.md5,
           yaraRule: yaraResult,
-          severiety: "",
-          deepseekResponse: ""
+          severity: "",
         });
       }
       return {
@@ -332,8 +417,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
         oldPath: filePath,
         hash: hashes.md5,
         yaraRule: yaraResult,
-        severiety: "",
-        deepseekResponse: ""
+        severity: "",
       });
     }
     return {
@@ -417,7 +501,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
       results.scan_summary.matches[scanResult.result.type] += 1;
       results.matched_files.push(scanResult.result);
 
-      global.scanStatus.threatsFound.push(scanResult.result.file);
+      // global.scanStatus.threatsFound.push(scanResult.result.file);
 
       // Show notification for detected threat
       showThreatNotification(
