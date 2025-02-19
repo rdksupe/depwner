@@ -1,6 +1,8 @@
 # PNB Hackathon Pwnedraccoon
 
-
+## Techinal Overview
+The main principal is to
+We have made an electron app which uses `chokidar` to constantly watch for filesystem changes.
 
 ## Development Setup
 
