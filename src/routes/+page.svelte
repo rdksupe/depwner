@@ -51,6 +51,16 @@
 			backIcon: ShieldIcon,
 			color: 'rgb(var(--ctp-yellow))'
 		},
+		LocationsEmpty: {
+			title: 'No Locations Set',
+			message:
+				"No locations are being monitiored<br/><span class='text-catp-peach'>Please add at least one location to monitor</span>",
+			fix: 'Add Now',
+			link: 'settings.html',
+			icon: ShieldAlertIcon,
+			backIcon: ShieldIcon,
+			color: 'rgb(var(--ctp-peach))'
+		},
 		YaraDisabled: {
 			title: 'Secure',
 			message:
@@ -88,8 +98,8 @@
 				sat: false
 			},
 			time: '13:00'
-		}
-		// 	locations: ['']
+		},
+		locations: []
 	});
 	let threats = $state(0);
 	onMount(async () => {
@@ -103,6 +113,8 @@
 	let dashStatus = $derived.by(() => {
 		if (threats != 0) {
 			return statusMessages.Threat;
+		} else if (!settings.locations[0]) {
+			return statusMessages.LocationsEmpty;
 		} else if (!settings.schedule.active) {
 			return statusMessages.NoSchedule;
 		} else if (!settings.yara) {
