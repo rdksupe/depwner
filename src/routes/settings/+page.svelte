@@ -108,6 +108,9 @@
 						</button>
 					</div>
 				{/each}
+				{#if !settings.locations[0]}
+					<p class="text-catp-red">Please add at least one location to monitor</p>
+				{/if}
 			</div>
 		</div>
 	</div>
