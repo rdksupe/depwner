@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "type": "bar",
+      "x": [
+        "\"n/a\"",
+        "\"Heodo\"",
+        "\"AgentTesla\"",
+        "\"Mirai\"",
+        "\"Quakbot\"",
+        "\"RedLineStealer\"",
+        "\"Dridex\"",
+        "\"Formbook\"",
+        "\"Loki\"",
+        "\"SnakeKeylogger\"",
+        "\"Smoke Loader\"",
+        "\"Gafgyt\"",
+        "\"GuLoader\"",
+        "\"RemcosRAT\"",
+        "\"Amadey\""
+      ],
+      "y": [
+        124845,
+        97340,
+        80718,
+        69839,
+        64062,
+        38817,
+        36771,
+        34750,
+        16694,
+        14772,
+        14244,
+        12825,
+        12308,
+        12218,
+        11046
+      ],
+      "marker": {
+        "color": "rgb(54, 162, 235)"
+      },
+      "hovertemplate": "%{x}<br>Samples: %{y}<extra></extra>"
+    }
+  ],
+  "layout": {
+    "title": "Malware Family Distribution",
+    "xaxis": {
+      "title": "Malware Family",
+      "tickangle": 45
+    },
+    "yaxis": {
+      "title": "Number of Samples"
+    },
+    "margin": {
+      "b": 100
+    },
+    "hovermode": "closest"
+  }
+}

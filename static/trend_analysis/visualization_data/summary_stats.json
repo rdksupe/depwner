@@ -1,0 +1,20 @@
+{
+  "total_samples": 871974,
+  "unique_families": 1841,
+  "date_range": {
+    "start": "2020-02-13",
+    "end": "2025-02-15"
+  },
+  "top_families": {
+    "\"n/a\"": 124845,
+    "\"Heodo\"": 97340,
+    "\"AgentTesla\"": 80718,
+    "\"Mirai\"": 69839,
+    "\"Quakbot\"": 64062,
+    "\"RedLineStealer\"": 38817,
+    "\"Dridex\"": 36771,
+    "\"Formbook\"": 34750,
+    "\"Loki\"": 16694,
+    "\"SnakeKeylogger\"": 14772
+  }
+}
