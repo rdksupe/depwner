@@ -94,8 +94,38 @@ function showScanCompleteNotification(numFiles, threatsFound) {
   }
 }
 
+
+function showWatcherStatus(isStarted) {
+    const NOTIFICATION_TITLE = isStarted ? '🔍 Live Scanning Started' : '⚠️ Live Scanning Failed';
+    const NOTIFICATION_BODY = isStarted ? 
+      'Real-time file protection is now active' : 
+      'Could not start real-time protection';
+  
+    try {
+      if (isMainProcess()) {
+        const { Notification } = require('electron');
+        new Notification({
+          title: NOTIFICATION_TITLE,
+          body: NOTIFICATION_BODY,
+          icon: path.join(__dirname, '../assets/scan.png'),
+          urgency: isStarted ? 'low' : 'critical',
+          silent: true
+        }).show();
+      } else {
+        new window.Notification(NOTIFICATION_TITLE, {
+          body: NOTIFICATION_BODY,
+          silent: true
+        });
+      }
+      console.log(`\x1b[32m${NOTIFICATION_TITLE}: ${NOTIFICATION_BODY}\x1b[0m`);
+    } catch (err) {
+      console.log(`\x1b[32m${NOTIFICATION_TITLE}: ${NOTIFICATION_BODY}\x1b[0m`);
+    }
+  }
+
 module.exports = {
   showThreatNotification,
   showScanStartNotification,
-  showScanCompleteNotification
+  showScanCompleteNotification,
+  showWatcherStatus
 };
