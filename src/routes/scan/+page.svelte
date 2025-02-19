@@ -163,41 +163,40 @@
 {/if}
 
 <style>
-	.progressBar {
-		display: flex;
-		align-items: center;
-		gap: 0.7vw;
-		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-		.progressBack {
-			width: stretch;
-			background: repeating-linear-gradient(
-					135deg,
-					rgb(var(--ctp-surface0)) 0 1vh,
-					rgb(var(--ctp-surface2)) 0 2vh
-				)
-				0/100%;
-			border-radius: 0.5vh;
-			height: min(1.6vh, 1.6vw);
-			transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-		}
-		.progress {
-			background: repeating-linear-gradient(135deg, #658ce6 0 1vh, rgb(var(--ctp-blue)) 0 2vh)
-				0/100% no-repeat;
-			left: 0;
-			right: 50%;
-		}
-	}
-	.statusData {
-		width: 40vw;
-		display: flex;
-		.value {
-			text-overflow: ellipsis;
-			overflow: hidden;
-			/* white-space: nowrap; */
-			text-wrap: nowrap;
-			overflow-wrap: break-word;
-		}
-	}
+	/* .progressBar { */
+	/* 	display: flex; */
+	/* 	align-items: center; */
+	/* 	gap: 0.7vw; */
+	/* 	transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); */
+	/* 	.progressBack { */
+	/* 		width: stretch; */
+	/* 		background: repeating-linear-gradient( */
+	/* 				135deg, */
+	/* 				rgb(var(--ctp-surface0)) 0 1vh, */
+	/* 				rgb(var(--ctp-surface2)) 0 2vh */
+	/* 			) */
+	/* 			0/100%; */
+	/* 		border-radius: 0.5vh; */
+	/* 		height: min(1.6vh, 1.6vw); */
+	/* 		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1); */
+	/* 	} */
+	/* 	.progress { */
+	/* 		background: repeating-linear-gradient(135deg, #658ce6 0 1vh, rgb(var(--ctp-blue)) 0 2vh) */
+	/* 			0/100% no-repeat; */
+	/* 		left: 0; */
+	/* 		right: 50%; */
+	/* 	} */
+	/* } */
+	/* .statusData { */
+	/* 	width: 40vw; */
+	/* 	display: flex; */
+	/* 	.value { */
+	/* 		text-overflow: ellipsis; */
+	/* 		overflow: hidden; */
+	/* 		text-wrap: nowrap; */
+	/* 		overflow-wrap: break-word; */
+	/* 	} */
+	/* } */
 	@keyframes spin {
 		to {
 			transform: rotate(-360deg);
