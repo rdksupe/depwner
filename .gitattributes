@@ -1,1 +1,0 @@
-scanner/full.csv filter=lfs diff=lfs merge=lfs -text
