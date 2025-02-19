@@ -36,7 +36,11 @@
 		<div class="grid justify-center">
 			<div class="headingInfo">
 				<h2>Advanced Detection</h2>
-				<button>
+				<button class="tooltip">
+					<span class="tooltiptext"
+						>Enable Advanced Detection to scan for malware files on an extended dataset. Recommended
+						only on systems with 4GB RAM or more and at least a Dual Core CPU</span
+					>
 					<Info />
 				</button>
 			</div>
@@ -58,7 +62,11 @@
 			</div>
 			<div class="headingInfo">
 				<h2>Scheduled Scans</h2>
-				<button>
+				<button class="tooltip">
+					<span class="tooltiptext">
+						It is recommended to schedule full system scans for an extra layer of protection. They
+						can be scheduled at non-working hours like the Lunch Break to not affect performance.
+					</span>
 					<Info />
 				</button>
 			</div>
@@ -78,7 +86,12 @@
 			</div>
 			<div class="headingInfo">
 				<h2>Locations</h2>
-				<button>
+				<button class="tooltip">
+					<span class="tooltiptext">
+						Specify the locations that depwner should monitor. You can even fully select all of your
+						partitions to monitor all of your system, but that may affect performance on outdated
+						systems.
+					</span>
 					<Info />
 				</button>
 			</div>
@@ -117,6 +130,32 @@
 </div>
 
 <style>
+	button.tooltip {
+		position: relative;
+	}
+	.tooltip .tooltiptext {
+		visibility: hidden;
+		max-width: 30vw;
+		width: max-content;
+		background-color: rgb(var(--ctp-crust));
+		/* color: #fff; */
+		text-align: center;
+		padding: 0.5vh 1.5vw;
+		border-radius: 0.7vh;
+
+		/* Position the tooltip text - see examples below! */
+		position: absolute;
+		z-index: 1;
+		/* left: 0; */
+		/* right: 0; */
+		bottom: -10%;
+		translate: -50% 100%;
+	}
+
+	/* Show the tooltip text when you mouse over the tooltip container */
+	.tooltip:hover .tooltiptext {
+		visibility: visible;
+	}
 	.locationSettings {
 		display: grid;
 		place-items: center;
