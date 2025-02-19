@@ -12,6 +12,8 @@ const csv = require("csv-parser");
 
 const hashFilePath = "data/hash.csv";
 const infoFilePath = "data/info.json";
+const QUARANTINE_JSON = "quarantine.json";
+const QUARANTINE_DIR = "quarantine";
 
 function getDirectoryNameForHash(targetHash) {
   return new Promise((resolve, reject) => {
@@ -40,6 +42,75 @@ function getMalwareInfo(directoryName) {
   }
 }
 
+function restoreFileByPath(originalPath) {
+  try {
+    // Load quarantine.json
+    const quarantineData = JSON.parse(fs.readFileSync(QUARANTINE_JSON, "utf8"));
+
+    // Find the file entry by original path
+    const fileIndex = quarantineData.findIndex(entry => entry.oldPath === originalPath);
+    if (fileIndex === -1) {
+      console.log(`File with path ${originalPath} not found in quarantine.`);
+      return false;
+    }
+
+    const fileEntry = quarantineData[fileIndex];
+    const quarantinedFilePath = path.join(QUARANTINE_DIR, fileEntry.name);
+
+    // Ensure the original directory exists before restoring
+    const originalDir = path.dirname(fileEntry.oldPath);
+    if (!fs.existsSync(originalDir)) {
+      fs.mkdirSync(originalDir, { recursive: true });
+    }
+
+    // Move file back to its original location
+    fs.renameSync(quarantinedFilePath, fileEntry.oldPath);
+    console.log(`Restored ${fileEntry.name} to ${fileEntry.oldPath}`);
+
+    // Remove the entry from quarantine.json
+    quarantineData.splice(fileIndex, 1);
+    fs.writeFileSync(QUARANTINE_JSON, JSON.stringify(quarantineData, null, 2), "utf8");
+
+    return true;
+  } catch (error) {
+    console.error(`Error restoring file: ${error.message}`);
+    return false;
+  }
+}
+
+function deleteFromQuarantineByPath(originalPath) {
+  try {
+    // Load quarantine.json
+    const quarantineData = JSON.parse(fs.readFileSync(QUARANTINE_JSON, "utf8"));
+
+    // Find the file entry by original path
+    const fileIndex = quarantineData.findIndex(entry => entry.oldPath === originalPath);
+    if (fileIndex === -1) {
+      console.log(`File with path ${originalPath} not found in quarantine.`);
+      return false;
+    }
+
+    const fileEntry = quarantineData[fileIndex];
+    const quarantinedFilePath = path.join(QUARANTINE_DIR, fileEntry.name);
+
+    // Delete the file from the quarantine folder if it exists
+    if (fs.existsSync(quarantinedFilePath)) {
+      fs.unlinkSync(quarantinedFilePath);
+      console.log(`Deleted ${fileEntry.name} from quarantine.`);
+    } else {
+      console.log(`File ${fileEntry.name} not found in quarantine folder.`);
+    }
+
+    // Remove the entry from quarantine.json
+    quarantineData.splice(fileIndex, 1);
+    fs.writeFileSync(QUARANTINE_JSON, JSON.stringify(quarantineData, null, 2), "utf8");
+
+    return true;
+  } catch (error) {
+    console.error(`Error deleting file: ${error.message}`);
+    return false;
+  }
+}
 function loadWhitelist() {
   const whitelistPath = path.join(__dirname, 'whitelist.txt');
   const whitelist = new Set();
@@ -311,6 +382,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
   if (malwareInfo) {
     const quarantinePath = moveToQuarantine(filePath);
     if (quarantinePath) {
+      const detectionTechniques = malwareInfo?.detailed_analysis?.detection_techniques;
       const data = {
         name: path.basename(filePath),
         type: directoryName,
@@ -322,8 +394,13 @@ async function scanFile(filePath, dbConnection, yaraRules) {
         origin: malwareInfo?.detailed_analysis?.origin,
         authorship: malwareInfo?.detailed_analysis?.authorship,
         affected_nations: malwareInfo?.detailed_analysis?.affected_nations,
-        detection_techniques: malwareInfo?.detailed_analysis?.detection_techniques,
       };
+      if (typeof detectionTechniques === "object") {
+        data.predictive_detection_techniques = detectionTechniques.predictive || "N/A";
+        data.behavior_based_detection_techniques = detectionTechniques.behavior_based || "N/A";
+      } else {
+        data.detection_techniques = detectionTechniques;
+      }
 
       const filteredData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)

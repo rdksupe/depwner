@@ -33,7 +33,11 @@
 					{:else if key =='affected_nations'}
 						Affected Nations
 					{:else if key =='detection_techniques'}
-						Detection Techniques			
+						Detection Techniques
+					{:else if key =='predictive_detection_techniques'}
+						Predictive Detection Techniques
+					{:else if key =='behavior_based_detection_techniques'}
+						Behavior Based Detection Technique				
 					{:else}
 						{key}
 					{/if}:</span
@@ -53,7 +57,7 @@
 					threats.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				displayInfo.name = '';
-				electronFilesystem.removeThreat(displayInfo);
+				electronFilesystem.removeThreat(displayInfo.oldPath);
 			}}>Permanently Remove</button
 		>
 		<h3>Think this was a mistake?</h3>
@@ -66,7 +70,7 @@
 					threats.splice(index, 1); // 2nd parameter means remove one item only
 				}
 				displayInfo.name = '';
-				electronFilesystem.restoreThreat(displayInfo);
+				electronFilesystem.restoreThreat(displayInfo.oldPath);
 			}}>Restore and Add to Whitelist</button
 		>
 	</div>

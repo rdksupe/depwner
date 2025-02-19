@@ -61,14 +61,14 @@
   },
   {
     "name": "CyberGate",
-    "description": "A Delphi-based Remote Access Trojan (RAT) employing UPX packing and custom TCP protocols for C&C communication. It features zlib compression and RC4 encryption with hardcoded keys ('draZwyK8wNHF'), enabling credential theft from Chrome/Firefox, screen capture, keylogging, and remote execution of secondary payloads. The malware creates mutexes like SPY_NET_RATMUTEX and uses XOR-encrypted C&C IPs (e.g., decrypted with key '2qYNYM2Z74XL'). Recent campaigns utilize AutoIt scripts for delivery alongside RedLine Stealer, targeting financial and government sectors through phishing documents[2][3][4][5].",
+    "description": "A Delphi-based Remote Access Trojan (RAT) employing UPX packing and custom TCP protocols for C&C communication. It features zlib compression and RC4 encryption with hardcoded keys ('draZwyK8wNHF'), enabling credential theft from Chrome/Firefox, screen capture, keylogging, and remote execution of secondary payloads. The malware creates mutexes like SPY_NET_RATMUTEX and uses XOR-encrypted C&C IPs (e.g., decrypted with key '2qYNYM2Z74XL'). Recent campaigns utilize AutoIt scripts for delivery alongside RedLine Stealer, targeting financial and government sectors through phishing documents.",
     "detailed_analysis": {
       "cve_scores": "Exploits CVE-2017-0199 (CVSS 7.8) via weaponized Office docs in distribution chains",
-      "history": "First observed in 2016; evolved through multiple variants with enhanced anti-analysis capabilities. Used in 2024 campaigns against Indian financial institutions and global healthcare organizations[1][2]",
+      "history": "First observed in 2016; evolved through multiple variants with enhanced anti-analysis capabilities. Used in 2024 campaigns against Indian financial institutions and global healthcare organizations",
       "origin": "Developed by Russian-speaking threat actors; infrastructure linked to JSocket underground markets",
       "authorship": "Attributed to cybercriminal group TA558; associated with Gorgon Group activities",
-      "affected_nations": "Primary targets: India (38% of cases), United States (22%), EU members (15%)[2][5]",
-      "detection_techniques": "1) Network: Snort rules for TCP port 3970 traffic patterns with 14-byte @@ markers 2) Host: YARA rules detecting UPX-packed Delphi executables with mutex creation patterns 3) Behavioral: Anomalous process hollowing of svchost.exe for persistence[3][4]"
+      "affected_nations": "Primary targets: India (38% of cases), United States (22%), EU members (15%)",
+      "detection_techniques": "1) Network: Snort rules for TCP port 3970 traffic patterns with 14-byte @@ markers 2) Host: YARA rules detecting UPX-packed Delphi executables with mutex creation patterns 3) Behavioral: Anomalous process hollowing of svchost.exe for persistence"
     },
     "hash": [
       "d65f0eac61b375293969dd1398fab2b5"
@@ -76,14 +76,14 @@
   },
   {
     "name": "Remcos",
-    "description": "Feature-rich RAT using RC4 encryption with distinctive 11-byte header patterns (08 b4 de f6 84 27 70 9a 57 17 5e) in C&C communication. Spreads via Excel exploits (CVE-2017-0199) and targets healthcare/government sectors with fileless execution techniques. Recent variants employ COM object abuse for privilege escalation and scheduled tasks for persistence[1].",
+    "description": "Feature-rich RAT using RC4 encryption with distinctive 11-byte header patterns (08 b4 de f6 84 27 70 9a 57 17 5e) in C&C communication. Spreads via Excel exploits (CVE-2017-0199) and targets healthcare/government sectors with fileless execution techniques. Recent variants employ COM object abuse for privilege escalation and scheduled tasks for persistence.",
     "detailed_analysis": {
       "cve_scores": "CVE-2017-0199 (CVSS 7.8) leveraged in initial infection vectors",
       "history": "Emerging in 2016 Hungarian hacker forums; adopted by APT33 in 2020 cloud attacks",
       "origin": "Hungarian-developed, commercialized via BreakingSecurity.net",
       "authorship": "Linked to FIN7 cybercrime syndicate operations",
       "affected_nations": "Germany (27%), United Arab Emirates (19%), Canada (14%)",
-      "detection_techniques": "1) Memory analysis for process hollowing artifacts 2) AMSI scanning for PowerShell payload patterns 3) Entropy analysis of RC4-encrypted network blobs[1]"
+      "detection_techniques": "1) Memory analysis for process hollowing artifacts 2) AMSI scanning for PowerShell payload patterns 3) Entropy analysis of RC4-encrypted network blobs"
     },
     "hash": [
       "88e1ac034315aed1b44082decf2d432d"
@@ -91,26 +91,26 @@
   },
   {
     "name": "NetWire",
-    "description": "Long-running AES-encrypted RAT distributed via GuLoader and SilverTerrier APT campaigns. Uses TCP protocol with initial 32-byte seed/16-byte IV exchanges for key negotiation. Recent variants spoof AsyncRAT server certificates (CN=AsyncRAT Server) while maintaining legacy Hydrojiin campaign TTPs[1].",
+    "description": "Long-running AES-encrypted RAT distributed via GuLoader and SilverTerrier APT campaigns. Uses TCP protocol with initial 32-byte seed/16-byte IV exchanges for key negotiation. Recent variants spoof AsyncRAT server certificates (CN=AsyncRAT Server) while maintaining legacy Hydrojiin campaign TTPs.",
     "detailed_analysis": {
       "cve_scores": "None attributed; relies on social engineering and malvertising",
       "history": "Active since 2012; evolved through 14 major versions with cloud-targeting capabilities",
       "origin": "Developed by Nigerian threat group The White Company",
       "authorship": "Attributed to SilverTerrier affiliate programs",
       "affected_nations": "South Africa (31%), Kenya (22%), Saudi Arabia (18%)",
-      "detection_techniques": "1) Certificate transparency monitoring for spoofed issuer names 2) Network pattern matching for AES key exchange sequences 3) Sandbox detection of GuLoader dependencies[1]"
+      "detection_techniques": "1) Certificate transparency monitoring for spoofed issuer names 2) Network pattern matching for AES key exchange sequences 3) Sandbox detection of GuLoader dependencies"
     }
   },
   {
     "name": "Quasar",
-    "description": "Open-source .NET RAT using pre-shared AES keys (hardcoded in client binaries) for C&C encryption. Adopted by APT41 and Patchwork group for attacks on aerospace/defense sectors. Features include process injection, password recovery from 87+ applications, and VNC-style remote desktop[1].",
+    "description": "Open-source .NET RAT using pre-shared AES keys (hardcoded in client binaries) for C&C encryption. Adopted by APT41 and Patchwork group for attacks on aerospace/defense sectors. Features include process injection, password recovery from 87+ applications, and VNC-style remote desktop.",
     "detailed_analysis": {
       "cve_scores": "CVE-2024-30103 (CVSS 8.1) in vulnerable RDP implementations exploited for lateral movement",
       "history": "GitHub source leak in 2018 led to 23+ variants; active in Russo-Ukrainian cyber campaigns",
       "origin": "Russian-aligned developers; code overlaps with Crackonosh miners",
       "authorship": "Gorgon Group affiliate projects",
       "affected_nations": "Ukraine (42%), Poland (19%), NATO contractors (13%)",
-      "detection_techniques": "1) Static analysis of .NET binaries with hardcoded AES constants 2) Behavioral detection of mass credential scraping 3) YARA rules for Process Hollowing patterns[1]"
+      "detection_techniques": "1) Static analysis of .NET binaries with hardcoded AES constants 2) Behavioral detection of mass credential scraping 3) YARA rules for Process Hollowing patterns"
     },
     "hash": [
       "1d6d97b36099b4e87dcd33a1a0adfed1"
@@ -118,14 +118,14 @@
   },
   {
     "name": "DarkComet",
-    "description": "A legacy Remote Access Trojan developed in 2008 by Jean-Pierre Lesueur, using mouse_event/keybd_event APIs for input simulation. Features include credential theft via browser memory scraping, webcam hijacking through DirectShow interfaces, and registry persistence via HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run. Recent campaigns use XOR-encrypted C2 traffic (key 0x7D) over port 1604, with 57,805 victims identified in longitudinal studies[1][2][4].",
+    "description": "A legacy Remote Access Trojan developed in 2008 by Jean-Pierre Lesueur, using mouse_event/keybd_event APIs for input simulation. Features include credential theft via browser memory scraping, webcam hijacking through DirectShow interfaces, and registry persistence via HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run. Recent campaigns use XOR-encrypted C2 traffic (key 0x7D) over port 1604, with 57,805 victims identified in longitudinal studies.",
     "detailed_analysis": {
       "cve_scores": "Exploits CVE-2017-0199 (CVSS 7.8) for distribution via weaponized RTF files",
-      "history": "Original author abandoned development in 2012; source code leaked in 2014 leading to 12+ variants. Used in 2024 Ukrainian political surveillance operations[1][4]",
+      "history": "Original author abandoned development in 2012; source code leaked in 2014 leading to 12+ variants. Used in 2024 Ukrainian political surveillance operations",
       "origin": "French-developed; infrastructure operated through No-IP dynamic DNS services",
       "authorship": "Linked to GRIZZLY STEPPE APT group activities",
-      "affected_nations": "Turkey (23% of controllers), Russia (19%), France (15%)[2][4]",
-      "detection_techniques": "1) Network: Snort rules for TCP port 1604 traffic with 0xDEADBEEF magic bytes 2) Host: YARA rules detecting VirtualAlloc pattern 0x400000 for code injection 3) Behavioral: Anomalous Win32 API call sequences in explorer.exe[1][3]"
+      "affected_nations": "Turkey (23% of controllers), Russia (19%), France (15%)",
+      "detection_techniques": "1) Network: Snort rules for TCP port 1604 traffic with 0xDEADBEEF magic bytes 2) Host: YARA rules detecting VirtualAlloc pattern 0x400000 for code injection 3) Behavioral: Anomalous Win32 API call sequences in explorer.exe"
     },
     "hash": [
       "0faee8383e8088667c4e94ab44d8cf66"
@@ -133,14 +133,14 @@
   },
   {
     "name": "SectopRAT",
-    "description": ".NET-based information stealer using AES256-CBC encryption (IV: 16-byte nonce) for C2 comms. Distributes via poisoned Google Ads promoting fake software installers. Establishes persistence through %AppData%\\Microsoft\\Network\\svchost.exe and exfiltrates browser data (Chrome 80+, Firefox 72+) to pastebin[.]com C2 endpoints[9].",
+    "description": ".NET-based information stealer using AES256-CBC encryption (IV: 16-byte nonce) for C2 comms. Distributes via poisoned Google Ads promoting fake software installers. Establishes persistence through %AppData%\\Microsoft\\Network\\svchost.exe and exfiltrates browser data (Chrome 80+, Firefox 72+) to pastebin[.]com C2 endpoints.",
     "detailed_analysis": {
       "cve_scores": "CVE-2023-36884 (CVSS 8.8) exploited for Office zero-day attacks",
       "history": "First detected in 2019; 2023 resurgence targeting US educational institutions with updated Chrome DevTools protocol integration",
       "origin": "Russian-speaking developers; infrastructure linked to bulletproof hosting in Moldova",
       "authorship": "Associated with TA407 cybercrime group",
       "affected_nations": "United States (42%), Germany (19%), UAE (15%)",
-      "detection_techniques": "1) AMSI scanning for .NET reflection patterns 2) Network IDS for Pastebin API TLS fingerprint anomalies 3) Registry analysis of HKCU\\Environment\\Temp mutations[9]"
+      "detection_techniques": "1) AMSI scanning for .NET reflection patterns 2) Network IDS for Pastebin API TLS fingerprint anomalies 3) Registry analysis of HKCU\\Environment\\Temp mutations"
     },
     "hash": [
       "5e2b456e366e13a76983e6f3cd77918d"
@@ -148,14 +148,14 @@
   },
   {
     "name": "WarzoneRAT",
-    "description": "C++ MaaS RAT employing process hollowing (aspnet_compiler.exe injection) and UAC bypass via CMSTPLUA COM interface. Uses RC4 encryption with 32-byte key (SHA256 of 'WarzoneKey') for C2 over ports 228/TCP and 443/SSL. Targets cryptocurrency wallets (Electrum, Exodus) through DLL side-loading attacks[10].",
+    "description": "C++ MaaS RAT employing process hollowing (aspnet_compiler.exe injection) and UAC bypass via CMSTPLUA COM interface. Uses RC4 encryption with 32-byte key (SHA256 of 'WarzoneKey') for C2 over ports 228/TCP and 443/SSL. Targets cryptocurrency wallets (Electrum, Exodus) through DLL side-loading attacks.",
     "detailed_analysis": {
       "cve_scores": "CVE-2021-40444 (CVSS 8.8) exploited via malicious CAB archives",
       "history": "Emerging in 2019 as AveMaria variant; rebranded in 2023 with Lokibot integration",
       "origin": "Developed by Russian-speaking actors; sold on Exploit[.]in forums",
       "authorship": "Linked to FIN12 ransomware operations",
       "affected_nations": "Ukraine (31%), Poland (22%), Baltic states (18%)",
-      "detection_techniques": "1) Memory forensics for RWX section in aspnet_compiler.exe 2) TLS JA3 fingerprinting of C2 beacons 3) Detection of anomalous WMI PermanentEvent subscriptions[10]"
+      "detection_techniques": "1) Memory forensics for RWX section in aspnet_compiler.exe 2) TLS JA3 fingerprinting of C2 beacons 3) Detection of anomalous WMI PermanentEvent subscriptions"
     },
     "hash": [
       "0fe23bfe4a1aff6b6e079d8a0c942d5b"
@@ -163,14 +163,14 @@
   },
   {
     "name": "Glupteba",
-    "description": "Modular malware combining RAT/cryptojacking capabilities via EternalBlue SMBv1 exploits (CVE-2017-0144). Uses blockchain-based C2 through Bitcoin transactions (address 1ES14c7qLb5CYh33UFPqTfdZg87fXPa7Vq) for resilience. Maintains persistence through infected router firmware and MBR modifications[6].",
+    "description": "Modular malware combining RAT/cryptojacking capabilities via EternalBlue SMBv1 exploits (CVE-2017-0144). Uses blockchain-based C2 through Bitcoin transactions (address 1ES14c7qLb5CYh33UFPqTfdZg87fXPa7Vq) for resilience. Maintains persistence through infected router firmware and MBR modifications.",
     "detailed_analysis": {
       "cve_scores": "CVE-2017-0144 (CVSS 8.1) for SMBv1 propagation",
       "history": "First seen in 2011; 2022 Google legal action disrupted operations temporarily",
       "origin": "Russian cybercrime collective; infrastructure uses Fast Flux DNS",
       "authorship": "Attributed to Evil Corp affiliate programs",
       "affected_nations": "Brazil (28%), India (24%), Mexico (19%)",
-      "detection_techniques": "1) Network inspection for Bitcoin protocol over TCP 8333 2) Memory analysis of DoublePulsar backdoor 3) Detection of MBR modification timestamps[6]"
+      "detection_techniques": "1) Network inspection for Bitcoin protocol over TCP 8333 2) Memory analysis of DoublePulsar backdoor 3) Detection of MBR modification timestamps"
     },
     "hash": [
       "f36e21c5da2e4a5d812890891a627a6a"
@@ -178,7 +178,7 @@
   },
   {
     "name": "MetamorpherRAT",
-    "description": "Polymorphic RAT employing code morphing via LLVM-based recompilation cycles. Uses TCP Fast Open with 16MB window scaling for C2 efficiency. Targets industrial control systems through modified CODESYS runtime environments[7].",
+    "description": "Polymorphic RAT employing code morphing via LLVM-based recompilation cycles. Uses TCP Fast Open with 16MB window scaling for C2 efficiency. Targets industrial control systems through modified CODESYS runtime environments.",
     "detailed_analysis": {
       "cve_scores": "CVE-2022-30178 (CVSS 9.1) in CODESYS V3 runtime",
       "history": "Emerging in 2020; used in 2024 attacks on European energy grid",
@@ -193,7 +193,7 @@
   },
   {
     "name": "RevangeRAT",
-    "description": "Delphi-based surveillance RAT using WebSocket over port 8080 with zlib compression (level 9). Implements virtual machine detection via CPUID hypervisor bits. Targets journalists through malicious OAuth app consent phishing[12].",
+    "description": "Delphi-based surveillance RAT using WebSocket over port 8080 with zlib compression (level 9). Implements virtual machine detection via CPUID hypervisor bits. Targets journalists through malicious OAuth app consent phishing.",
     "detailed_analysis": {
       "cve_scores": "CVE-2023-23397 (CVSS 9.8) for Outlook NTLM relay attacks",
       "history": "Active since 2017; 2023 campaigns focused on Middle Eastern media",
@@ -208,7 +208,7 @@
   },
   {
     "name": "WSHRAT",
-    "description": "A polymorphic Remote Access Trojan (RAT) written in VBScript/JavaScript, distributed via phishing campaigns with self-replicating capabilities. Known aliases include Houdini, Hworm, and Jenxcus. Features include keylogging, webcam hijacking, and modular payload delivery through Pastebin. Recent variants use PowerShell and RegAsm for persistence, with HTTP POST communications containing 'WSHRAT' User-Agent headers to C2 servers[2][8].",
+    "description": "A polymorphic Remote Access Trojan (RAT) written in VBScript/JavaScript, distributed via phishing campaigns with self-replicating capabilities. Known aliases include Houdini, Hworm, and Jenxcus. Features include keylogging, webcam hijacking, and modular payload delivery through Pastebin. Recent variants use PowerShell and RegAsm for persistence, with HTTP POST communications containing 'WSHRAT' User-Agent headers to C2 servers.",
     "detailed_analysis": {
       "cve_scores": "Primarily leverages social engineering; no direct CVEs attributed",
       "history": "First observed in 2013 targeting energy sectors; rewritten in JavaScript in 2019. 2024 campaigns use ISO disk image lures mimicking tax documents",
@@ -223,7 +223,7 @@
   },
   {
     "name": "XenorRat",
-    "description": "Open-source C# RAT distributed via Discord CDN, featuring SOCKS5 reverse proxy and DarkVNC-based hidden desktop control. Uses DLL side-loading through weaponized LNK files disguised as WhatsApp screenshots. Recent campaigns incorporate process hollowing of dllhost.exe and UAC bypass via CMSTPLUA COM interfaces[3].",
+    "description": "Open-source C# RAT distributed via Discord CDN, featuring SOCKS5 reverse proxy and DarkVNC-based hidden desktop control. Uses DLL side-loading through weaponized LNK files disguised as WhatsApp screenshots. Recent campaigns incorporate process hollowing of dllhost.exe and UAC bypass via CMSTPLUA COM interfaces.",
     "detailed_analysis": {
       "cve_scores": "CVE-2024-21413 (CVSS 8.1) exploited for LNK file spoofing",
       "history": "Released on GitHub in 2024 by developer moom825; used in attacks against SMBs",
@@ -238,7 +238,7 @@
   },
   {
     "name": "ZGRat",
-    "description": ".NET-based surveillance RAT using AES-encrypted C2 channels over port 8443. Establishes persistence via BridgehyperRuntime.exe masquerading as legitimate software. Recent variants target cryptocurrency wallets (MetaMask, Trust Wallet) through clipboard hijacking[4].",
+    "description": ".NET-based surveillance RAT using AES-encrypted C2 channels over port 8443. Establishes persistence via BridgehyperRuntime.exe masquerading as legitimate software. Recent variants target cryptocurrency wallets (MetaMask, Trust Wallet) through clipboard hijacking.",
     "detailed_analysis": {
       "cve_scores": "CVE-2023-36884 (CVSS 8.8) exploited in initial infection vectors",
       "history": "Active since 2020; 2024 campaigns focus on DeFi platforms",
@@ -253,7 +253,7 @@
   },
   {
     "name": "Happy99",
-    "description": "Historic email worm targeting Windows 95/98 systems via WSOCK32.DLL modification. Propagates through email/newsgroup posts containing Happy99.exe attachments, logging infected addresses to LISTE.SKA. Considered precursor to modern RATs with its auto-replication design[5].",
+    "description": "Historic email worm targeting Windows 95/98 systems via WSOCK32.DLL modification. Propagates through email/newsgroup posts containing Happy99.exe attachments, logging infected addresses to LISTE.SKA. Considered precursor to modern RATs with its auto-replication design.",
     "detailed_analysis": {
       "cve_scores": "N/A (pre-CVE era); exploits Windows 95 SMB vulnerabilities",
       "history": "Released in 1999 by 'Spanska' creator; inspired Melissa/I-Love-You worms",
@@ -268,7 +268,7 @@
   },
   {
     "name": "NJRat",
-    "description": "Arabic-language RAT spreading via USB drives and phishing, masquerading as critical Windows processes. Features include webcam capture, DDoS capabilities, and Pastebin-based payload updates. Recent variants disable Windows Defender through WMI class modifications[6].",
+    "description": "Arabic-language RAT spreading via USB drives and phishing, masquerading as critical Windows processes. Features include webcam capture, DDoS capabilities, and Pastebin-based payload updates. Recent variants disable Windows Defender through WMI class modifications.",
     "detailed_analysis": {
       "cve_scores": "CVE-2023-23397 (CVSS 9.8) exploited for NTLM relay attacks",
       "history": "Active since 2012; 2023 updates added Telegram C2 integration",
@@ -280,7 +280,7 @@
   },
   {
     "name": "DarkCloud",
-    "description": "Fileless RAT leveraging Windows Management Instrumentation (WMI) for persistence and PowerShell Remoting for lateral movement. Uses AES-GCM encryption with nonce reuse vulnerability in C2 communications. Targets energy sector ICS/SCADA systems through OPC UA protocol vulnerabilities, injecting malicious ladder logic into PLC runtime environments. Recent variants exploit CVE-2023-3519 in Citrix ADC for initial access[7][9].",
+    "description": "Fileless RAT leveraging Windows Management Instrumentation (WMI) for persistence and PowerShell Remoting for lateral movement. Uses AES-GCM encryption with nonce reuse vulnerability in C2 communications. Targets energy sector ICS/SCADA systems through OPC UA protocol vulnerabilities, injecting malicious ladder logic into PLC runtime environments. Recent variants exploit CVE-2023-3519 in Citrix ADC for initial access.",
     "detailed_analysis": {
       "cve_scores": "CVE-2023-3519 (CVSS 9.8) for unauthenticated RCE in Citrix appliances",
       "history": "First identified in 2019 Triton framework attacks; evolved with Industroyer2 capabilities in 2023",
@@ -474,7 +474,7 @@
   },
   {
     "name": "Mamba",
-    "description": "Mamba ransomware weaponizes DiskCryptor, an open-source full-disk encryption tool, to encrypt entire drives including operating systems. First observed in 2016, it overwrites the Master Boot Record (MBR) with a custom bootloader and spreads via PsExec. Recent FBI alerts highlight attacks against critical infrastructure sectors including public transportation and legal services[1][3]. The malware uses AES-256 + RSA-2048 encryption and leaves ransom notes in modified bootloaders[4][5].",
+    "description": "Mamba ransomware weaponizes DiskCryptor, an open-source full-disk encryption tool, to encrypt entire drives including operating systems. First observed in 2016, it overwrites the Master Boot Record (MBR) with a custom bootloader and spreads via PsExec. Recent FBI alerts highlight attacks against critical infrastructure sectors including public transportation and legal services. The malware uses AES-256 + RSA-2048 encryption and leaves ransom notes in modified bootloaders.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2023-22518 (CVSS 9.1)"
@@ -494,7 +494,7 @@
   },
   {
     "name": "Radamant",
-    "description": "Radamant (RDM) operates as Ransomware-as-a-Service (RaaS) with AES-256 per-file encryption and RSA-2048 master keys. A 2016 SQLi vulnerability in its C2 dashboard allowed security researchers to mark victims as 'paid' to trigger free decryption[7]. Targets SMEs globally with tailored ransom demands.",
+    "description": "Radamant (RDM) operates as Ransomware-as-a-Service (RaaS) with AES-256 per-file encryption and RSA-2048 master keys. A 2016 SQLi vulnerability in its C2 dashboard allowed security researchers to mark victims as 'paid' to trigger free decryption. Targets SMEs globally with tailored ransom demands.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -515,7 +515,7 @@
   },
   {
     "name": "Satana",
-    "description": "Satana combines Petya-like MBR encryption with file-level AES-128 CBC. Deploys !satana!.txt ransom notes and uses RTDSC-based key generation. Notable for bricking systems if interrupted during encryption[8].",
+    "description": "Satana combines Petya-like MBR encryption with file-level AES-128 CBC. Deploys !satana!.txt ransom notes and uses RTDSC-based key generation. Notable for bricking systems if interrupted during encryption.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -536,7 +536,7 @@
   },
   {
     "name": "Sodinokibi",
-    "description": "Sodinokibi (REvil) exploits Oracle WebLogic CVE-2019-2725 for initial access. Uses double extortion tactics and Golang payloads to encrypt VMware ESXi environments. Peaked in 2021 with $50M ransom demands[9].",
+    "description": "Sodinokibi (REvil) exploits Oracle WebLogic CVE-2019-2725 for initial access. Uses double extortion tactics and Golang payloads to encrypt VMware ESXi environments. Peaked in 2021 with $50M ransom demands.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2019-2725 (CVSS 9.8)"
@@ -556,7 +556,7 @@
   },
   {
     "name": "TearDrop",
-    "description": "TearDrop malware served as second-stage payload in SolarWinds SUNBURST attacks. Loads Cobalt Strike beacons via DLL sideloading (CVE-2021-35211). Focused on espionage vs. ransom[10][18].",
+    "description": "TearDrop malware served as second-stage payload in SolarWinds SUNBURST attacks. Loads Cobalt Strike beacons via DLL sideloading (CVE-2021-35211). Focused on espionage vs. ransom.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2021-35211 (CVSS 8.6)"
@@ -576,7 +576,7 @@
   },
   {
     "name": "Thanos",
-    "description": "Thanos ransomware employs anti-VM checks, disables 40+ AV services, and uses AES-256 + RSA-4096. Spreads via RDP brute-forcing and embeds credential lists for lateral movement[11].",
+    "description": "Thanos ransomware employs anti-VM checks, disables 40+ AV services, and uses AES-256 + RSA-4096. Spreads via RDP brute-forcing and embeds credential lists for lateral movement.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -599,7 +599,7 @@
   },
   {
     "name": "BadRabbit",
-    "description": "BadRabbit masquerades as Flash updates to deploy MBR-encrypting payloads. Uses EternalRomance (CVE-2017-0145) for propagation. 2017 attacks disrupted Ukrainian infrastructure[14][21].",
+    "description": "BadRabbit masquerades as Flash updates to deploy MBR-encrypting payloads. Uses EternalRomance (CVE-2017-0145) for propagation. 2017 attacks disrupted Ukrainian infrastructure.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2017-0145 (CVSS 8.1)"
@@ -619,7 +619,7 @@
   },
   {
     "name": "Annabelle",
-    "description": "Annabelle combines file encryption with MBR overwrites using modified DiskCryptor drivers. Terminates 50+ security processes and drops !Annabelle.txt notes. Uses static AES key[16].",
+    "description": "Annabelle combines file encryption with MBR overwrites using modified DiskCryptor drivers. Terminates 50+ security processes and drops !Annabelle.txt notes. Uses static AES key.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -639,7 +639,7 @@
   },
   {
     "name": "MonsterV2",
-    "description": "Monster ransomware family uses Delphi-based multiplatform payloads with GUI controllers. V2 introduces Linux/ESXi support and worming via SSH keys. Demands Monero ransoms[28].",
+    "description": "Monster ransomware family uses Delphi-based multiplatform payloads with GUI controllers. V2 introduces Linux/ESXi support and worming via SSH keys. Demands Monero ransoms.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -659,7 +659,7 @@
   },
   {
     "name": "GoldenEye",
-    "description": "GoldenEye Petya variant encrypts MFT tables and files via Salsa20. Spread via EternalBlue (CVE-2017-0144). 2017 attacks caused $10B+ damages in Ukraine[13][20].",
+    "description": "GoldenEye Petya variant encrypts MFT tables and files via Salsa20. Spread via EternalBlue (CVE-2017-0144). 2017 attacks caused $10B+ damages in Ukraine.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2017-0144 (CVSS 8.1)"
@@ -680,7 +680,7 @@
   },
   {
     "name": "Pikachu",
-    "description": "Pikachu malware spreads via malicious ZIPs (SHA256: ECDA6CE5DC46E2FF565E22F12F4CAE92D55919879308DF26AA33A0E282ECD740) posing as invoices. Leverages Outlook vulnerabilities for propagation[19].",
+    "description": "Pikachu malware spreads via malicious ZIPs (SHA256: ECDA6CE5DC46E2FF565E22F12F4CAE92D55919879308DF26AA33A0E282ECD740) posing as invoices. Leverages Outlook vulnerabilities for propagation.",
     "detailed_analysis": {
       "cve_scores": [
         "N/A"
@@ -700,7 +700,7 @@
   },
   {
     "name": "Petrwrap",
-    "description": "Petrwrap is a modified version of the Petya ransomware that repurposes its encryption engine while implementing independent cryptographic controls. It uses OpenSSL libraries to generate session-specific ECDH keys on the prime192v1 curve, replacing Petya's original secp192k1 implementation. This allows attackers to maintain decryption capability without relying on Petya's operators[8]. The malware spreads via PsExec and EternalBlue (CVE-2017-0144), modifying Petya's bootloader to remove identifying animations and ransom note references[8][9].",
+    "description": "Petrwrap is a modified version of the Petya ransomware that repurposes its encryption engine while implementing independent cryptographic controls. It uses OpenSSL libraries to generate session-specific ECDH keys on the prime192v1 curve, replacing Petya's original secp192k1 implementation. This allows attackers to maintain decryption capability without relying on Petya's operators. The malware spreads via PsExec and EternalBlue (CVE-2017-0144), modifying Petya's bootloader to remove identifying animations and ransom note references.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2017-0144 (CVSS 8.1)"
@@ -725,7 +725,7 @@
   },
   {
     "name": "WannaCryPlus",
-    "description": "WannaCryPlus represents an enhanced variant leveraging updated EternalBlue (CVE-2017-0144) and DoublePulsar exploits with AES-256-GCM encryption. It features improved worming capabilities through SSH brute-forcing and modifies the original kill switch domain (iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com) to prevent easy neutralization[3][5]. Recent variants target IoT devices through SMBv1 honeypots, demanding 0.5 BTC (~$15,000) via Tor payment portals[4][6].",
+    "description": "WannaCryPlus represents an enhanced variant leveraging updated EternalBlue (CVE-2017-0144) and DoublePulsar exploits with AES-256-GCM encryption. It features improved worming capabilities through SSH brute-forcing and modifies the original kill switch domain (iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com) to prevent easy neutralization. Recent variants target IoT devices through SMBv1 honeypots, demanding 0.5 BTC (~$15,000) via Tor payment portals.",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2017-0144 (CVSS 8.1)",
@@ -746,7 +746,7 @@
   },
   {
     "name": "MonsterV1",
-    "description": "MonsterV1 employs Delphi-based polymorphic code with VM detection bypass techniques. It uses AES-128-CTR for file encryption and modifies NTFS journal entries to prevent recovery. Spreads via malvertising campaigns exploiting CVE-2021-40444 (Microsoft MSHTML)[28].",
+    "description": "MonsterV1 employs Delphi-based polymorphic code with VM detection bypass techniques. It uses AES-128-CTR for file encryption and modifies NTFS journal entries to prevent recovery. Spreads via malvertising campaigns exploiting CVE-2021-40444 (Microsoft MSHTML).",
     "detailed_analysis": {
       "cve_scores": [
         "CVE-2021-40444 (CVSS 8.8)"
@@ -766,20 +766,20 @@
   },
   {
     "name": "AgentTesla",
-    "description": "Agent Tesla is a .NET-based Remote Access Trojan (RAT) and information stealer first observed in 2014. It employs keylogging, screen capture, and clipboard monitoring to harvest credentials from 50+ applications including browsers, email clients, and VPNs. Recent variants exploit Microsoft Office vulnerabilities (CVE-2017-11882, CVE-2018-0802) through weaponized documents[1][2][6]. Its modular design allows data exfiltration via SMTP, FTP, HTTP, or Tor-enabled channels[4].",
+    "description": "Agent Tesla is a .NET-based Remote Access Trojan (RAT) and information stealer first observed in 2014. It employs keylogging, screen capture, and clipboard monitoring to harvest credentials from 50+ applications including browsers, email clients, and VPNs. Recent variants exploit Microsoft Office vulnerabilities (CVE-2017-11882, CVE-2018-0802) through weaponized documents. Its modular design allows data exfiltration via SMTP, FTP, HTTP, or Tor-enabled channels.",
     "analysis": {
       "CVE_scores": [
         "CVE-2017-11882 (CVSS 8.8)",
         "CVE-2018-0802 (CVSS 7.8)"
       ],
-      "history": "Evolved from basic keylogger to sophisticated MaaS (Malware-as-a-Service) model. 2023 campaigns show integration with exploit kits[3][5].",
-      "origin": "Indonesian threat actors, sold for $5-$10 subscriptions on dark web forums[2]",
-      "authorship": "Unknown developer collective; maintained through GitHub repositories[8]",
-      "affected_nations": "Global focus: USA (35%), India (22%), EU (18%) financial sectors[1]",
+      "history": "Evolved from basic keylogger to sophisticated MaaS (Malware-as-a-Service) model. 2023 campaigns show integration with exploit kits.",
+      "origin": "Indonesian threat actors, sold for $5-$10 subscriptions on dark web forums",
+      "authorship": "Unknown developer collective; maintained through GitHub repositories",
+      "affected_nations": "Global focus: USA (35%), India (22%), EU (18%) financial sectors",
       "detection_techniques": [
         "Behavior: Unusual child processes from MS Office apps",
         "Predictive: YARA rules for .NET obfuscation patterns",
-        "Network: Detection of TripleDES-encrypted TOR traffic[4]"
+        "Network: Detection of TripleDES-encrypted TOR traffic"
       ]
     },
     "hash": [
@@ -788,20 +788,20 @@
   },
   {
     "name": "Akira",
-    "description": "First observed in March 2023, Akira ransomware employs double extortion tactics targeting SMBs. Uses ChaCha20-RSA hybrid encryption and deletes Volume Shadow Copies. Linked to Conti through blockchain analysis showing $600K+ transactions to shared wallets[9][10][13].",
+    "description": "First observed in March 2023, Akira ransomware employs double extortion tactics targeting SMBs. Uses ChaCha20-RSA hybrid encryption and deletes Volume Shadow Copies. Linked to Conti through blockchain analysis showing $600K+ transactions to shared wallets.",
     "analysis": {
       "CVE_scores": [
         "CVE-2020-3259 (CVSS 9.8)",
         "CVE-2023-20269 (CVSS 8.6)"
       ],
-      "history": "Evolution from Conti's leaked codebase; 63 confirmed attacks as of 2024[10]",
-      "origin": "Russian-speaking group, likely ex-Conti members[15]",
-      "authorship": "Developed by 'Akira Team' with public leak site at akira.xxxx.onion[11]",
-      "affected_nations": "USA (58%), Canada (22%), UK (15%) - focus on <1000 employee companies[14]",
+      "history": "Evolution from Conti's leaked codebase; 63 confirmed attacks as of 2024",
+      "origin": "Russian-speaking group, likely ex-Conti members",
+      "authorship": "Developed by 'Akira Team' with public leak site at akira.xxxx.onion",
+      "affected_nations": "USA (58%), Canada (22%), UK (15%) - focus on <1000 employee companies",
       "detection_techniques": [
         "Behavior: Masscan usage & PsExec lateral movement",
         "Predictive: Registry key HKCU\\Software\\Akira_v2 checks",
-        "Network: TOR exit node communication patterns[12]"
+        "Network: TOR exit node communication patterns"
       ]
     },
     "hash": [
@@ -810,19 +810,19 @@
   },
   {
     "name": "Amadey",
-    "description": "Modular info-stealer first seen in 2018. Distributes via Fallout exploit kit using EternalBlue (CVE-2017-0144). Recent variants include clipper modules replacing crypto wallet addresses[17][19][20].",
+    "description": "Modular info-stealer first seen in 2018. Distributes via Fallout exploit kit using EternalBlue (CVE-2017-0144). Recent variants include clipper modules replacing crypto wallet addresses.",
     "analysis": {
       "CVE_scores": [
         "CVE-2017-0144 (CVSS 8.1)"
       ],
-      "history": "Linked to GandCrab campaigns; 2024 variants target Latin American banks[19]",
-      "origin": "Eastern European developers, sold on Russian forums[18]",
-      "authorship": "Unknown; uses open-source Donut loader for code injection[18]",
-      "affected_nations": "Brazil (41%), Mexico (29%), Colombia (18%)[20]",
+      "history": "Linked to GandCrab campaigns; 2024 variants target Latin American banks",
+      "origin": "Eastern European developers, sold on Russian forums",
+      "authorship": "Unknown; uses open-source Donut loader for code injection",
+      "affected_nations": "Brazil (41%), Mexico (29%), Colombia (18%)",
       "detection_techniques": [
         "Behavior: Rundll32 executing unsigned DLLs",
         "Predictive: Mutex names like 'AmadeyBot_1312'",
-        "Network: POST requests to /gate.php with Base64 blobs[19]"
+        "Network: POST requests to /gate.php with Base64 blobs"
       ]
     },
     "hash": [
@@ -831,19 +831,19 @@
   },
   {
     "name": "BanLoad",
-    "description": "Brazilian banking Trojan targeting BACEN/PIX systems. Uses SVG files for code injection (CVE-2022-30115). 2024 variants deploy kernel drivers to disable security tools[27][28].",
+    "description": "Brazilian banking Trojan targeting BACEN/PIX systems. Uses SVG files for code injection (CVE-2022-30115). 2024 variants deploy kernel drivers to disable security tools.",
     "analysis": {
       "CVE_scores": [
         "CVE-2022-30115 (CVSS 7.8)"
       ],
-      "history": "Active since 2009; 2023 campaign hit 120+ Brazilian banks[28]",
+      "history": "Active since 2009; 2023 campaign hit 120+ Brazilian banks",
       "origin": "Brazilian gang 'FirstCapital'",
-      "authorship": "Coded in Delphi with custom crypters[27]",
-      "affected_nations": "Brazil (98% of cases)[22]",
+      "authorship": "Coded in Delphi with custom crypters",
+      "affected_nations": "Brazil (98% of cases)",
       "detection_techniques": [
         "Behavior: Hooking NtWriteVirtualMemory",
         "Predictive: YARA rule for .rsrc section anomalies",
-        "Network: HTTP POST to /pix/valida endpoint[34]"
+        "Network: HTTP POST to /pix/valida endpoint"
       ]
     },
     "hash": [
@@ -852,19 +852,19 @@
   },
   {
     "name": "Berbew",
-    "description": "Legacy banking Trojan (2004) targeting IE SSL certificates. Uses RC4 encryption for C2 (CVE-2004-0112). Maintains persistence via HKCU\\Software\\Microsoft\\Berbew keys[29].",
+    "description": "Legacy banking Trojan (2004) targeting IE SSL certificates. Uses RC4 encryption for C2 (CVE-2004-0112). Maintains persistence via HKCU\\Software\\Microsoft\\Berbew keys.",
     "analysis": {
       "CVE_scores": [
         "CVE-2004-0112 (CVSS 7.5)"
       ],
-      "history": "Peak activity 2006-2009; recent decoy in APT campaigns[29]",
+      "history": "Peak activity 2006-2009; recent decoy in APT campaigns",
       "origin": "Ukrainian group 'MoneyTaker'",
-      "authorship": "VB6 code with Russian comments[29]",
-      "affected_nations": "Ukraine (62%), Poland (29%)[29]",
+      "authorship": "VB6 code with Russian comments",
+      "affected_nations": "Ukraine (62%), Poland (29%)",
       "detection_techniques": [
         "Behavior: Code injection into explorer.exe",
         "Predictive: MD5 hashes starting with adfcac0a",
-        "Network: Port 447 TCP beaconing[25]"
+        "Network: Port 447 TCP beaconing"
       ]
     },
     "hash": [
@@ -885,17 +885,12 @@
     "analysis": {}
   },
   {
-    "name": "Blankgrabber",
+    "name": "BlackGuard",
     "description": "Insufficient data in provided search results",
     "analysis": {},
     "hash": [
       "9fa453bd90122faf9fe6a88cbf954a70"
     ]
-  },
-  {
-    "name": "Coper",
-    "description": "Insufficient data in provided search results",
-    "analysis": {}
   },
   {
     "name": "Dirdex",
@@ -907,20 +902,20 @@
   },
   {
     "name": "ICEDid",
-    "description": "Modular banking Trojan employing anti-VM checks and dual-stage code injection. 2025 variants use encrypted .png payloads (15MB avg size) with TOR-based C2 communication[2][8].",
+    "description": "Modular banking Trojan employing anti-VM checks and dual-stage code injection. 2025 variants use encrypted .png payloads (15MB avg size) with TOR-based C2 communication.",
     "analysis": {
       "CVE_scores": [
         "CVE-2020-3259 (CVSS 9.8)",
         "CVE-2023-20269 (CVSS 8.6)"
       ],
-      "history": "First observed in 2017; 2024 campaign targeted 23 EU banks through SVG exploits[2]",
+      "history": "First observed in 2017; 2024 campaign targeted 23 EU banks through SVG exploits",
       "origin": "Russian-speaking cybercrime syndicate 'IceBreakers'",
       "authorship": "Attributed to developer 'Frostbyte' based on code similarities",
-      "affected_nations": "Germany (34%), France (28%), Italy (19%)[2]",
+      "affected_nations": "Germany (34%), France (28%), Italy (19%)",
       "detection_techniques": [
         "Behavior: Parallel process injection into svchost.exe",
         "Predictive: %appdata%\\local\\*\\photo.png pattern matching",
-        "Network: TLS 1.3 handshakes with JA3S fingerprint 6734f...c21[2]"
+        "Network: TLS 1.3 handshakes with JA3S fingerprint 6734f...c21"
       ]
     },
     "hash": [
@@ -945,7 +940,7 @@
   },
   {
     "name": "Matsnu",
-    "description": "Polymorphic malware employing code permutation (3.5M unique variants detected). Uses API hooking to intercept SSL/TLS traffic[5][8].",
+    "description": "Polymorphic malware employing code permutation (3.5M unique variants detected). Uses API hooking to intercept SSL/TLS traffic.",
     "analysis": {
       "CVE_scores": [
         "CVE-2017-0144 (CVSS 8.1)"
@@ -953,11 +948,11 @@
       "history": "First identified in 2019 South Korean infrastructure attacks",
       "origin": "North Korean APT group 'ScarletCrystal'",
       "authorship": "Coded in Rust with WASM components",
-      "affected_nations": "South Korea (61%), Japan (23%), Taiwan (12%)[5]",
+      "affected_nations": "South Korea (61%), Japan (23%), Taiwan (12%)",
       "detection_techniques": [
         "Behavior: Memory section entropy >7.8",
         "Predictive: ML model for WASM execution patterns",
-        "Network: DNS TXT record exfiltration[5]"
+        "Network: DNS TXT record exfiltration"
       ]
     },
     "hash": [
@@ -966,7 +961,7 @@
   },
   {
     "name": "Pony",
-    "description": "Assembly-based credential stealer targeting 96+ applications. 2024 variants focus on cryptocurrency wallets with AES-256-GCM encryption[6][8].",
+    "description": "Assembly-based credential stealer targeting 96+ applications. 2024 variants focus on cryptocurrency wallets with AES-256-GCM encryption.",
     "analysis": {
       "CVE_scores": [
         "CVE-2021-40449 (CVSS 7.8)"
@@ -974,11 +969,11 @@
       "history": "Active since 2011; 2023 version added Monero wallet targeting",
       "origin": "Eastern European cybercrime collective",
       "authorship": "Linked to 'Borshch' developer group via code patterns",
-      "affected_nations": "USA (41%), Germany (19%), Australia (15%)[6]",
+      "affected_nations": "USA (41%), Germany (19%), Australia (15%)",
       "detection_techniques": [
         "Behavior: Registry key enumeration at HKCU\\Software\\*\\FileZilla",
         "Predictive: YARA rule for ROP chain patterns",
-        "Network: Beaconing to port 447 TCP with RC4 cipher[6]"
+        "Network: Beaconing to port 447 TCP with RC4 cipher"
       ]
     },
     "hash": [
@@ -987,7 +982,7 @@
   },
   {
     "name": "Pysilon",
-    "description": "Python-based RAT using Discord API for C2. Implements Fernet encryption with 256-bit keys stored in %userprofile%[7].",
+    "description": "Python-based RAT using Discord API for C2. Implements Fernet encryption with 256-bit keys stored in %userprofile%.",
     "analysis": {
       "CVE_scores": [
         "CVE-2022-30115 (CVSS 7.8)"
@@ -995,11 +990,11 @@
       "history": "First identified in 2023 healthcare sector attacks",
       "origin": "Brazilian hacker collective 'PyNinjas'",
       "authorship": "Open-source components mixed with custom modules",
-      "affected_nations": "Brazil (78%), Argentina (13%), Chile (7%)[7]",
+      "affected_nations": "Brazil (78%), Argentina (13%), Chile (7%)",
       "detection_techniques": [
         "Behavior: Discord API calls with 'x-pysilon' header",
         "Predictive: Entropy analysis of .pyc files",
-        "Network: Webhook communication to discordapp.com[7]"
+        "Network: Webhook communication to discordapp.com"
       ]
     },
     "hash": [
@@ -1008,7 +1003,7 @@
   },
   {
     "name": "QakBot",
-    "description": "Banking Trojan causing AD lockouts through brute-force SMB attacks. Uses modified Mimikatz modules for credential dumping[8].",
+    "description": "Banking Trojan causing AD lockouts through brute-force SMB attacks. Uses modified Mimikatz modules for credential dumping.",
     "analysis": {
       "CVE_scores": [
         "CVE-2017-0144 (CVSS 8.1)"
@@ -1016,11 +1011,11 @@
       "history": "Active since 2009; 2024 variants target Azure AD configurations",
       "origin": "Russian cybercrime group 'GoldDust'",
       "authorship": "C++ codebase with .NET plugins",
-      "affected_nations": "USA (63%), Canada (22%), UK (12%)[8]",
+      "affected_nations": "USA (63%), Canada (22%), UK (12%)",
       "detection_techniques": [
         "Behavior: LSASS handle duplication attempts",
         "Predictive: AD event ID 4740 pattern analysis",
-        "Network: NTLMv1 authentication spikes[8]"
+        "Network: NTLMv1 authentication spikes"
       ]
     },
     "hash": [
@@ -1061,7 +1056,7 @@
   },
   {
     "name": "Magistr",
-    "description": "Polymorphic email worm using MIME-encoded VBA scripts. Spreads through Outlook contact lists[4][8].",
+    "description": "Polymorphic email worm using MIME-encoded VBA scripts. Spreads through Outlook contact lists.",
     "analysis": {
       "CVE_scores": [
         "CVE-2017-11882 (CVSS 8.8)"
@@ -1069,11 +1064,11 @@
       "history": "First observed in 2001; 2023 variants target M365 tenants",
       "origin": "Eastern European spam operations",
       "authorship": "VBscript core with C++ encryption modules",
-      "affected_nations": "USA (52%), UK (23%), Germany (15%)[4]",
+      "affected_nations": "USA (52%), UK (23%), Germany (15%)",
       "detection_techniques": [
         "Behavior: MAPI interface abuse for contact harvesting",
         "Predictive: Attachment entropy >6.7 analysis",
-        "Network: SMTP auth scanning on port 587[4]"
+        "Network: SMTP auth scanning on port 587"
       ]
     },
     "hash": [
