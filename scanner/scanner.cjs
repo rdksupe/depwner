@@ -442,6 +442,11 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           severity: "",
         });
       }
+
+      showThreatNotification(
+        path.basename(filePath),
+        match.signature
+      );
       return {
         matched: true,
         result: {
@@ -471,6 +476,11 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           severity: "",
         });
       }
+
+      showThreatNotification(
+        path.basename(filePath),
+        match.signature
+      );
       return {
         matched: true,
         result: {
@@ -497,6 +507,10 @@ async function scanFile(filePath, dbConnection, yaraRules) {
         severity: "",
       });
     }
+    showThreatNotification(
+      path.basename(filePath),
+      match.signature
+    );
     return {
       matched: true,
       result: {
@@ -507,6 +521,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
       },
     };
   }
+
 
   addToWhitelist(hashes.md5);
   return {
@@ -581,10 +596,10 @@ async function scanFolder(folder, dbConnection, yaraRules) {
       // global.scanStatus.threatsFound.push(scanResult.result.file);
 
       // Show notification for detected threat
-      showThreatNotification(
-        path.basename(scanResult.result.file),
-        scanResult.result.quarantined
-      );
+      // showThreatNotification(
+      //   path.basename(scanResult.result.file),
+      //   scanResult.result.quarantined
+      // );
 
       ////////////////////////////////////////////////
       ///////// NOTIFICATION /////////////////////////
