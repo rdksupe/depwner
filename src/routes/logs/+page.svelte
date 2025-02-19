@@ -2,27 +2,16 @@
 	import { onMount } from 'svelte';
 
 	let logs = $state([]);
-	// let logs = $state([
-	// 	{
-	// 		scanType: 'Full',
-	// 		filesScanned: 45372,
-	// 		threats: 2,
-	// 		time: 1737729873000,
-	// 		folder: '/home/harshit/Harshit_Work/pclub/'
-	// 	}
-	// ]);
 	let threats = $state(0);
 	let totalThreatsFound = $derived.by(() => {
-		let i = 0;
-		logs.forEach((log) => {
-			i += log.threats;
-		});
-		return i;
+		return logs.reduce((sum, log) => sum + log.threats, 0);
 	});
+
 	onMount(async () => {
 		const statsObj = await depwnerStatus.getStats();
 		logs = JSON.parse(statsObj);
-		console.log(statsObj)
+		console.log(statsObj);
+
 		const threatResponse = await depwnerStatus.getThreats();
 		const threatArr = JSON.parse(threatResponse);
 		threats = threatArr.length;
@@ -30,36 +19,118 @@
 	});
 </script>
 
-<div class="overallContainer">
-	<h2 class="overallThreats">Overall {totalThreatsFound} Threats were Eliminated by dePWNer</h2>
-	<h2 class="activeThreats">{threats} are Quarantined</h2>
-	<h2 class="eliminatedThreats">{totalThreatsFound - threats} were removed by user</h2>
-	<div class="table">
-		<h3>Time</h3>
-		<h3>Date</h3>
-		<h3>Scan Type</h3>
-		<h3>Path Scanned</h3>
-		<h3>Threats</h3>
-		<h3>TotalScanned</h3>
-		{#each logs as scan}
-			<p>{new Date(scan.time).toLocaleTimeString()}</p>
-			<p>{new Date(scan.time).toLocaleDateString()}</p>
-			<p>{scan.scanType}</p>
-			<p>{scan.folder}</p>
-			<p>{scan.threats}</p>
-			<p>{scan.filesScanned}</p>
-		{/each}
+<div class="overall-container">
+	<h2 class="overall-threats">🚀 {totalThreatsFound} Threats Eliminated by dePWNer</h2>
+	<h2 class="active-threats">⚠️ {threats} Threats in Quarantine</h2>
+	<h2 class="eliminated-threats">✅ {totalThreatsFound - threats} Removed by User</h2>
+
+	<div class="table-container">
+		<table>
+			<thead>
+				<tr>
+					<th>Time</th>
+					<th>Date</th>
+					<th>Scan Type</th>
+					<th>Path Scanned</th>
+					<th>Threats</th>
+					<th>Files Scanned</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each logs as scan}
+					<tr>
+						<td>{new Date(scan.time).toLocaleTimeString()}</td>
+						<td>{new Date(scan.time).toLocaleDateString()}</td>
+						<td>{scan.scanType}</td>
+						<td class="folder-path">{scan.folder}</td>
+						<td class="threat-count">{scan.threats}</td>
+						<td>{scan.filesScanned}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
 </div>
 
 <style>
-	.table {
-		display: grid;
-		grid-template-columns: repeat(6, auto);
-		text-align: center;
+	:root {
+		--primary-bg: #1e1e2f;
+		--secondary-bg: #282a36;
+		--primary-text: #ffffff;
+		--secondary-text: #b0b0b0;
+		--highlight: #ff4757;
+		--safe: #2ed573;
+		--warning: #ffa502;
 	}
-	.overallContainer {
-		height: 100%;
+
+	.overall-container {
+		width: 90%;
+		margin: 20px auto;
+		text-align: center;
+		color: var(--primary-text);
+		background: var(--primary-bg);
+		padding: 20px;
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	}
+
+	h2 {
+		margin-bottom: 10px;
+	}
+
+	.overall-threats {
+		color: var(--safe);
+	}
+
+	.active-threats {
+		color: var(--warning);
+	}
+
+	.eliminated-threats {
+		color: var(--highlight);
+	}
+
+	.table-container {
+		margin-top: 20px;
+		overflow-x: auto;
+		border-radius: 8px;
+		background: var(--secondary-bg);
+		padding: 10px;
+	}
+
+	table {
 		width: 100%;
+		border-collapse: collapse;
+		color: var(--primary-text);
+	}
+
+	th, td {
+		padding: 12px;
+		text-align: left;
+		border-bottom: 1px solid var(--secondary-text);
+	}
+
+	th {
+		background: var(--highlight);
+		color: white;
+		font-weight: bold;
+	}
+
+	tr:nth-child(even) {
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	tr:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.folder-path {
+		word-break: break-all;
+		max-width: 200px;
+	}
+
+	.threat-count {
+		font-weight: bold;
+		color: var(--highlight);
 	}
 </style>
