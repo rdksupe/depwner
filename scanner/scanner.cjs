@@ -259,8 +259,16 @@ function updateQuarantineJson(fileInfo) {
   const quarantineJsonPath = path.join(__dirname, '../data/quarantine.json');
   let quarantineList = [];
   
-  if (fs.existsSync(quarantineJsonPath)) {
-    quarantineList = JSON.parse(fs.readFileSync(quarantineJsonPath, 'utf-8'));
+  try {
+    if (fs.existsSync(quarantineJsonPath)) {
+      const content = fs.readFileSync(quarantineJsonPath, 'utf-8').trim();
+      if (content) {
+        quarantineList = JSON.parse(content);
+      }
+    }
+  } catch (err) {
+    console.error("Error reading quarantine.json:", err);
+    quarantineList = []; 
   }
 
   quarantineList.push(fileInfo);
@@ -355,7 +363,6 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           hash: hashes.md5,
           yaraRule: "",
           severity: "",
-          deepseekResponse: ""
         });
       }
       return {
@@ -385,7 +392,6 @@ async function scanFile(filePath, dbConnection, yaraRules) {
           hash: hashes.md5,
           yaraRule: yaraResult,
           severity: "",
-          deepseekResponse: ""
         });
       }
       return {
@@ -412,7 +418,6 @@ async function scanFile(filePath, dbConnection, yaraRules) {
         hash: hashes.md5,
         yaraRule: yaraResult,
         severity: "",
-        deepseekResponse: ""
       });
     }
     return {
@@ -496,7 +501,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
       results.scan_summary.matches[scanResult.result.type] += 1;
       results.matched_files.push(scanResult.result);
 
-      global.scanStatus.threatsFound.push(scanResult.result.file);
+      // global.scanStatus.threatsFound.push(scanResult.result.file);
 
       // Show notification for detected threat
       showThreatNotification(
