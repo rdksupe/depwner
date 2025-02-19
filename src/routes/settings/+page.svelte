@@ -35,7 +35,7 @@
 		<!-- <p>You can set your preferences here.</p> -->
 		<div class="grid justify-center">
 			<div class="headingInfo">
-				<h2>Advanced Dataset</h2>
+				<h2>Advanced Detection</h2>
 				<button>
 					<Info />
 				</button>
