@@ -93,7 +93,7 @@
 							if (folder != 'user cancelled' && !settings.locations.includes(folder)) {
 								settings.locations.push(folder);
 							}
-						}}>Add Path to Locations</button
+						}}>Add Path to Monitored Locations</button
 					>
 				</div>
 				{#each settings.locations as location, i}
@@ -131,7 +131,7 @@
 			margin: 0.5vh 0;
 		}
 		.addButton {
-			width: min(50vh, 40vw);
+			width: min(60vh, 50vw);
 		}
 		.entry {
 			width: min(75vh, 60vw);
