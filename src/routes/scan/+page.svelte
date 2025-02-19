@@ -1,22 +1,34 @@
 <script lang="ts">
-	const hashDatabases = [
-		'Malpedia',
-		'EmbeeResearch',
-		'Microsoft',
-		'AvastTI',
-		'Arkbird SOLG',
-		'Signature Base',
-		'Elastic',
-		'CadoSecurity'
-	];
-	const yaraDatabases = [
-		'Malpedia',
-		'Dragon Threat Labs',
-		'Microsoft',
-		'FireEye-RT',
-		'RussianPanda',
-		'GodModeRules'
-	];
+	let settings = $state({
+		yara: true,
+		locations: ['/home/harshit/Harshit_Work/']
+	});
+	let hashDatabases = $derived(
+		settings.yara
+			? [
+					'Malpedia',
+					'EmbeeResearch',
+					'Microsoft',
+					'AvastTI',
+					'Arkbird SOLG',
+					'Signature Base',
+					'Elastic',
+					'CadoSecurity'
+				]
+			: ['Malpedia', 'EmbeeResearch', 'Microsoft', 'AvastTI']
+	);
+	let yaraDatabases = $derived(
+		settings.yara
+			? [
+					'Malpedia',
+					'Dragon Threat Labs',
+					'Microsoft',
+					'FireEye-RT',
+					'RussianPanda',
+					'GodModeRules'
+				]
+			: ['Dragon Threat Labs', 'Microsoft']
+	);
 
 	let status = $state({
 		status: 'idle',
