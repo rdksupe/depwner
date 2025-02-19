@@ -27,27 +27,29 @@
 		currentFile:
 			'/home/harshit/Videos/Gravity Falls/Gravity Falls Season 1 WEB-HD 720p x264 [Pahe.in]/Gravity.Falls.S01E01.720p.WEB-HD.x264.150MB-Pahe.in.mkv'
 	});
-
 	onMount(async () => {
 		const statusObj = depwnerStatus.getScanStatus();
 		status = JSON.parse(statusObj);
+
+		let settingsResponse = await depwnerPreferences.get();
+		settings = JSON.parse(settingsResponse);
 	});
 
-	let interval = $state(15000)
-	$effect(()=>{
-		console.log("Effect called")
-		console.log(status)
-	
-		const updateStatus = setInterval(async()=>{
-			if(JSON.parse(JSON.stringify(status)).status == 'scan'){
+	let interval = $state(15000);
+	$effect(() => {
+		console.log('Effect called');
+		console.log(status);
+
+		const updateStatus = setInterval(async () => {
+			if (JSON.parse(JSON.stringify(status)).status == 'scan') {
 				interval = 1000;
-			}else{
+			} else {
 				interval = 15000;
 			}
 			const statusObj = await depwnerStatus.getScanStatus();
-				status = JSON.parse(statusObj);
-		},interval)
-	})
+			status = JSON.parse(statusObj);
+		}, interval);
+	});
 
 	import FullScan from '../../components/+FullScan.svelte';
 	import CustomScan from '../../components/+CustomScan.svelte';
@@ -59,44 +61,18 @@
 	{#if status.status == 'scan'}
 		<div class="scanPannel row-span-2">
 			<div>
-				<h1 class="flex items-center justify-center gap-2">
-					{#if status.type == 'full'}
-						Full Scan in Progress
-					{:else if status.type == 'custom'}
-						Custom Scan in Progress
-					{/if}
-					<div class="spin">
-						<RefreshCcw size="1.5rem" />
+				{#if status.type == 'full'}
+					<h1 class="flex items-center justify-center gap-2">Full Scan in Progress</h1>
+					{#each settings.locations as location}
+						<p>{location}</p>
+					{/each}
+				{:else if status.type == 'custom'}
+					<h1 class="flex items-center justify-center gap-2">Custom Scan in Progress</h1>
+				{/if}
+				<div class="flex justify-center">
+					<div class="spin h-min w-min">
+						<RefreshCcw size="min(10vh,10vw)" />
 					</div>
-				</h1>
-				<div class="statusData">
-					<p class="key font-bold">Files Scanned:</p>
-					&nbsp;
-					<p>
-						{status.progress}/{status.filesToScan}
-					</p>
-				</div>
-				<div class="statusData">
-					<p class="key font-bold">Threats Found:</p>
-					&nbsp;
-					<p>
-						{status.threatsFound}
-					</p>
-				</div>
-				<div class="statusData">
-					<p class="key font-bold">Scanning:</p>
-					<p dir="rtl" class="value currentFile">
-						{status.currentFile}
-					</p>
-				</div>
-				<div class="progressBar">
-					<div class="progressBack relative">
-						<div
-							class="progressBack progress absolute"
-							style="right:{100 - (status.progress * 100) / status.filesToScan}%;"
-						></div>
-					</div>
-					<p><span>{Math.round((status.progress * 1000) / status.filesToScan) / 10}</span>%</p>
 				</div>
 			</div>
 		</div>
@@ -226,7 +202,7 @@
 		place-items: center;
 	}
 	h1 {
-		font-size: min(3vh, 2.5vw);
+		font-size: min(3.5vh, 3.5vw);
 		font-weight: 800;
 	}
 	.entry {
