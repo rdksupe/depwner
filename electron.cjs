@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, Tray, Menu, nativeImage } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
@@ -196,6 +196,9 @@ function createWindow() {
     win.loadFile('./build/index.html');
 }
 
+
+let tray = null
+let isQuiting = false
 app.whenReady().then(() => {
     ipcMain.handle("getSettings", getSettings)
     ipcMain.handle("getStats", getStats)
@@ -219,7 +222,47 @@ app.whenReady().then(() => {
         console.error("Error loading settings:", err);
     }
 
+    const icon = nativeImage.createFromPath('./data/Logo_smol.png')
+    tray = new Tray(icon)
+    var contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show App', click: function () {
+                win.show();
+            }
+        },
+        {
+            label: 'Quit', click: function () {
+                isQuiting = true;
+                app.quit();
+            }
+        }
+    ]);
+    tray.setToolTip('dePWNer by pwnedraccoons')
+    tray.setContextMenu(contextMenu)
+    tray.on('click', () => {
+        if (win.isVisible()) {
+            win.hide()
+        } else {
+            win.show()
+        }
+    });
+
+
     createWindow()
+
+    win.on('minimize', function (event) {
+        event.preventDefault();
+        win.hide();
+    });
+
+    win.on('close', function (event) {
+        if (!isQuiting) {
+            event.preventDefault();
+            win.hide();
+        }
+
+        return false;
+    });
 
     console.log("Main window loaded, starting watcher...");
     startWatcher();
