@@ -110,9 +110,27 @@ function deleteFromQuarantineByPath(originalPath) {
         console.error(`Error deleting file: ${error.message}`);
         return false;
     }
+
+    
 }
+
+function getWhitelistPath(scannerDir) {
+    if (!scannerDir) {
+        console.error("scannerDir is undefined in getWhitelistPath");
+        return '';
+    }
+    console.log("Getting whitelist path for scannerDir:", scannerDir);
+    const whitelistPath = global.settings?.yara 
+        ? path.join(scannerDir, 'whitelist.txt')
+        : path.join(scannerDir, 'over_whitelist.txt');
+    console.log("Selected whitelist path:", whitelistPath);
+    return whitelistPath;
+}
+
 function loadWhitelist(scannerDir) {
-    const whitelistPath = path.join(scannerDir || '', 'whitelist.txt');
+    
+    const whitelistPath =  getWhitelistPath(scannerDir);
+    console.log("Loading whitelist..." + whitelistPath);
     const whitelist = new Set();
 
     if (fs.existsSync(whitelistPath)) {
@@ -121,9 +139,40 @@ function loadWhitelist(scannerDir) {
             const hash = line.trim();
             if (hash) whitelist.add(hash);
         });
-        console.log(`Loaded ${whitelist.size} whitelist hashes`);
+        console.log(`Loaded ${whitelist.size} whitelist hashes from ${whitelistPath}`);
     }
     return whitelist;
+}
+
+function addToWhitelist(hash, scannerDir) {  // Add scannerDir parameter
+    if (!hash) {
+        console.error("Cannot add empty hash to whitelist");
+        return;
+    }
+    const whitelistPath = getWhitelistPath(scannerDir);
+    if (!whitelistPath) {
+        console.error("Could not determine whitelist path");
+        return;
+    }
+    console.log(`Adding hash ${hash} to whitelist at ${whitelistPath}`);
+    
+    // Create directory if it doesn't exist
+    const dir = path.dirname(whitelistPath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // Create file if it doesn't exist
+    if (!fs.existsSync(whitelistPath)) {
+        fs.writeFileSync(whitelistPath, '');
+    }
+    
+    try {
+        fs.appendFileSync(whitelistPath, hash + '\n');
+        console.log(`Successfully added hash ${hash} to whitelist`);
+    } catch (err) {
+        console.error(`Failed to write to whitelist: ${err}`);
+    }
 }
 
 // const PATHS = {
@@ -308,13 +357,13 @@ function runYaraScan(filePath, rulesPath = "./output.yarc") {
     }
 }
 
-function addToWhitelist(hash) {
-    const whitelistPath = path.join(global.scannerDir, 'whitelist.txt');
-    fs.appendFileSync(whitelistPath, hash + '\n');
-}
+function moveToQuarantine(filePath, options = {}) {  // Add options parameter
+    if (!options.dataDir) {
+        console.error("dataDir is required for quarantine operations");
+        return null;
+    }
 
-function moveToQuarantine(filePath) {
-    const quarantinePath = path.join(global.dataDir, './quarantine');
+    const quarantinePath = path.join(options.dataDir, './quarantine');
     if (!fs.existsSync(quarantinePath)) {
         fs.mkdirSync(quarantinePath, { recursive: true });
     }
@@ -331,8 +380,13 @@ function moveToQuarantine(filePath) {
     }
 }
 
-function updateQuarantineJson(fileInfo) {
-    const quarantineJsonPath = path.join(global.dataDir, './quarantine.json');
+function updateQuarantineJson(fileInfo, options = {}) {
+    if (!options.dataDir) {
+        console.error("dataDir is required for quarantine operations");
+        return;
+    }
+
+    const quarantineJsonPath = path.join(options.dataDir, './quarantine.json');
     let quarantineList = [];
 
     try {
@@ -386,7 +440,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
         console.log("No malware info found for directory:", directoryName);
     }
     if (malwareInfo) {
-        const quarantinePath = moveToQuarantine(filePath);
+        const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
         if (quarantinePath) {
             const detectionTechniques = malwareInfo?.detailed_analysis?.detection_techniques;
             const data = {
@@ -413,7 +467,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
             );
 
             if (Object.keys(filteredData).length > 0) {
-                updateQuarantineJson(filteredData);
+                updateQuarantineJson(filteredData, options);
             }
 
             return {
@@ -437,7 +491,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
 
         if (match) {
             console.log(`Match details: ${JSON.stringify(match)}`);
-            const quarantinePath = moveToQuarantine(filePath);
+            const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
             if (quarantinePath) {
                 updateQuarantineJson({
                     name: path.basename(filePath),
@@ -446,7 +500,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
                     hash: hashes.md5,
                     yaraRule: "",
                     severity: "",
-                });
+                }, options);
             }
 
             showThreatNotification(
@@ -471,7 +525,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
     if (!dbConnection) {
         const yaraResult = runYaraScan(filePath, yaraRules);
         if (yaraResult) {
-            const quarantinePath = moveToQuarantine(filePath);
+            const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
             if (quarantinePath) {
                 updateQuarantineJson({
                     name: path.basename(filePath),
@@ -480,7 +534,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
                     hash: hashes.md5,
                     yaraRule: yaraResult,
                     severity: "",
-                });
+                }, options);
             }
 
             showThreatNotification(
@@ -502,7 +556,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
 
     const yaraResult = runYaraScan(filePath, yaraRules);
     if (yaraResult) {
-        const quarantinePath = moveToQuarantine(filePath);
+        const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
         if (quarantinePath) {
             updateQuarantineJson({
                 name: path.basename(filePath),
@@ -511,7 +565,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
                 hash: hashes.md5,
                 yaraRule: yaraResult,
                 severity: "",
-            });
+            }, options);
         }
         showThreatNotification(
             path.basename(filePath),
@@ -529,7 +583,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
     }
 
 
-    addToWhitelist(hashes.md5);
+    addToWhitelist(hashes.md5, options.scannerDir);
     return {
         matched: false,
         result: {
@@ -618,19 +672,27 @@ async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
         process.stdout.write(`\rScanned: ${count}/${totalFiles}`);
     }
 
-    let newLogEntry = {
-        scanType: global.scanStatus.type,
-        filesScanned: totalFiles,
-        threats: results.matched_files.length,
-        time: Date.now(),
-        folder: folder
+    // Fix the logs file path handling
+    if (options.dataDir) {
+        const logsFile = path.join(options.dataDir, './logs.json');
+        try {
+            let logs = [];
+            if (fs.existsSync(logsFile)) {
+                logs = JSON.parse(fs.readFileSync(logsFile, 'utf-8'));
+            }
+            const newLogEntry = {
+                scanType: global.scanStatus?.type || 'unknown',
+                filesScanned: totalFiles,
+                threats: results.matched_files.length,
+                time: Date.now(),
+                folder: folder
+            };
+            logs.push(newLogEntry);
+            fs.writeFileSync(logsFile, JSON.stringify(logs, null, 2));
+        } catch (err) {
+            console.error("Error writing to logs file:", err);
+        }
     }
-
-    const logsFile = path.join(global.dataDir, './logs.json')
-    var logs = fs.readFileSync(logsFile);
-    logs = JSON.parse(logs);
-    logs.push(newLogEntry);
-    fs.writeFileSync(logsFile, JSON.stringify(logs, null, 2));
 
     global.scanStatus.status = 'completed';
 
