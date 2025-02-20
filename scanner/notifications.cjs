@@ -63,6 +63,31 @@ function showScanStartNotification(numFiles) {
   }
 }
 
+function showScanStartNotificationFile() {
+  const NOTIFICATION_TITLE = '🔍 File Scan Started';
+  const NOTIFICATION_BODY = `Starting scan`;
+
+  try {
+    if (isMainProcess()) {
+      const { Notification } = require('electron');
+      new Notification({
+        title: NOTIFICATION_TITLE,
+        body: NOTIFICATION_BODY,
+        icon: path.join(__dirname, '../assets/scan.png'),
+        urgency: 'low',
+        silent: true
+      }).show();
+    } else {
+      new window.Notification(NOTIFICATION_TITLE, {
+        body: NOTIFICATION_BODY,
+        silent: true
+      });
+    }
+    console.log(`\x1b[32m${NOTIFICATION_TITLE}: ${NOTIFICATION_BODY}\x1b[0m`);
+  } catch (err) {
+    console.log(`\x1b[32m${NOTIFICATION_TITLE}: ${NOTIFICATION_BODY}\x1b[0m`);
+  }
+}
 function showScanCompleteNotification(numFiles, threatsFound) {
   const NOTIFICATION_TITLE = threatsFound > 0 ? '⚠️ Scan Complete' : '✅ Scan Complete';
   const NOTIFICATION_BODY = `Scanned ${numFiles} files.\n${threatsFound > 0 ? `Found ${threatsFound} threats!` : 'No threats found.'
@@ -123,5 +148,6 @@ module.exports = {
   showThreatNotification,
   showScanStartNotification,
   showScanCompleteNotification,
-  showWatcherStatus
+  showWatcherStatus,
+  showScanStartNotificationFile
 };

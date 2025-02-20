@@ -7,7 +7,7 @@ const { spawnSync } = require("child_process");
 const process = require("process");
 const sqlite3 = require('sqlite3');
 const { promisify } = require('util');
-const { showThreatNotification, showScanStartNotification, showScanCompleteNotification } = require('./notifications.cjs');
+const { showThreatNotification, showScanStartNotification, showScanCompleteNotification,showScanStartNotificationFile } = require('./notifications.cjs');
 const csv = require("csv-parser");
 
 const hashFilePath = "data/hash.csv";
@@ -405,13 +405,15 @@ function updateQuarantineJson(fileInfo, options = {}) {
     fs.writeFileSync(quarantineJsonPath, JSON.stringify(quarantineList, null, 2));
 }
 
-async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
+async function scanFile(filePath, dbConnection, yaraRules, options = {},logAndNotify = true) {
     const whitelist = loadWhitelist(options.scannerDir);
     const hashes = computeHashes(filePath);  // Move this up
 
     console.log(`\nScanning file: ${filePath}`);
     console.log(`Computed MD5: ${hashes?.md5 || 'failed to compute hash'}`);
-
+    if(logAndNotify){
+        showScanStartNotificationFile();
+    }   
     if (!hashes) {
         return { matched: false, result: "hash_error" };
     }
@@ -420,6 +422,10 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
     console.log('Checking whitelist...');
     if (whitelist.has(hashes.md5)) {
         console.log('File is whitelisted');
+        if (logAndNotify) {
+            showNotification(true);
+            logScanResult(filePath,true, options);
+        }
         return {
             matched: false,
             result: {
@@ -469,7 +475,11 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
             if (Object.keys(filteredData).length > 0) {
                 updateQuarantineJson(filteredData, options);
             }
-
+            if (logAndNotify) {
+                showThreatNotification(path.basename(filePath), directoryName);
+                showNotification(false);
+                logScanResult(filePath, false, options);
+            }
             return {
                 matched: true,
                 result: {
@@ -503,10 +513,11 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
                 }, options);
             }
 
-            showThreatNotification(
-                path.basename(filePath),
-                match.signature
-            );
+            if (logAndNotify) {
+                showThreatNotification(path.basename(filePath), match.signature);
+                showNotification(false);
+                logScanResult(filePath, false, options);
+            }
             return {
                 matched: true,
                 result: {
@@ -537,10 +548,11 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
                 }, options);
             }
 
-            showThreatNotification(
-                path.basename(filePath),
-                match.signature
-            );
+            if (logAndNotify) {
+                showThreatNotification(path.basename(filePath), "YARA Detection");
+                showNotification(false);
+                logScanResult(filePath, false, options);
+            }
             return {
                 matched: true,
                 result: {
@@ -554,35 +566,38 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
         return { matched: false, result: null };
     }
 
-    const yaraResult = runYaraScan(filePath, yaraRules);
-    if (yaraResult) {
-        const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
-        if (quarantinePath) {
-            updateQuarantineJson({
-                name: path.basename(filePath),
-                type: "YARA Detection",
-                oldPath: filePath,
-                hash: hashes.md5,
-                yaraRule: yaraResult,
-                severity: "",
-            }, options);
-        }
-        showThreatNotification(
-            path.basename(filePath),
-            match.signature
-        );
-        return {
-            matched: true,
-            result: {
-                type: "yara",
-                matches: yaraResult,
-                file: filePath,
-                quarantined: !!quarantinePath
-            },
-        };
+    // const yaraResult = runYaraScan(filePath, yaraRules);
+    // if (yaraResult) {
+    //     const quarantinePath = moveToQuarantine(filePath, options);  // Pass options
+    //     if (quarantinePath) {
+    //         updateQuarantineJson({
+    //             name: path.basename(filePath),
+    //             type: "YARA Detection",
+    //             oldPath: filePath,
+    //             hash: hashes.md5,
+    //             yaraRule: yaraResult,
+    //             severity: "",
+    //         }, options);
+    //     }
+    //     showThreatNotification(
+    //         path.basename(filePath),
+    //         match.signature
+    //     );
+    //     return {
+    //         matched: true,
+    //         result: {
+    //             type: "yara",
+    //             matches: yaraResult,
+    //             file: filePath,
+    //             quarantined: !!quarantinePath
+    //         },
+    //     };
+    // }
+
+    if (logAndNotify) {
+        showNotification(true);
+        logScanResult(filePath, true , options);
     }
-
-
     addToWhitelist(hashes.md5, options.scannerDir);
     return {
         matched: false,
@@ -592,6 +607,7 @@ async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
             file: filePath,
         },
     };
+    
 }
 
 function getAllFiles(dir) {
@@ -641,7 +657,7 @@ async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
     console.log(`Scanning ${totalFiles} files...`);
     let count = 0;
     for (const filePath of allFiles) {
-        let scanResult = await scanFile(filePath, dbConnection, yaraRules, options);
+        let scanResult = await scanFile(filePath, dbConnection, yaraRules, options,false);
         global.scanStatus.currentFile = filePath;
 
         if (scanResult.result?.type === "whitelist") {
@@ -709,6 +725,34 @@ async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
     return results;
 }
 
+function logScanResult(filePath, status, options) {
+    if (options.dataDir) {
+        const logsFile = path.join(options.dataDir, 'logs.json');
+        try {
+            let logs = [];
+            if (fs.existsSync(logsFile)) {
+                logs = JSON.parse(fs.readFileSync(logsFile, 'utf-8'));
+            }
+
+            logs.push({
+                scanType: global.scanStatus?.type || 'unknown',
+                filesScanned: 1,
+                threats: status? 0:1,
+                time: Date.now(),
+                folder: path.dirname(filePath)
+            });
+
+            fs.writeFileSync(logsFile, JSON.stringify(logs, null, 2));
+            console.log("Log entry added successfully!");
+        } catch (err) {
+            console.error("Error writing to logs file:", err);
+        }
+    }
+}
+
+function showNotification(files) {
+    showScanCompleteNotification(1,files?0:1);
+}
 function formatMem(usage) {
     const mb = x => (x / (1024 * 1024)).toFixed(2) + " MB";
     return {
