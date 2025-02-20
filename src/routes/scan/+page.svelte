@@ -1,7 +1,7 @@
 <script lang="ts">
 	let settings = $state({
 		yara: true,
-		locations: ['/home/harshit/Harshit_Work/']
+		locations: ['']
 	});
 	let hashDatabases = $derived(
 		settings.yara
