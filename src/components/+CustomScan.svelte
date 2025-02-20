@@ -16,11 +16,12 @@
 					onclick={async () => {
 						let file = await electronFilesystem.getFile();
 						console.log(file);
-						if (file != 'user cancelled') {
+						if (file && file != 'user cancelled') {
 							electronFilesystem.manualScan(file, 'custom');
 							option = 'scan';
 						} else {
-							option = 'idle';
+							console.warn("No file selected, staying on the current screen.");
+							alert("No file selected. Please choose a file to proceed.");
 						}
 					}}
 				>
@@ -32,11 +33,12 @@
 					onclick={async () => {
 						let folder = await electronFilesystem.getFolder();
 						console.log(folder);
-						if (folder != 'user cancelled') {
+						if (folder && folder != 'user cancelled') {
 							electronFilesystem.manualScan(folder, 'custom');
 							option = 'scan';
 						} else {
-							option = 'idle';
+							console.warn("No folder selected, staying on the current screen.");
+							alert("No folder selected. Please choose a folder to proceed.");
 						}
 					}}
 				>

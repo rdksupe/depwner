@@ -104,6 +104,10 @@ function scheduleScanning() {
 }
 
 const startManualScan = async (pathToScan, type) => {
+    if (!pathToScan) {
+        console.error("Error: pathToScan is undefined.");
+        return;
+    }
     console.log("Starting manual scan:", pathToScan, type);
 
     global.scanStatus = {
