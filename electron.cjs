@@ -25,6 +25,9 @@ if (!fs.existsSync(path)) {
     })
 }
 
+global.dataDir = dataDir;
+global.scannerDir = scannerDir;
+
 const settingsPath = path.join(dataDir, './settings.json');
 const logsPath = path.join(dataDir, './logs.json');
 const quarantine = path.join(dataDir, './quarantine.json');
@@ -114,13 +117,17 @@ const startManualScan = async (pathToScan, type) => {
     let options;
     if (settings.yara) {
         options = {
-            dbPath: path.join(dataDir, "./scanner/malware_hashes.db"),
-            yaraPath: path.join(dataDir, "./scanner/output.yarc")
+            dbPath: path.join(dataDir, "./scanner/malware_hashes_full.db"),
+            yaraPath: path.join(dataDir, "./scanner/output.yarc"),
+            scannerDir: scannerDir,
+            dataDir: dataDir
         };
     } else {
         options = {
-            dbPath: path.join(dataDir, "./scanner/malware_hashes.db"),
-            yaraPath: ""
+            dbPath: path.join(dataDir, "./simple_malware_hashes.db"),
+            yaraPath: "",
+            scannerDir: scannerDir,
+            dataDir: dataDir
         };
     }
 
@@ -130,14 +137,15 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        const { scanInput } = await import(path.join(scannerDir, './scanner.cjs'));
+        console.log(options) ; 
+        // Change the import to use the original scanner location instead of the copied one
+        const { scanInput } = await import(path.join(__dirname, './scanner/scanner.cjs'));
         const result = await scanInput(options);
         global.scanStatus = 'completed'
 
     } catch (err) {
         console.error("Error during manual scan:", err);
         global.scanStatus.status = 'idle';
-        // if (win) win.webContents.send("scanStatus", manualScanStatus);
     }
 };
 
