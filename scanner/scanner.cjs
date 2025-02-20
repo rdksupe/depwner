@@ -9,9 +9,11 @@ const sqlite3 = require('sqlite3');
 const { promisify } = require('util');
 const { showThreatNotification, showScanStartNotification, showScanCompleteNotification,showScanStartNotificationFile } = require('./notifications.cjs');
 const csv = require("csv-parser");
+const os = require("os");
+const dataDir = path.join(os.homedir(), "dePWNer"); // Use the same data directory as in electron.cjs
 
-const hashFilePath = "data/hash.csv";
-const infoFilePath = "data/info.json";
+const hashFilePath = path.join(dataDir, "hash.csv");
+const infoFilePath = path.join(dataDir, "info.json");
 const QUARANTINE_JSON = "quarantine.json";
 const QUARANTINE_DIR = "quarantine";
 
