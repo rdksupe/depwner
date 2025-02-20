@@ -111,8 +111,8 @@ function deleteFromQuarantineByPath(originalPath) {
         return false;
     }
 }
-function loadWhitelist() {
-    const whitelistPath = path.join(global.scannerDir, 'whitelist.txt');
+function loadWhitelist(scannerDir) {
+    const whitelistPath = path.join(scannerDir || '', 'whitelist.txt');
     const whitelist = new Set();
 
     if (fs.existsSync(whitelistPath)) {
@@ -351,9 +351,9 @@ function updateQuarantineJson(fileInfo) {
     fs.writeFileSync(quarantineJsonPath, JSON.stringify(quarantineList, null, 2));
 }
 
-async function scanFile(filePath, dbConnection, yaraRules) {
-    const whitelist = loadWhitelist();
-    const hashes = computeHashes(filePath);
+async function scanFile(filePath, dbConnection, yaraRules, options = {}) {
+    const whitelist = loadWhitelist(options.scannerDir);
+    const hashes = computeHashes(filePath);  // Move this up
 
     console.log(`\nScanning file: ${filePath}`);
     console.log(`Computed MD5: ${hashes?.md5 || 'failed to compute hash'}`);
@@ -362,6 +362,7 @@ async function scanFile(filePath, dbConnection, yaraRules) {
         return { matched: false, result: "hash_error" };
     }
 
+    // Rest of the function remains the same...
     console.log('Checking whitelist...');
     if (whitelist.has(hashes.md5)) {
         console.log('File is whitelisted');
@@ -557,8 +558,9 @@ function getAllFiles(dir) {
     return results;
 }
 
-async function scanFolder(folder, dbConnection, yaraRules) {
+async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
     const allFiles = getAllFiles(folder);
+
     if (allFiles.length === 0) {
         console.log(JSON.stringify({ error: "No files found to scan." }, null, 2));
         return;
@@ -585,7 +587,7 @@ async function scanFolder(folder, dbConnection, yaraRules) {
     console.log(`Scanning ${totalFiles} files...`);
     let count = 0;
     for (const filePath of allFiles) {
-        let scanResult = await scanFile(filePath, dbConnection, yaraRules);
+        let scanResult = await scanFile(filePath, dbConnection, yaraRules, options);
         global.scanStatus.currentFile = filePath;
 
         if (scanResult.result?.type === "whitelist") {
@@ -653,7 +655,7 @@ function formatMem(usage) {
         heapUsed: mb(usage.heapUsed),
         external: mb(usage.external),
         arrayBuffers: mb(usage.arrayBuffers || 0)
-    };
+    };filesTo
 }
 
 async function scanInput(options) {
@@ -681,17 +683,21 @@ async function scanInput(options) {
     const yaraRules = options.yaraPath || "./output.yarc";
 
     let results;
+
     if (options.filePath) {
         results = await scanFile(
             options.filePath,
             dbConnection,
-            yaraRules
+            yaraRules,
+            options
         );
     } else {
+        console.log("Hello this is me" + options.folderPath) ; 
         results = await scanFolder(
             options.folderPath,
             dbConnection,
-            yaraRules
+            yaraRules,
+            options
         );
     }
     console.log("Yara status" + global.settings.yara);
