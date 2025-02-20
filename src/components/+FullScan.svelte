@@ -26,6 +26,9 @@
 					class="proceed"
 					onclick={() => {
 						option = 'scan';
+						paths.forEach((path) => {
+							electronFilesystem.manualScan(path, 'full');
+						});
 					}}
 				>
 					Start Scan
