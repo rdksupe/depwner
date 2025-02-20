@@ -22,7 +22,7 @@
 <div class="overall-container">
 	<h2 class="overall-threats">🚀 {totalThreatsFound} Threats Eliminated by dePWNer</h2>
 	<h2 class="active-threats">⚠️ {threats} Threats in Quarantine</h2>
-	<h2 class="eliminated-threats text-red-400">✅ {totalThreatsFound - threats} Removed by User</h2>
+	<h2 class="eliminated-threats text-red-400">✅ {Math.max(0,totalThreatsFound - threats)} Removed by User</h2>
 
 	<div class="table-container">
 		<table>
