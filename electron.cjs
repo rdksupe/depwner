@@ -3,9 +3,31 @@ const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
 
-const settingsPath = path.join(__dirname, './data/settings.json');
-const logsPath = path.join(__dirname, './data/logs.json');
-const quarantine = path.join(__dirname, './data/quarantine.json');
+const homedir = require('os').homedir();
+const dataDir = path.join(homedir, './dePWNer')
+const scannerDir = path.join(dataDir, './scanner/')
+
+if (!fs.existsSync(path)) {
+    console.log('First Run Detected')
+    fs.cpSync(path.join(__dirname, './data/'), dataDir, { recursive: true }, (err) => {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log("copied data files")
+        }
+    })
+    fs.cpSync(path.join(__dirname, './scanner/'), scannerDir, { recursive: true }, (err) => {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log("copied scanner files")
+        }
+    })
+}
+
+const settingsPath = path.join(dataDir, './settings.json');
+const logsPath = path.join(dataDir, './logs.json');
+const quarantine = path.join(dataDir, './quarantine.json');
 const cron = require('node-cron');
 
 let win;
@@ -92,12 +114,12 @@ const startManualScan = async (pathToScan, type) => {
     let options;
     if (settings.yara) {
         options = {
-            dbPath: "./scanner/malware_hashes.db",
-            yaraPath: "./scanner/output.yarc"
+            dbPath: path.join(dataDir, "./scanner/malware_hashes.db"),
+            yaraPath: path.join(dataDir, "./scanner/output.yarc")
         };
     } else {
         options = {
-            dbPath: "./scanner/malware_hashes.db",
+            dbPath: path.join(dataDir, "./scanner/malware_hashes.db"),
             yaraPath: ""
         };
     }
@@ -108,7 +130,7 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        const { scanInput } = await import('./scanner/scanner.cjs');
+        const { scanInput } = await import(path.join(scannerDir, './scanner.cjs'));
         const result = await scanInput(options);
         global.scanStatus = 'completed'
 
@@ -172,7 +194,7 @@ function startWatcher() {
 }
 
 
-var settings = require("./data/settings.json")
+var settings = require(path.join(dataDir, './settings.json'))
 
 const setSettings = async (_, setting) => {
     try {
@@ -263,7 +285,7 @@ const restoreThreat = async (_, threat) => {
     // Use threat.oldPath and threat.hash
 }
 
-const icon = nativeImage.createFromPath('./data/Logo_smol.png')
+const icon = nativeImage.createFromPath(path.join(dataDir, './Logo_smol.png'))
 function createWindow() {
     win = new BrowserWindow({
         width: 800,
