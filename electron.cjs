@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, Tray, Menu, nativeImage } = require
 const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
+const { pathToFileURL } = require('url');
 
 const homedir = require('os').homedir();
 const dataDir = path.join(homedir, './dePWNer')
@@ -24,9 +25,6 @@ if (!fs.existsSync(path)) {
         }
     })
 }
-
-global.dataDir = dataDir;
-global.scannerDir = scannerDir;
 
 const settingsPath = path.join(dataDir, './settings.json');
 const logsPath = path.join(dataDir, './logs.json');
@@ -117,14 +115,14 @@ const startManualScan = async (pathToScan, type) => {
     let options;
     if (settings.yara) {
         options = {
-            dbPath: path.join(dataDir, "./scanner/malware_hashes_full.db"),
+            dbPath: path.join(dataDir, "./scanner/malware_hashes.db"),
             yaraPath: path.join(dataDir, "./scanner/output.yarc"),
             scannerDir: scannerDir,
             dataDir: dataDir
         };
     } else {
         options = {
-            dbPath: path.join(dataDir, "./simple_malware_hashes.db"),
+            dbPath: path.join(dataDir, "simple_malware_hashes.db"),
             yaraPath: "",
             scannerDir: scannerDir,
             dataDir: dataDir
@@ -137,12 +135,12 @@ const startManualScan = async (pathToScan, type) => {
         } else {
             options.filePath = pathToScan;
         }
-        console.log(options) ; 
-        // Change the import to use the original scanner location instead of the copied one
-        const { scanInput } = await import(path.join(__dirname, './scanner/scanner.cjs'));
+        console.log(options); 
+        // Replace dynamic import with file URL conversion:
+        const scannerModuleUrl = pathToFileURL(path.join(__dirname, './scanner/scanner.cjs')).href;
+        const { scanInput } = await import(scannerModuleUrl);
         const result = await scanInput(options);
-        global.scanStatus = 'completed'
-
+        global.scanStatus = 'completed';
     } catch (err) {
         console.error("Error during manual scan:", err);
         global.scanStatus.status = 'idle';
