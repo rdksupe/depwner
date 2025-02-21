@@ -23,6 +23,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # dePWNer
-*whitelist.txt
 *malware_hashes_*.db
 /out
