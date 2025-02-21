@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, Tray, Menu, nativeImage } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, Tray, Menu, nativeImage, Notification } = require('electron')
 const path = require('node:path')
 const fs = require('node:fs');
 const chokidar = require('chokidar');
@@ -355,7 +355,7 @@ app.whenReady().then(() => {
             }
         }
     ]);
-    tray.setToolTip('dePWNer by pwnedraccoons')
+    tray.setToolTip('dePWNer is Active ✅')
     tray.setContextMenu(contextMenu)
     tray.on('click', () => {
         if (win.isVisible()) {
@@ -368,15 +368,15 @@ app.whenReady().then(() => {
 
     createWindow()
 
-    win.on('minimize', function (event) {
-        event.preventDefault();
-        win.hide();
-    });
-
     win.on('close', function (event) {
         if (!isQuiting) {
             event.preventDefault();
             win.hide();
+            new Notification({
+                title: "dePWNer is still Active",
+                body: "Active in the background, you can go to system tray to Quit",
+                silent: true
+            }).show()
         }
 
         return false;
