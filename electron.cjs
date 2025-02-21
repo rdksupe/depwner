@@ -133,13 +133,15 @@ const startManualScan = async (pathToScan, type) => {
         };
     }
 
+    options.type = type
+
     try {
         if (fs.statSync(pathToScan).isDirectory()) {
             options.folderPath = pathToScan;
         } else {
             options.filePath = pathToScan;
         }
-        console.log(options); 
+        console.log(options);
         // Replace dynamic import with file URL conversion:
         const scannerModuleUrl = pathToFileURL(path.join(__dirname, './scanner/scanner.cjs')).href;
         const { scanInput } = await import(scannerModuleUrl);
