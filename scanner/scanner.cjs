@@ -639,7 +639,9 @@ async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
     }
 
     const totalFiles = allFiles.length;
-    showScanStartNotification(totalFiles);
+    if (options.type == "custom") {
+        showScanStartNotification(totalFiles);
+    }
 
     const results = {
         scan_summary: {
@@ -718,10 +720,12 @@ async function scanFolder(folder, dbConnection, yaraRules, options = {}) {
     results.scan_summary.total_matches = totalMatches;
     results.scan_summary.match_percentage = totalFiles > 0 ? (totalMatches / totalFiles) * 100 : 0;
 
-    showScanCompleteNotification(
-        totalFiles,
-        results.scan_summary.total_matches
-    );
+    if (options.type == "custom") {
+        showScanCompleteNotification(
+            totalFiles,
+            results.scan_summary.total_matches
+        );
+    }
 
     console.log(JSON.stringify(results, null, 2));
     return results;
