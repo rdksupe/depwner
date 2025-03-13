@@ -13,6 +13,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
+    "electron": "electron .",
     "build:electron": "npm run build && electron .",
     "start": "electron-forge start",
     "package": "electron-forge package",
