@@ -1,8 +1,7 @@
-# PNB Hackathon Pwnedraccoon
+# Depwner by Team PwnedRaccoons
 
 ## Techinal Overview
-The main principal is to
-We have made an electron app which uses `chokidar` to constantly watch for filesystem changes.
+We have made an electron app which uses `chokidar` to constantly watch for filesystem changes. On any filesystem change (addition/modification), it scans the modified files for any malicious content using static hash analysis and yara rules.
 
 ## Development Setup
 
