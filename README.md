@@ -7,6 +7,8 @@ Two engines have been implemented for scanning-
 - Static Hash Analysis: Highly efficient and highly accurate (has practically no false positives) but a complex enough malware can fool this engine by modifying its file contents without making any significant change to the overall code, just enough to change it's hash.
 - Yara Rules Engine: A smarter way to check for threats, leveraging pattern matching, it can even detect the malware if it made some modifications to itself or malware embedded into other files. However, it is very CPU intensive, especially when dealing with a large number of files.
 
+[A video demonstrating dePWNer](https://youtu.be/smSNuqAhjns)
+
 ## Development Setup
 
 This is powered by Electron.js to build a cross platform yet native app for various platforms- Windows, Linux, Mac and more. The frontend is made with SvelteKit with adapter-static to prerender it to plain HTML, CSS and Vanilla JS which electron can then use. The backend is made on NodeJS by the APIs provided by Electron.js itself. both frontend and backend communicate with each other using APIs of ipcMain provided by electron.
