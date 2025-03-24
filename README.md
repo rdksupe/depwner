@@ -1,7 +1,11 @@
 # Depwner by Team PwnedRaccoons
 
 ## Techinal Overview
-We have made an electron app which uses `chokidar` to constantly watch for filesystem changes. On any filesystem change (addition/modification), it scans the modified files for any malicious content using static hash analysis and yara rules.
+We have made an electron app which uses `chokidar` to constantly watch for filesystem changes. On any filesystem change (addition/modification), it scans the modified files for any malicious content.
+
+Two engines have been implemented for scanning-
+- Static Hash Analysis: Highly efficient and highly accurate (has practically no false positives) but a complex enough malware can fool this engine by modifying its file contents without making any significant change to the overall code, just enough to change it's hash.
+- Yara Rules Engine: A smarter way to check for threats, leveraging pattern matching, it can even detect the malware if it made some modifications to itself or malware embedded into other files. However, it is very CPU intensive, especially when dealing with a large number of files.
 
 ## Development Setup
 
