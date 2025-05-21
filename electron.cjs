@@ -24,6 +24,27 @@ if (!fs.existsSync(dataDir)) {
             console.log("copied scanner files")
         }
     })
+
+    // Create static directory in user's dataDir and copy update_database.py
+    try {
+        const staticDirUserPath = path.join(dataDir, 'static');
+        if (!fs.existsSync(staticDirUserPath)) {
+            fs.mkdirSync(staticDirUserPath, { recursive: true });
+            console.log(`Created directory: ${staticDirUserPath}`);
+        }
+
+        const sourceScriptPath = path.join(__dirname, 'static/update_database.py');
+        const destScriptPath = path.join(staticDirUserPath, 'update_database.py');
+        
+        if (!fs.existsSync(sourceScriptPath)) {
+            console.error(`Error: Source script not found at ${sourceScriptPath}. Please ensure the file exists in the application's static folder.`);
+        } else {
+            fs.copyFileSync(sourceScriptPath, destScriptPath);
+            console.log(`Copied update_database.py to ${destScriptPath}`);
+        }
+    } catch (error) {
+        console.error('Error copying update_database.py during first run:', error);
+    }
 }
 
 const settingsPath = path.join(dataDir, './settings.json');
@@ -206,7 +227,19 @@ function startWatcher() {
 }
 
 
-var settings = require(path.join(dataDir, './settings.json'))
+var settings = require(path.join(dataDir, './settings.json'));
+
+// Ensure settings.lastUpdated exists
+if (settings.lastUpdated === undefined) {
+    settings.lastUpdated = "Never";
+    try {
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+        console.log("Initialized and saved settings.lastUpdated");
+    } catch (err) {
+        console.error("Error saving initial settings.lastUpdated:", err);
+    }
+}
+
 
 const setSettings = async (_, setting) => {
     try {
@@ -330,15 +363,129 @@ app.whenReady().then(() => {
         console.log("Reloading watcher...");
         startWatcher();
     });
-    ipcMain.handle("removeThreat", removeThreat)
-    ipcMain.handle("restoreThreat", restoreThreat)
+    ipcMain.handle("removeThreat", removeThreat);
+    ipcMain.handle("restoreThreat", restoreThreat);
+
+    // Updated IPC handler for updating definitions
+    ipcMain.handle("updateDefinitions", async () => {
+        let tempFeedPath = '';
+        try {
+            console.log("Fetching latest definitions from Malware Bazaar...");
+            const response = await fetch('https://bazaar.abuse.ch/export/txt/md5/recent/');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch definitions: ${response.statusText}`);
+            }
+            const feedData = await response.text();
+            console.log("Fetched definitions (first 500 chars):", feedData.substring(0, 500));
+
+            const pythonScriptPath = path.join(dataDir, 'static/update_database.py');
+            const dbPath = settings.yara ? path.join(scannerDir, 'malware_hashes.db') : path.join(dataDir, 'simple_malware_hashes.db');
+            
+            tempFeedPath = path.join(require('os').tmpdir(), `depwner_feed_${Date.now()}.txt`);
+            fs.writeFileSync(tempFeedPath, feedData);
+            console.log(`Feed data written to temporary file: ${tempFeedPath}`);
+            console.log(`Python script path: ${pythonScriptPath}`);
+            console.log(`Database path: ${dbPath}`);
+
+            // Check if Python script exists
+            if (!fs.existsSync(pythonScriptPath)) {
+                throw new Error(`Update script not found at ${pythonScriptPath}`);
+            }
+            // Check if DB exists
+            if (!fs.existsSync(dbPath)) {
+                throw new Error(`Database not found at ${dbPath}. Please ensure it's created, possibly by running a scan first or during app setup.`);
+            }
+
+
+            const runPythonScript = (pythonCmd) => {
+                return new Promise((resolve, reject) => {
+                    const { spawn } = require('child_process');
+                    const scriptProcess = spawn(pythonCmd, [pythonScriptPath, dbPath, tempFeedPath]);
+                    
+                    let stdout = '';
+                    let stderr = '';
+
+                    scriptProcess.stdout.on('data', (data) => {
+                        stdout += data.toString();
+                    });
+
+                    scriptProcess.stderr.on('data', (data) => {
+                        stderr += data.toString();
+                    });
+
+                    scriptProcess.on('close', (code) => {
+                        console.log(`${pythonCmd} process exited with code ${code}`);
+                        if (code === 0 && !stderr) { // Checking for no stderr as well
+                            resolve({ stdout, stderr, pythonCmdUsed: pythonCmd });
+                        } else {
+                            reject({ code, stdout, stderr, pythonCmdUsed: pythonCmd });
+                        }
+                    });
+
+                    scriptProcess.on('error', (err) => {
+                        console.error(`Failed to start ${pythonCmd} process:`, err);
+                        reject({ error: err, pythonCmdUsed: pythonCmd });
+                    });
+                });
+            };
+
+            let scriptResult;
+            try {
+                console.log("Attempting to run update script with python3...");
+                scriptResult = await runPythonScript('python3');
+            } catch (errorInfoP3) {
+                if (errorInfoP3.error && errorInfoP3.error.code === 'ENOENT') { // 'ENOENT' typically means command not found
+                    console.warn("python3 command not found or failed, trying with python...");
+                    try {
+                        scriptResult = await runPythonScript('python');
+                    } catch (errorInfoPy) {
+                         console.error("Error executing Python script with python:", errorInfoPy.stderr || errorInfoPy.stdout || errorInfoPy.error);
+                         throw new Error(`Error executing update script with python: ${errorInfoPy.stderr || errorInfoPy.stdout || (errorInfoPy.error ? errorInfoPy.error.message : 'Unknown error')}. Python command used: ${errorInfoPy.pythonCmdUsed}`);
+                    }
+                } else {
+                    // Error with python3 was not ENOENT, or it was some other script error
+                    console.error("Error executing Python script with python3:", errorInfoP3.stderr || errorInfoP3.stdout || errorInfoP3.error);
+                    throw new Error(`Error executing update script with python3: ${errorInfoP3.stderr || errorInfoP3.stdout || (errorInfoP3.error ? errorInfoP3.error.message : 'Unknown error')}. Python command used: ${errorInfoP3.pythonCmdUsed}`);
+                }
+            }
+            
+            console.log("Python script stdout:", scriptResult.stdout);
+            if (scriptResult.stderr) { // Log stderr even on "successful" exit code 0 if present
+                console.warn("Python script stderr:", scriptResult.stderr);
+            }
+
+            settings.lastUpdated = new Date().toLocaleString();
+            fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+            console.log(`Definitions updated. Last updated set to: ${settings.lastUpdated}. Python command used: ${scriptResult.pythonCmdUsed}`);
+            
+            if (win) {
+                win.webContents.send('settingsUpdated', settings);
+            }
+            return { success: true, message: scriptResult.stdout.trim() || 'Definitions updated successfully.', lastUpdated: settings.lastUpdated, pythonCmdUsed: scriptResult.pythonCmdUsed };
+
+        } catch (error) {
+            console.error("Error in updateDefinitions main catch block:", error);
+            return { success: false, message: error.message || "An unknown error occurred during definition update." };
+        } finally {
+            if (tempFeedPath && fs.existsSync(tempFeedPath)) {
+                try {
+                    fs.unlinkSync(tempFeedPath);
+                    console.log(`Temporary feed file ${tempFeedPath} deleted.`);
+                } catch (delError) {
+                    console.error(`Error deleting temporary feed file ${tempFeedPath}:`, delError);
+                }
+            }
+        }
+    });
 
     try {
-        settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-        global.settings = settings;
+        // Settings are already loaded and potentially modified above for lastUpdated
+        // settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8')); 
+        global.settings = settings; // Ensure global settings is also up-to-date
         console.log("Settings Loaded:", settings);
     } catch (err) {
-        console.error("Error loading settings:", err);
+        // This catch might not be necessary if settings are guaranteed by the require and initialization above
+        console.error("Error re-loading/re-parsing settings:", err);
     }
 
     tray = new Tray(icon)

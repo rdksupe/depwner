@@ -18,14 +18,55 @@
 			},
 			time: '13:00'
 		},
-		locations: []
+		locations: [],
+		lastUpdated: 'Never' // Ensure lastUpdated is part of the initial state
 	});
+
+	let isLoadingUpdate = $state(false);
+
 	onMount(async () => {
 		let settingsResponse = await depwnerPreferences.get();
-		settings = JSON.parse(settingsResponse);
+		let parsedSettings = JSON.parse(settingsResponse);
+		settings = { ...settings, ...parsedSettings }; // Merge, ensuring lastUpdated is present
 	});
 	$effect(() => {
 		depwnerPreferences.set(JSON.stringify(settings));
+	});
+
+	async function handleUpdateDefinitionsClick() {
+		console.log('Update Definitions button clicked');
+		isLoadingUpdate = true;
+		try {
+			// @ts-ignore
+			const result = await electronAPI.updateDefinitions();
+			alert(result.message || 'Update process initiated.');
+			if (result.success && result.lastUpdated) {
+				settings.lastUpdated = result.lastUpdated; 
+			} else if (!result.success) {
+				// Optionally, if the backend didn't update lastUpdated on failure, 
+				// you might want to reflect that or keep the old value.
+				// For now, the alert message covers the failure.
+			}
+		} catch (error) {
+			console.error('Error calling updateDefinitions:', error);
+			alert('Failed to start update process: ' + (error.message || 'Unknown error'));
+		} finally {
+			isLoadingUpdate = false;
+		}
+	}
+
+	onMount(async () => {
+		// Existing onMount logic
+		// ...
+		// Add listener for settingsUpdated event
+		// @ts-ignore
+		if (window.electronAPI && typeof window.electronAPI.onSettingsUpdated === 'function') {
+			// @ts-ignore
+			window.electronAPI.onSettingsUpdated((event, updatedSettings) => {
+				console.log('Received settingsUpdated event with:', updatedSettings);
+				settings = { ...settings, ...updatedSettings }; // Update local settings state
+			});
+		}
 	});
 </script>
 
@@ -125,6 +166,28 @@
 					<p class="text-catp-red">Please add at least one location to monitor</p>
 				{/if}
 			</div>
+			<div class="headingInfo">
+				<h2>Update Definitions</h2>
+				<button class="tooltip">
+					<span class="tooltiptext">
+						Keep your malware definitions up to date to ensure the best protection against new
+						threats.
+					</span>
+					<Info />
+				</button>
+			</div>
+			<div class="settingsField">
+				<button class="updateButton" on:click={handleUpdateDefinitionsClick} disabled={isLoadingUpdate}>
+					{#if isLoadingUpdate}
+						Updating...
+					{:else}
+						Update Now
+					{/if}
+				</button>
+			</div>
+			<div class="lastUpdatedText">
+				<p>Last updated: {settings.lastUpdated || 'Never'}</p>
+			</div>
 		</div>
 	</div>
 </div>
@@ -210,6 +273,30 @@
 	.locationSettings button:hover {
 		background: rgb(var(--ctp-blue));
 		color: rgb(var(--ctp-mantle));
+	}
+	.updateButton {
+		background: rgb(var(--ctp-mauve)); /* Using a different color for distinction */
+		color: rgb(var(--ctp-base));
+		border-radius: 1vh;
+		padding: min(1vh, 1vw) min(1.5vw); /* Adjusted padding */
+		font-size: min(2vh, 1.9vw);
+		font-weight: 600; /* Slightly bolder */
+		width: auto; /* Auto width based on content */
+		transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+		margin: 0.5vh auto; /* Centering the button */
+		display: block;
+	}
+	.updateButton:hover {
+		background: rgb(var(--ctp-pink));
+		color: rgb(var(--ctp-base));
+		transform: translateY(-2px); /* Subtle hover effect */
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding shadow for depth */
+	}
+	.lastUpdatedText {
+		font-size: min(1.8vh, 1.5vw);
+		color: rgb(var(--ctp-subtext0));
+		margin-top: min(1vh, 0.5vw);
+		margin-bottom: min(3vh, 3vw);
 	}
 	.headingInfo {
 		display: flex;
