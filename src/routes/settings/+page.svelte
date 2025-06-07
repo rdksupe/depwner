@@ -213,7 +213,7 @@
 				</button>
 			</div>
 			<div class="settingsField">
-				<button class="updateButton" on:click={handleUpdateDefinitionsClick} disabled={isLoadingUpdate}>
+				<button class="updateButton" onclick={handleUpdateDefinitionsClick} disabled={isLoadingUpdate}>
 					{#if isLoadingUpdate}
 						Updating...
 					{:else}
