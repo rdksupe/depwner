@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Info, Trash2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-
+	
 	let settings = $state({
 		yara: true,
 		schedule: {
@@ -19,15 +19,44 @@
 			time: '13:00'
 		},
 		locations: [],
-		lastUpdated: 'Never' // Ensure lastUpdated is part of the initial state
+		lastUpdated: 'Never'
 	});
 
 	let isLoadingUpdate = $state(false);
 	let updateProgressCurrent = $state(0);
 	let updateProgressTotal = $state(0);
 	let showProgressBar = $state(false);
+	
+	onMount(async () => {
+		// Fetch initial settings
+		try {
+			let settingsResponse = await depwnerPreferences.get();
+			settings = JSON.parse(settingsResponse);
+		} catch (e) {
+			console.error("Failed to load settings:", e);
+		}
 
+		// Setup update progress listener
+		depwnerPreferences.onUpdateProgress((progress) => {
+			console.log('Received updateProgress event:', progress);
+			updateProgressCurrent = progress.processed;
+			updateProgressTotal = progress.total;
+			showProgressBar = true;
+
+			if (progress.completed || progress.error) {
+				if (!progress.error) {
+					// Update completed successfully
+					setTimeout(() => {
+						showProgressBar = false;
+					}, 1000);
+				}
+			}
+		});
+	});
+	
+	// Save settings on changes
 	$effect(() => {
+		console.log('Saving settings:', settings);
 		depwnerPreferences.set(JSON.stringify(settings));
 	});
 
@@ -38,7 +67,6 @@
 		updateProgressCurrent = 0; // Reset progress
 		updateProgressTotal = 0;   // Reset progress
 		try {
-			// @ts-ignore
 			const result = await electronAPI.updateDefinitions();
 			alert(result.message || 'Update process initiated.');
 			if (result.success && result.lastUpdated) {
@@ -49,61 +77,13 @@
 			alert('Failed to start update process: ' + (error.message || 'Unknown error'));
 		} finally {
 			isLoadingUpdate = false;
-			showProgressBar = false; // Hide progress bar when update finishes
-			updateProgressCurrent = 0; // Reset progress
-			updateProgressTotal = 0;   // Reset progress
+			if (!showProgressBar) {
+				// Only reset if no active progress is shown
+				updateProgressCurrent = 0;
+				updateProgressTotal = 0;
+			}
 		}
 	}
-
-	onMount(async () => {
-		// Fetch initial settings
-		try {
-			let settingsResponse = await depwnerPreferences.get();
-			let parsedSettings = JSON.parse(settingsResponse);
-			settings = { ...settings, ...parsedSettings };
-		} catch (e) {
-			console.error("Failed to load settings:", e);
-		}
-
-		// Setup IPC listeners
-		// @ts-ignore
-		if (window.electronAPI) {
-			// @ts-ignore
-			if (typeof window.electronAPI.onSettingsUpdated === 'function') {
-				// @ts-ignore
-				window.electronAPI.onSettingsUpdated((_event, updatedSettings) => {
-					console.log('Received settingsUpdated event with:', updatedSettings);
-					settings = { ...settings, ...updatedSettings };
-				});
-			}
-			// @ts-ignore
-			if (typeof window.electronAPI.onUpdateProgress === 'function') {
-				// @ts-ignore
-				window.electronAPI.onUpdateProgress((_event, progress) => {
-					console.log('Received updateProgress event:', progress);
-					updateProgressCurrent = progress.processed;
-					updateProgressTotal = progress.total;
-					showProgressBar = true; // Ensure it's visible if we receive progress
-
-					if (progress.completed || progress.error) {
-						// The main finally block in handleUpdateDefinitionsClick will also hide it,
-						// but this can hide it sooner if the event signals completion/error.
-						// However, to keep it simple and avoid race conditions with the alert,
- nachhaltige // we might let finally handle the definitive hiding.
-						// For now, let's rely on `isLoadingUpdate` in the template and `finally` block.
-						if (progress.error) {
-							// If there's an error, the alert in handleUpdateDefinitionsClick will show.
-							// The progress bar will be hidden in the finally block there.
-						}
-						if (progress.completed) {
-							// Update might be completed before the user dismisses the alert.
-							// `showProgressBar` will be set to false in `finally`.
-						}
-					}
-				});
-			}
-		}
-	});
 </script>
 
 <div class="mainCont">
