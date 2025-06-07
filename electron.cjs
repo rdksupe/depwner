@@ -24,27 +24,8 @@ if (!fs.existsSync(dataDir)) {
             console.log("copied scanner files")
         }
     })
-
-    // Create static directory in user's dataDir and copy update_database.py
-    try {
-        const staticDirUserPath = path.join(dataDir, 'static');
-        if (!fs.existsSync(staticDirUserPath)) {
-            fs.mkdirSync(staticDirUserPath, { recursive: true });
-            console.log(`Created directory: ${staticDirUserPath}`);
-        }
-
-        const sourceScriptPath = path.join(__dirname, 'static/update_database.py');
-        const destScriptPath = path.join(staticDirUserPath, 'update_database.py');
-        
-        if (!fs.existsSync(sourceScriptPath)) {
-            console.error(`Error: Source script not found at ${sourceScriptPath}. Please ensure the file exists in the application's static folder.`);
-        } else {
-            fs.copyFileSync(sourceScriptPath, destScriptPath);
-            console.log(`Copied update_database.py to ${destScriptPath}`);
-        }
-    } catch (error) {
-        console.error('Error copying update_database.py during first run:', error);
-    }
+    // The python script and its copying logic have been removed.
+    // The static/ directory in user's dataDir is no longer created by this logic.
 }
 
 const settingsPath = path.join(dataDir, './settings.json');
@@ -366,121 +347,162 @@ app.whenReady().then(() => {
     ipcMain.handle("removeThreat", removeThreat);
     ipcMain.handle("restoreThreat", restoreThreat);
 
-    // Updated IPC handler for updating definitions
+    // Updated IPC handler for updating definitions using better-sqlite3
     ipcMain.handle("updateDefinitions", async () => {
-        let tempFeedPath = '';
+        let db; // Declare db here to be accessible in finally block
         try {
-            console.log("Fetching latest definitions from Malware Bazaar...");
-            const response = await fetch('https://bazaar.abuse.ch/export/txt/md5/recent/');
+            console.log("Fetching latest definitions from Malware Bazaar (CSV)...");
+            const response = await fetch('https://bazaar.abuse.ch/export/csv/recent/');
             if (!response.ok) {
                 throw new Error(`Failed to fetch definitions: ${response.statusText}`);
             }
-            const feedData = await response.text();
-            console.log("Fetched definitions (first 500 chars):", feedData.substring(0, 500));
+            const csvData = await response.text();
+            console.log("Fetched CSV definitions (first 500 chars):", csvData.substring(0, 500));
 
-            const pythonScriptPath = path.join(dataDir, 'static/update_database.py');
             const dbPath = settings.yara ? path.join(scannerDir, 'malware_hashes.db') : path.join(dataDir, 'simple_malware_hashes.db');
-            
-            tempFeedPath = path.join(require('os').tmpdir(), `depwner_feed_${Date.now()}.txt`);
-            fs.writeFileSync(tempFeedPath, feedData);
-            console.log(`Feed data written to temporary file: ${tempFeedPath}`);
-            console.log(`Python script path: ${pythonScriptPath}`);
-            console.log(`Database path: ${dbPath}`);
-
-            // Check if Python script exists
-            if (!fs.existsSync(pythonScriptPath)) {
-                throw new Error(`Update script not found at ${pythonScriptPath}`);
-            }
-            // Check if DB exists
             if (!fs.existsSync(dbPath)) {
-                throw new Error(`Database not found at ${dbPath}. Please ensure it's created, possibly by running a scan first or during app setup.`);
-            }
-
-
-            const runPythonScript = (pythonCmd) => {
-                return new Promise((resolve, reject) => {
-                    const { spawn } = require('child_process');
-                    const scriptProcess = spawn(pythonCmd, [pythonScriptPath, dbPath, tempFeedPath]);
-                    
-                    let stdout = '';
-                    let stderr = '';
-
-                    scriptProcess.stdout.on('data', (data) => {
-                        stdout += data.toString();
-                    });
-
-                    scriptProcess.stderr.on('data', (data) => {
-                        stderr += data.toString();
-                    });
-
-                    scriptProcess.on('close', (code) => {
-                        console.log(`${pythonCmd} process exited with code ${code}`);
-                        if (code === 0 && !stderr) { // Checking for no stderr as well
-                            resolve({ stdout, stderr, pythonCmdUsed: pythonCmd });
-                        } else {
-                            reject({ code, stdout, stderr, pythonCmdUsed: pythonCmd });
-                        }
-                    });
-
-                    scriptProcess.on('error', (err) => {
-                        console.error(`Failed to start ${pythonCmd} process:`, err);
-                        reject({ error: err, pythonCmdUsed: pythonCmd });
-                    });
-                });
-            };
-
-            let scriptResult;
-            try {
-                console.log("Attempting to run update script with python3...");
-                scriptResult = await runPythonScript('python3');
-            } catch (errorInfoP3) {
-                if (errorInfoP3.error && errorInfoP3.error.code === 'ENOENT') { // 'ENOENT' typically means command not found
-                    console.warn("python3 command not found or failed, trying with python...");
-                    try {
-                        scriptResult = await runPythonScript('python');
-                    } catch (errorInfoPy) {
-                         console.error("Error executing Python script with python:", errorInfoPy.stderr || errorInfoPy.stdout || errorInfoPy.error);
-                         throw new Error(`Error executing update script with python: ${errorInfoPy.stderr || errorInfoPy.stdout || (errorInfoPy.error ? errorInfoPy.error.message : 'Unknown error')}. Python command used: ${errorInfoPy.pythonCmdUsed}`);
+                // Attempt to create the directory for simple_malware_hashes.db if it doesn't exist
+                if (!settings.yara) {
+                    const simpleDbDir = path.dirname(dbPath);
+                    if (!fs.existsSync(simpleDbDir)) {
+                        fs.mkdirSync(simpleDbDir, { recursive: true });
+                        console.log(`Created directory for simple_malware_hashes.db: ${simpleDbDir}`)
                     }
-                } else {
-                    // Error with python3 was not ENOENT, or it was some other script error
-                    console.error("Error executing Python script with python3:", errorInfoP3.stderr || errorInfoP3.stdout || errorInfoP3.error);
-                    throw new Error(`Error executing update script with python3: ${errorInfoP3.stderr || errorInfoP3.stdout || (errorInfoP3.error ? errorInfoP3.error.message : 'Unknown error')}. Python command used: ${errorInfoP3.pythonCmdUsed}`);
+                } else if (!fs.existsSync(scannerDir)) {
+                     // This case should ideally be handled by first-run setup for scannerDir
+                    throw new Error(`Scanner directory not found at ${scannerDir}. Cannot create malware_hashes.db.`);
                 }
+                // For simple_malware_hashes.db, it will be created by better-sqlite3 if it doesn't exist
+                // For malware_hashes.db (Yara), it's expected to be part of the scanner setup.
+                // However, the CREATE TABLE IF NOT EXISTS will handle table creation in both.
+                console.log(`Database will be created or opened at: ${dbPath}`);
             }
-            
-            console.log("Python script stdout:", scriptResult.stdout);
-            if (scriptResult.stderr) { // Log stderr even on "successful" exit code 0 if present
-                console.warn("Python script stderr:", scriptResult.stderr);
+
+            db = require('better-sqlite3')(dbPath);
+            console.log(`Database opened successfully at ${dbPath}`);
+
+            // Ensure table exists
+            db.exec(`
+                CREATE TABLE IF NOT EXISTS malware_hashes (
+                    md5_hash TEXT PRIMARY KEY,
+                    first_seen_utc TEXT,
+                    signature TEXT
+                )
+            `);
+
+            const lines = csvData.split('\n');
+            let headerFields = [];
+            let md5Index = -1, firstSeenIndex = -1, signatureIndex = -1;
+            let addedCount = 0;
+            let processedCount = 0;
+            let dataRows = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                if (line.startsWith('#')) {
+                    if (headerFields.length === 0) { // Check if this is the last comment line before actual headers
+                        const potentialHeaderLine = lines[i+1];
+                        if (potentialHeaderLine && !potentialHeaderLine.startsWith("#")) {
+                             // Example header from problem: # "first_seen_utc"	sha256_hash	md5_hash	sha1_hash	reporter	file_name	file_type_guess	mime_type	signature	clamav	vtpercent	imphash	ssdeep	tlsh
+                             // The actual CSV uses comma delimiter and quotes.
+                             // Example actual header: "first_seen_utc","sha256_hash","md5_hash","sha1_hash","reporter","file_name","file_type_guess","mime_type","signature","clamav","vtpercent","imphash","ssdeep","tlsh"
+                            let rawHeaders = lines[i].substring(1).trim(); // Remove '#'
+                            if (rawHeaders.includes('\t')) { // Handle tab-delimited header in comment
+                                headerFields = rawHeaders.split('\t').map(h => h.trim().replace(/^"|"$/g, ''));
+                            } else if (rawHeaders.includes(',')) { // Handle comma-delimited header in comment (less likely for the # line)
+                                 headerFields = rawHeaders.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                            }
+                        }
+                    }
+                    continue;
+                }
+
+                if (headerFields.length === 0) { // This is the actual CSV header row
+                    headerFields = line.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                    md5Index = headerFields.indexOf('md5_hash');
+                    firstSeenIndex = headerFields.indexOf('first_seen_utc');
+                    signatureIndex = headerFields.indexOf('signature');
+
+                    if (md5Index === -1 || firstSeenIndex === -1 || signatureIndex === -1) {
+                        throw new Error(`Required header field (md5_hash, first_seen_utc, or signature) not found in CSV. Found: ${headerFields.join(', ')}`);
+                    }
+                    continue; // Skip processing the header row as data
+                }
+                dataRows.push(line);
+            }
+
+            const totalEntries = dataRows.length;
+            if (totalEntries === 0) {
+                return { success: true, message: 'No new data entries in the feed.', lastUpdated: settings.lastUpdated };
+            }
+
+            const checkStmt = db.prepare('SELECT 1 FROM malware_hashes WHERE md5_hash = ?');
+            const insertStmt = db.prepare('INSERT INTO malware_hashes (md5_hash, first_seen_utc, signature) VALUES (?, ?, ?)');
+
+            db.transaction(() => {
+                for (const row of dataRows) {
+                    const values = row.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                    const md5_hash = values[md5Index];
+                    const first_seen_utc_val = values[firstSeenIndex];
+                    let signature_val = values[signatureIndex];
+
+                    if (!md5_hash || md5_hash.length !== 32) { // Basic MD5 validation
+                        console.warn(`Skipping invalid MD5 hash: ${md5_hash} in row: ${row}`);
+                        continue;
+                    }
+
+                    if (!signature_val || signature_val.toLowerCase() === 'n/a' || signature_val === '') {
+                        signature_val = 'MalwareBazaar_Recent_CSV';
+                    }
+
+                    const exists = checkStmt.get(md5_hash);
+                    if (!exists) {
+                        try {
+                            insertStmt.run(md5_hash, first_seen_utc_val, signature_val);
+                            addedCount++;
+                        } catch (insertError) {
+                            console.error(`Failed to insert MD5 ${md5_hash}: ${insertError.message}. Row: ${row}`);
+                        }
+                    }
+                    processedCount++;
+                    if (win && processedCount % 100 === 0) {
+                        win.webContents.send('updateProgress', { processed: processedCount, total: totalEntries });
+                    }
+                }
+            })(); // Execute transaction
+
+            if (win) {
+                win.webContents.send('updateProgress', { processed: totalEntries, total: totalEntries, completed: true });
             }
 
             settings.lastUpdated = new Date().toLocaleString();
             fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
-            console.log(`Definitions updated. Last updated set to: ${settings.lastUpdated}. Python command used: ${scriptResult.pythonCmdUsed}`);
-            
+            console.log(`Definitions updated. Added ${addedCount} new entries. Last updated set to: ${settings.lastUpdated}`);
+
             if (win) {
                 win.webContents.send('settingsUpdated', settings);
             }
-            return { success: true, message: scriptResult.stdout.trim() || 'Definitions updated successfully.', lastUpdated: settings.lastUpdated, pythonCmdUsed: scriptResult.pythonCmdUsed };
+            return { success: true, message: `Added ${addedCount} new malware definitions from ${totalEntries} processed entries.`, lastUpdated: settings.lastUpdated };
 
         } catch (error) {
-            console.error("Error in updateDefinitions main catch block:", error);
-            return { success: false, message: error.message || "An unknown error occurred during definition update." };
+            console.error("Error in updateDefinitions (CSV/better-sqlite3):", error);
+            if (win) { // Send error state for progress
+                 win.webContents.send('updateProgress', { error: true, message: error.message });
+            }
+            return { success: false, message: `Error updating definitions. ${error.message}` };
         } finally {
-            if (tempFeedPath && fs.existsSync(tempFeedPath)) {
-                try {
-                    fs.unlinkSync(tempFeedPath);
-                    console.log(`Temporary feed file ${tempFeedPath} deleted.`);
-                } catch (delError) {
-                    console.error(`Error deleting temporary feed file ${tempFeedPath}:`, delError);
-                }
+            if (db) {
+                db.close();
+                console.log("Database connection closed.");
             }
         }
     });
 
     try {
         // Settings are already loaded and potentially modified above for lastUpdated
-        // settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8')); 
+        // settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
         global.settings = settings; // Ensure global settings is also up-to-date
         console.log("Settings Loaded:", settings);
     } catch (err) {

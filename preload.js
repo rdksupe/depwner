@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld("depwnerStatus", {
 contextBridge.exposeInMainWorld("electronAPI", {
     updateDefinitions: () => ipcRenderer.invoke('updateDefinitions'),
     onSettingsUpdated: (callback) => ipcRenderer.on('settingsUpdated', (_event, value) => callback(value)),
+    onUpdateProgress: (callback) => ipcRenderer.on('updateProgress', callback), // Added for progress updates
     // You might want to move other relevant IPC calls here for better organization
 });
 

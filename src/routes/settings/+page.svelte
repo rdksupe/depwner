@@ -23,12 +23,10 @@
 	});
 
 	let isLoadingUpdate = $state(false);
+	let updateProgressCurrent = $state(0);
+	let updateProgressTotal = $state(0);
+	let showProgressBar = $state(false);
 
-	onMount(async () => {
-		let settingsResponse = await depwnerPreferences.get();
-		let parsedSettings = JSON.parse(settingsResponse);
-		settings = { ...settings, ...parsedSettings }; // Merge, ensuring lastUpdated is present
-	});
 	$effect(() => {
 		depwnerPreferences.set(JSON.stringify(settings));
 	});
@@ -36,36 +34,74 @@
 	async function handleUpdateDefinitionsClick() {
 		console.log('Update Definitions button clicked');
 		isLoadingUpdate = true;
+		showProgressBar = true; // Show progress bar when update starts
+		updateProgressCurrent = 0; // Reset progress
+		updateProgressTotal = 0;   // Reset progress
 		try {
 			// @ts-ignore
 			const result = await electronAPI.updateDefinitions();
 			alert(result.message || 'Update process initiated.');
 			if (result.success && result.lastUpdated) {
-				settings.lastUpdated = result.lastUpdated; 
-			} else if (!result.success) {
-				// Optionally, if the backend didn't update lastUpdated on failure, 
-				// you might want to reflect that or keep the old value.
-				// For now, the alert message covers the failure.
+				settings.lastUpdated = result.lastUpdated;
 			}
 		} catch (error) {
 			console.error('Error calling updateDefinitions:', error);
 			alert('Failed to start update process: ' + (error.message || 'Unknown error'));
 		} finally {
 			isLoadingUpdate = false;
+			showProgressBar = false; // Hide progress bar when update finishes
+			updateProgressCurrent = 0; // Reset progress
+			updateProgressTotal = 0;   // Reset progress
 		}
 	}
 
 	onMount(async () => {
-		// Existing onMount logic
-		// ...
-		// Add listener for settingsUpdated event
+		// Fetch initial settings
+		try {
+			let settingsResponse = await depwnerPreferences.get();
+			let parsedSettings = JSON.parse(settingsResponse);
+			settings = { ...settings, ...parsedSettings };
+		} catch (e) {
+			console.error("Failed to load settings:", e);
+		}
+
+		// Setup IPC listeners
 		// @ts-ignore
-		if (window.electronAPI && typeof window.electronAPI.onSettingsUpdated === 'function') {
+		if (window.electronAPI) {
 			// @ts-ignore
-			window.electronAPI.onSettingsUpdated((event, updatedSettings) => {
-				console.log('Received settingsUpdated event with:', updatedSettings);
-				settings = { ...settings, ...updatedSettings }; // Update local settings state
-			});
+			if (typeof window.electronAPI.onSettingsUpdated === 'function') {
+				// @ts-ignore
+				window.electronAPI.onSettingsUpdated((_event, updatedSettings) => {
+					console.log('Received settingsUpdated event with:', updatedSettings);
+					settings = { ...settings, ...updatedSettings };
+				});
+			}
+			// @ts-ignore
+			if (typeof window.electronAPI.onUpdateProgress === 'function') {
+				// @ts-ignore
+				window.electronAPI.onUpdateProgress((_event, progress) => {
+					console.log('Received updateProgress event:', progress);
+					updateProgressCurrent = progress.processed;
+					updateProgressTotal = progress.total;
+					showProgressBar = true; // Ensure it's visible if we receive progress
+
+					if (progress.completed || progress.error) {
+						// The main finally block in handleUpdateDefinitionsClick will also hide it,
+						// but this can hide it sooner if the event signals completion/error.
+						// However, to keep it simple and avoid race conditions with the alert,
+ nachhaltige // we might let finally handle the definitive hiding.
+						// For now, let's rely on `isLoadingUpdate` in the template and `finally` block.
+						if (progress.error) {
+							// If there's an error, the alert in handleUpdateDefinitionsClick will show.
+							// The progress bar will be hidden in the finally block there.
+						}
+						if (progress.completed) {
+							// Update might be completed before the user dismisses the alert.
+							// `showProgressBar` will be set to false in `finally`.
+						}
+					}
+				});
+			}
 		}
 	});
 </script>
@@ -188,11 +224,59 @@
 			<div class="lastUpdatedText">
 				<p>Last updated: {settings.lastUpdated || 'Never'}</p>
 			</div>
+			{#if showProgressBar && isLoadingUpdate}
+				<div class="progress-bar-container">
+					<progress value={updateProgressCurrent} max={updateProgressTotal}></progress>
+					{#if updateProgressTotal > 0}
+						<span>{updateProgressCurrent} / {updateProgressTotal}</span>
+					{:else}
+						<span>Processing...</span>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
 
 <style>
+	.progress-bar-container {
+		width: 80%;
+		margin: 10px auto;
+		text-align: center;
+		color: rgb(var(--ctp-text));
+	}
+	.progress-bar-container span {
+		display: block;
+		margin-top: 5px;
+		font-size: 0.9em;
+	}
+	progress {
+		width: 100%;
+		height: 20px;
+		border-radius: 5px; /* Consistent with other elements */
+		border: 1px solid rgb(var(--ctp-overlay0)); /* Subtle border */
+	}
+	/* Track color (background of the progress bar) */
+	progress::-webkit-progress-bar {
+		background-color: rgb(var(--ctp-surface0)); /* Catppuccin Surface0 */
+		border-radius: 5px;
+	}
+	progress::-moz-progress-bar { /* Firefox */
+		background-color: rgb(var(--ctp-surface0));
+		border-radius: 5px;
+	}
+	/* Bar color (the actual progress) */
+	progress::-webkit-progress-value {
+		background-color: rgb(var(--ctp-blue)); /* Catppuccin Blue */
+		border-radius: 5px;
+		transition: width 0.2s ease-in-out;
+	}
+	progress[value]::-moz-progress-bar { /* Firefox */
+		background-color: rgb(var(--ctp-blue));
+		border-radius: 5px;
+		transition: width 0.2s ease-in-out;
+	}
+
 	button.tooltip {
 		position: relative;
 	}
